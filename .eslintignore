@@ -3,3 +3,5 @@ dist
 *.config.js
 *.test.js
 *.test.ts
+stories
+test

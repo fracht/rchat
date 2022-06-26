@@ -21,8 +21,8 @@
     "scripts": {
         "build": "aqu build",
         "start": "aqu watch",
-        "lint": "aqu lint",
-        "lint:fix": "aqu lint --fix",
+        "lint": "eslint **/*.{ts,tsx}",
+        "lint:fix": "eslint . --fix",
         "test": "aqu test --passWithNoTests",
         "test:watch": "aqu test --passWithNoTests --watch",
         "test:coverage": "aqu test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
@@ -45,6 +45,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.18.2",
+        "@sirse-dev/eslint-config": "^1.0.5",
         "@size-limit/preset-small-lib": "^7.0.8",
         "@storybook/addon-actions": "^6.5.6",
         "@storybook/addon-essentials": "^6.5.6",
