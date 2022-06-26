@@ -74,6 +74,7 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 const ChatItemComponent = forwardRef(
     ({ item, index, items }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
         <div style={item.isLeft ? styles.leftContainer : styles.rightContainer}>
+            {item.id}
             <div
                 ref={ref as React.Ref<HTMLDivElement>}
                 style={{
@@ -91,13 +92,19 @@ export default {
     title: 'EndlessList',
     argTypes: {
         ItemComponent: {
-            defaultValue: ChatItemComponent,
+            options: ['unstyled', 'highContrast', 'chat'],
+            mapping: {
+                unstyled: UnStyledItemComponent,
+                highContrast: HighContrastItemComponent,
+                chat: ChatItemComponent,
+            },
+            defaultValue: 'chat',
             control: {
                 type: 'select',
-                options: {
-                    Unstyled: UnStyledItemComponent,
-                    'High contrast': HighContrastItemComponent,
-                    Chat: ChatItemComponent,
+                labels: {
+                    unstyled: 'UnStyled',
+                    highContrast: 'High contrast',
+                    chat: 'Chat',
                 },
             },
         },
@@ -136,28 +143,37 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
     const [messages, setMessages] = useState(() => generateMessageArray(50));
 
     return (
-        <EndlessList
-            {...props}
-            items={messages}
-            onTopReached={() => {
-                setMessages((old) => {
-                    const newMsgs = generateMessageArray(20);
+        <React.Fragment>
+            <EndlessList
+                {...props}
+                items={messages}
+                onTopReached={() => {
+                    setMessages((old) => {
+                        const newMsgs = generateMessageArray(20);
 
-                    return [...newMsgs, ...old].slice(0, 100);
-                });
+                        return [...newMsgs, ...old].slice(0, 100);
+                    });
 
-                props.onTopReached?.();
-            }}
-            onBottomReached={() => {
-                setMessages((old) => {
-                    const newMsgs = generateMessageArray(20);
+                    props.onTopReached?.();
+                }}
+                onBottomReached={() => {
+                    setMessages((old) => {
+                        const newMsgs = generateMessageArray(20);
 
-                    return [...old, ...newMsgs].slice(-100);
-                });
+                        return [...old, ...newMsgs].slice(-100);
+                    });
 
-                props.onBottomReached?.();
-            }}
-        />
+                    props.onBottomReached?.();
+                }}
+            />
+            <button
+                onClick={() => {
+                    setMessages(generateMessageArray(100));
+                }}
+            >
+                Jump!
+            </button>
+        </React.Fragment>
     );
 };
 
@@ -167,8 +183,11 @@ export const Default = Template.bind({});
 Default.args = {
     itemKey: 'id',
     distance: 100,
+    compareItems: () => (Math.random() > 0.5 ? 1 : -1),
+    PlaceholderComponent: () => <div style={{ height: 400 }}>Placeholder!</div>,
     style: {
         overflow: 'auto',
-        height: 600,
+        height: 300,
     },
+    jumpAnimDuration: 1000,
 } as Partial<EndlessListProps<ExampleMessage>>;

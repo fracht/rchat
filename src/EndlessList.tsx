@@ -1,8 +1,19 @@
-import { ComponentType, RefAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import React, {
+    ComponentType,
+    RefAttributes,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+} from 'react';
 import type { Key } from 'react';
 import type { KeysOfType } from './internal/KeysOfType';
 import { usePrevious } from './internal/usePrevious';
 import { useToggleEvent } from './internal/useToggleEvent';
+import { smoothScrollToCenter } from './internal/smoothScrollToCenter';
 
 export type ItemComponentProps<T> = {
     item: T;
@@ -20,6 +31,11 @@ export type EndlessListProps<T> = {
     distance: number;
     onTopReached?: () => void;
     onBottomReached?: () => void;
+    // TODO: rename this parameter
+    compareItems: (first: T, second: T) => number;
+    focusItem?: T;
+    jumpAnimDuration?: number;
+    PlaceholderComponent: ComponentType;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const getElRef = <E,>(index: number, length: number, topRef: React.RefObject<E>, bottomRef: React.RefObject<E>) => {
@@ -34,7 +50,28 @@ const getElRef = <E,>(index: number, length: number, topRef: React.RefObject<E>,
     return undefined;
 };
 
+const getFocusRef = <T, E>(
+    focusItem: T | undefined,
+    focusIndex: number,
+    index: number,
+    focusArray: Array<T>,
+    currentArray: Array<T>,
+    focusElementRef: React.RefObject<E>,
+) => {
+    if (currentArray !== focusArray) {
+        return undefined;
+    }
+
+    if (focusItem !== undefined) {
+        return focusArray[index] === focusItem ? focusElementRef : undefined;
+    }
+
+    return index === focusIndex ? focusElementRef : undefined;
+};
+
 const noop = () => {};
+
+const PlaceholderItemSymbol = Symbol();
 
 export const EndlessList = <T,>({
     ItemComponent,
@@ -44,10 +81,15 @@ export const EndlessList = <T,>({
     onTopReached,
     onBottomReached,
     onScroll,
+    compareItems,
+    PlaceholderComponent,
+    jumpAnimDuration = 500,
+    focusItem,
     ...other
 }: EndlessListProps<T>) => {
     const scrollableContainerRef = useRef<HTMLDivElement>(null);
     const contentContainerRef = useRef<HTMLDivElement>(null);
+    const focusElementRef = useRef<HTMLDivElement>(null);
     const topElementRef = useRef<HTMLElement>(null);
     const bottomElementRef = useRef<HTMLElement>(null);
 
@@ -62,28 +104,61 @@ export const EndlessList = <T,>({
         }
     }, [itemKey]);
 
-    const handleScroll = useCallback(async (e: React.UIEvent<HTMLDivElement>) => {
-        if (
-            !scrollableContainerRef.current ||
-            !contentContainerRef.current ||
-            !topElementRef.current ||
-            !bottomElementRef.current
-        ) {
-            return;
+    const [oldItems, invalidate] = usePrevious(items);
+
+    const jumpItems = useMemo(() => {
+        const keys = items.map(keyExtractor);
+        const oldKeys = oldItems.map(keyExtractor);
+
+        const moveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys[oldKeys.length - 1]);
+        const moveBackward = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys[keys.length - 1]);
+
+        const isInJump = moveForward && moveBackward;
+
+        if (isInJump) {
+            setTimeout(invalidate, jumpAnimDuration);
+
+            if (compareItems(items[0], oldItems[0]) > 0) {
+                return { next: items, prev: oldItems, actual: items };
+            } else {
+                return { prev: items, next: oldItems, actual: items };
+            }
         }
 
-        const containerRect = scrollableContainerRef.current.getBoundingClientRect();
-        const bottomElRect = bottomElementRef.current.getBoundingClientRect();
-        const topElRect = topElementRef.current.getBoundingClientRect();
+        return undefined;
+    }, [items, oldItems]);
 
-        const distanceTillBottomEl = bottomElRect.bottom - containerRect.bottom;
-        const distanceTillTopEl = containerRect.top - topElRect.top;
+    useEffect(() => {
+        if (jumpItems !== undefined && focusElementRef.current && scrollableContainerRef.current) {
+            smoothScrollToCenter(scrollableContainerRef.current, focusElementRef.current, jumpAnimDuration);
+        }
+    }, [jumpItems]);
 
-        setBottomReached(distanceTillBottomEl <= distance);
-        setTopReached(distanceTillTopEl <= distance);
+    const handleScroll = useCallback(
+        async (e: React.UIEvent<HTMLDivElement>) => {
+            if (
+                !topElementRef.current ||
+                !bottomElementRef.current ||
+                !scrollableContainerRef.current ||
+                !contentContainerRef.current
+            ) {
+                return;
+            }
 
-        onScroll?.(e);
-    }, []);
+            const containerRect = scrollableContainerRef.current.getBoundingClientRect();
+            const bottomElRect = bottomElementRef.current.getBoundingClientRect();
+            const topElRect = topElementRef.current.getBoundingClientRect();
+
+            const distanceTillBottomEl = bottomElRect.bottom - containerRect.bottom;
+            const distanceTillTopEl = containerRect.top - topElRect.top;
+
+            setBottomReached(distanceTillBottomEl <= distance);
+            setTopReached(distanceTillTopEl <= distance);
+
+            onScroll?.(e);
+        },
+        [jumpItems],
+    );
 
     useLayoutEffect(() => {
         if (scrollableContainerRef.current && contentContainerRef.current) {
@@ -91,42 +166,58 @@ export const EndlessList = <T,>({
         }
     }, []);
 
-    const oldItems = usePrevious(items);
-
     useEffect(() => {
-        if (!contentContainerRef.current || !scrollableContainerRef.current) return;
-
-        const keys = items.map(keyExtractor);
-        const oldKeys = oldItems.map(keyExtractor);
-
-        const moveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys[oldKeys.length - 1]);
-        const moveBackward = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys[keys.length - 1]);
-
-        if (moveForward && moveBackward) {
-            throw new Error('Cannot perform jump - currently not supported.');
-        }
-
-        if (moveForward) {
-            setTopReached(false);
-        }
-
-        if (moveBackward) {
-            setBottomReached(false);
-        }
+        setTopReached(false);
+        setBottomReached(false);
     }, [items]);
 
     return (
         <div {...other} ref={scrollableContainerRef} onScroll={handleScroll}>
             <div ref={contentContainerRef}>
-                {items.map((item, index, items) => (
-                    <ItemComponent
-                        index={index}
-                        items={items}
-                        item={item}
-                        key={keyExtractor(item)}
-                        ref={getElRef(index, items.length, topElementRef, bottomElementRef)}
-                    />
-                ))}
+                {jumpItems
+                    ? ([...jumpItems.next, PlaceholderItemSymbol, ...jumpItems.prev] as const).map((item, index) => {
+                          if (item === PlaceholderItemSymbol) {
+                              return <PlaceholderComponent key={-1} />;
+                          }
+
+                          let normalIndex = 0;
+                          const focusIndex = jumpItems.next.length / 2;
+                          let normalArray: T[] = [];
+
+                          if (index > jumpItems.next.length) {
+                              normalIndex = index - jumpItems.next.length - 1;
+                              normalArray = jumpItems.prev;
+                          } else {
+                              normalIndex = index;
+                              normalArray = jumpItems.next;
+                          }
+
+                          return (
+                              <ItemComponent
+                                  item={item}
+                                  index={normalIndex}
+                                  items={normalArray}
+                                  key={keyExtractor(item)}
+                                  ref={getFocusRef(
+                                      focusItem,
+                                      focusIndex,
+                                      normalIndex,
+                                      jumpItems.actual,
+                                      normalArray,
+                                      focusElementRef,
+                                  )}
+                              />
+                          );
+                      })
+                    : items.map((item, index, items) => (
+                          <ItemComponent
+                              item={item}
+                              index={index}
+                              items={items}
+                              key={keyExtractor(item)}
+                              ref={getElRef(index, items.length, topElementRef, bottomElementRef)}
+                          />
+                      ))}
             </div>
         </div>
     );
