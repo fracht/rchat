@@ -20,13 +20,11 @@ export type EndlessListProps<T> = {
     ItemComponent: ComponentType<ItemComponentProps<T> & RefAttributes<HTMLElement>>;
     items: T[];
     itemKey: ItemKey<T>;
-    // TODO: rename this parameter
-    distance: number;
+    triggerDistance: number;
     onTopReached?: () => void;
     onBottomReached?: () => void;
-    // TODO: rename this parameter
     compareItems: (first: T, second: T) => number;
-    focusItem?: T;
+    focusedItem?: T;
     jumpAnimDuration?: number;
     PlaceholderComponent: ComponentType;
 } & React.HTMLAttributes<HTMLDivElement>;
@@ -77,14 +75,14 @@ export const EndlessList = <T,>({
     ItemComponent,
     items,
     itemKey,
-    distance,
+    triggerDistance,
     onTopReached,
     onBottomReached,
     onScroll,
     compareItems,
     PlaceholderComponent,
     jumpAnimDuration = 500,
-    focusItem,
+    focusedItem,
     ...other
 }: EndlessListProps<T>) => {
     const scrollableContainerReference = useRef<HTMLDivElement>(null);
@@ -140,9 +138,9 @@ export const EndlessList = <T,>({
         const distanceTillBottomElement = bottomElementRect.bottom - containerRect.bottom;
         const distanceTillTopElement = containerRect.top - topElementRect.top;
 
-        setBottomReached(distanceTillBottomElement <= distance);
-        setTopReached(distanceTillTopElement <= distance);
-    }, [distance, setBottomReached, setTopReached]);
+        setBottomReached(distanceTillBottomElement <= triggerDistance);
+        setTopReached(distanceTillTopElement <= triggerDistance);
+    }, [triggerDistance, setBottomReached, setTopReached]);
 
     const handleScroll = useCallback(
         async (event: React.UIEvent<HTMLDivElement>) => {
@@ -160,7 +158,7 @@ export const EndlessList = <T,>({
     useEffect(() => {
         if (
             !isScrolling.current &&
-            (jumpItems !== undefined || focusItem) &&
+            (jumpItems !== undefined || focusedItem) &&
             focusElementReference.current &&
             scrollableContainerReference.current
         ) {
@@ -174,7 +172,7 @@ export const EndlessList = <T,>({
                 checkScrollPosition();
             });
         }
-    }, [jumpAnimDuration, jumpItems, focusItem, checkScrollPosition]);
+    }, [jumpAnimDuration, jumpItems, focusedItem, checkScrollPosition]);
 
     useLayoutEffect(() => {
         if (scrollableContainerReference.current && contentContainerReference.current) {
@@ -217,7 +215,7 @@ export const EndlessList = <T,>({
                                   items={normalArray}
                                   key={keyExtractor(item)}
                                   ref={getFocusReference(
-                                      focusItem,
+                                      focusedItem,
                                       focusIndex,
                                       normalIndex,
                                       jumpItems.actual,
@@ -235,7 +233,7 @@ export const EndlessList = <T,>({
                               key={keyExtractor(item)}
                               ref={mergeReferences(
                                   getElementReference(index, items.length, topElementReference, bottomElementReference),
-                                  getFocusReference(focusItem, -1, index, items, items, focusElementReference),
+                                  getFocusReference(focusedItem, -1, index, items, items, focusElementReference),
                               )}
                           />
                       ))}

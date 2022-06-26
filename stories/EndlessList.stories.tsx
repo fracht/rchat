@@ -146,7 +146,7 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
         <React.Fragment>
             <EndlessList
                 {...props}
-                focusItem={focusedItem}
+                focusedItem={focusedItem}
                 items={messages}
                 onTopReached={() => {
                     setMessages((old) => {
@@ -198,7 +198,7 @@ const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> 
 export const Default = Template.bind({});
 Default.args = {
     itemKey: 'id',
-    distance: 100,
+    triggerDistance: 100,
     compareItems: () => (Math.random() > 0.5 ? 1 : -1),
     PlaceholderComponent: () => <div style={{ height: 400 }}>Placeholder!</div>,
     style: {
