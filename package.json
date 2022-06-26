@@ -1,6 +1,6 @@
 {
     "name": "awesome-react-chat",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "Awesome React chat",
     "main": "./dist/index.js",
     "module": "./dist/awesome-react-chat.esm.js",
