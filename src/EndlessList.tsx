@@ -1,8 +1,8 @@
 import React, { ComponentType, RefAttributes, useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
+import { mergeReferences } from './internal/mergeReferences';
 import { smoothScrollToCenter } from './internal/smoothScrollToCenter';
 import { usePrevious } from './internal/usePrevious';
-
 import { useToggleEvent } from './internal/useToggleEvent';
 
 import type { KeysOfType } from './internal/KeysOfType';
@@ -95,6 +95,7 @@ export const EndlessList = <T,>({
 
     const setBottomReached = useToggleEvent(onBottomReached ?? noop);
     const setTopReached = useToggleEvent(onTopReached ?? noop);
+    const isScrolling = useRef(false);
 
     const keyExtractor = useMemo(() => {
         return typeof itemKey === 'function' ? itemKey : (value: T) => value[itemKey] as unknown as Key;
@@ -122,37 +123,58 @@ export const EndlessList = <T,>({
         return;
     }, [compareItems, invalidate, items, jumpAnimDuration, keyExtractor, oldItems]);
 
-    useEffect(() => {
-        if (jumpItems !== undefined && focusElementReference.current && scrollableContainerReference.current) {
-            smoothScrollToCenter(scrollableContainerReference.current, focusElementReference.current, jumpAnimDuration);
+    const checkScrollPosition = useCallback(async () => {
+        if (
+            !topElementReference.current ||
+            !bottomElementReference.current ||
+            !scrollableContainerReference.current ||
+            !contentContainerReference.current
+        ) {
+            return;
         }
-    }, [jumpAnimDuration, jumpItems]);
+
+        const containerRect = scrollableContainerReference.current.getBoundingClientRect();
+        const bottomElementRect = bottomElementReference.current.getBoundingClientRect();
+        const topElementRect = topElementReference.current.getBoundingClientRect();
+
+        const distanceTillBottomElement = bottomElementRect.bottom - containerRect.bottom;
+        const distanceTillTopElement = containerRect.top - topElementRect.top;
+
+        setBottomReached(distanceTillBottomElement <= distance);
+        setTopReached(distanceTillTopElement <= distance);
+    }, [distance, setBottomReached, setTopReached]);
 
     const handleScroll = useCallback(
         async (event: React.UIEvent<HTMLDivElement>) => {
-            if (
-                !topElementReference.current ||
-                !bottomElementReference.current ||
-                !scrollableContainerReference.current ||
-                !contentContainerReference.current
-            ) {
+            if (isScrolling.current) {
                 return;
             }
 
-            const containerRect = scrollableContainerReference.current.getBoundingClientRect();
-            const bottomElementRect = bottomElementReference.current.getBoundingClientRect();
-            const topElementRect = topElementReference.current.getBoundingClientRect();
-
-            const distanceTillBottomElement = bottomElementRect.bottom - containerRect.bottom;
-            const distanceTillTopElement = containerRect.top - topElementRect.top;
-
-            setBottomReached(distanceTillBottomElement <= distance);
-            setTopReached(distanceTillTopElement <= distance);
+            checkScrollPosition();
 
             onScroll?.(event);
         },
-        [distance, onScroll, setBottomReached, setTopReached],
+        [onScroll, checkScrollPosition],
     );
+
+    useEffect(() => {
+        if (
+            !isScrolling.current &&
+            (jumpItems !== undefined || focusItem) &&
+            focusElementReference.current &&
+            scrollableContainerReference.current
+        ) {
+            isScrolling.current = true;
+            smoothScrollToCenter(
+                scrollableContainerReference.current,
+                focusElementReference.current,
+                jumpAnimDuration,
+            ).then(() => {
+                isScrolling.current = false;
+                checkScrollPosition();
+            });
+        }
+    }, [jumpAnimDuration, jumpItems, focusItem, checkScrollPosition]);
 
     useLayoutEffect(() => {
         if (scrollableContainerReference.current && contentContainerReference.current) {
@@ -175,8 +197,9 @@ export const EndlessList = <T,>({
                               return <PlaceholderComponent key={-1} />;
                           }
 
-                          let normalIndex = 0;
                           const focusIndex = jumpItems.next.length / 2;
+
+                          let normalIndex = 0;
                           let normalArray: T[] = [];
 
                           if (index > jumpItems.next.length) {
@@ -210,11 +233,9 @@ export const EndlessList = <T,>({
                               index={index}
                               items={items}
                               key={keyExtractor(item)}
-                              ref={getElementReference(
-                                  index,
-                                  items.length,
-                                  topElementReference,
-                                  bottomElementReference,
+                              ref={mergeReferences(
+                                  getElementReference(index, items.length, topElementReference, bottomElementReference),
+                                  getFocusReference(focusItem, -1, index, items, items, focusElementReference),
                               )}
                           />
                       ))}

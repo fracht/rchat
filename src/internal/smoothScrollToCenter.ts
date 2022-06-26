@@ -2,7 +2,7 @@ const easeInOutCubic = (value: number) => {
     return value < 0.5 ? 4 * value * value * value : (value - 1) * (2 * value - 2) * (2 * value - 2) + 1;
 };
 
-export const smoothScrollToCenter = (container: HTMLElement, element: HTMLElement, duration: number) => {
+export const smoothScrollToCenter = async (container: HTMLElement, element: HTMLElement, duration: number) => {
     const elementRect = element.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
@@ -14,14 +14,23 @@ export const smoothScrollToCenter = (container: HTMLElement, element: HTMLElemen
     const scrollIntendedDestination = startPos + top;
     const scrollEndValue = Math.min(Math.max(scrollIntendedDestination, 0), maxScroll);
     let startTime = 0;
-    const scroll = (timestamp: number) => {
-        startTime = startTime || timestamp;
-        const elapsed = timestamp - startTime;
-        container.scrollTop = startPos + (scrollEndValue - startPos) * easeInOutCubic(elapsed / duration);
-        elapsed <= duration && window.requestAnimationFrame(scroll);
-    };
 
-    if (startPos !== scrollEndValue) {
-        window.requestAnimationFrame(scroll);
-    }
+    return new Promise<void>((resolve) => {
+        const scroll = (timestamp: number) => {
+            startTime = startTime || timestamp;
+            const elapsed = timestamp - startTime;
+            container.scrollTop = startPos + (scrollEndValue - startPos) * easeInOutCubic(elapsed / duration);
+            if (elapsed <= duration) {
+                window.requestAnimationFrame(scroll);
+            } else {
+                resolve();
+            }
+        };
+
+        if (startPos !== scrollEndValue) {
+            window.requestAnimationFrame(scroll);
+        } else {
+            resolve();
+        }
+    });
 };

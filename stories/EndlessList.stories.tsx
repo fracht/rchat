@@ -74,7 +74,6 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 const ChatItemComponent = forwardRef(
     ({ item, index, items }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
         <div style={item.isLeft ? styles.leftContainer : styles.rightContainer}>
-            {item.id}
             <div
                 ref={ref as React.Ref<HTMLDivElement>}
                 style={{
@@ -141,11 +140,13 @@ const generateMessageArray = (length: number) => {
 
 const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
     const [messages, setMessages] = useState(() => generateMessageArray(50));
+    const [focusedItem, setFocusedItem] = useState<ExampleMessage | undefined>();
 
     return (
         <React.Fragment>
             <EndlessList
                 {...props}
+                focusItem={focusedItem}
                 items={messages}
                 onTopReached={() => {
                     setMessages((old) => {
@@ -168,10 +169,25 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
             />
             <button
                 onClick={() => {
+                    setFocusedItem(undefined);
                     setMessages(generateMessageArray(100));
                 }}
             >
                 Jump!
+            </button>
+            <button
+                onClick={() => {
+                    setFocusedItem(messages[Math.floor(Math.random() * messages.length)]);
+                }}
+            >
+                Focus random item
+            </button>
+            <button
+                onClick={() => {
+                    setFocusedItem(messages[messages.length - 1]);
+                }}
+            >
+                Focus last item
             </button>
         </React.Fragment>
     );
@@ -189,5 +205,4 @@ Default.args = {
         overflow: 'auto',
         height: 300,
     },
-    jumpAnimDuration: 1000,
 } as Partial<EndlessListProps<ExampleMessage>>;
