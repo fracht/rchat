@@ -1,5 +1,5 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React, { ComponentType, CSSProperties, forwardRef, useState } from 'react';
+import { ComponentType, CSSProperties, forwardRef, Fragment, useState } from 'react';
 
 import { ContainerComponentProps, EndlessList, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
 
@@ -143,7 +143,7 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
     const [focusedItem, setFocusedItem] = useState<ExampleMessage | undefined>();
 
     return (
-        <React.Fragment>
+        <Fragment>
             <EndlessList
                 {...props}
                 focusedItem={focusedItem}
@@ -189,7 +189,7 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
             >
                 Focus last item
             </button>
-        </React.Fragment>
+        </Fragment>
     );
 };
 
