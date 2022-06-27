@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React, { ComponentType, CSSProperties, forwardRef, useState } from 'react';
 
-import { EndlessList, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
+import { ContainerComponentProps, EndlessList, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
 
 type ExampleMessage = {
     message: string;
@@ -195,14 +195,26 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 
 const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <TestComponent {...args} />;
 
+const Container = forwardRef(
+    ({ innerContainerRef, onScroll, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
+        <div
+            style={{
+                overflow: 'auto',
+                height: 300,
+            }}
+            onScroll={onScroll}
+            ref={ref}
+        >
+            <div ref={innerContainerRef as React.Ref<HTMLDivElement>}>{children}</div>
+        </div>
+    ),
+);
+
 export const Default = Template.bind({});
 Default.args = {
     itemKey: 'id',
     triggerDistance: 100,
     compareItems: () => (Math.random() > 0.5 ? 1 : -1),
     PlaceholderComponent: () => <div style={{ height: 400 }}>Placeholder!</div>,
-    style: {
-        overflow: 'auto',
-        height: 300,
-    },
+    ContainerComponent: Container,
 } as Partial<EndlessListProps<ExampleMessage>>;

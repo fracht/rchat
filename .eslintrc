@@ -1,4 +1,4 @@
 {
     "root": true,
-    "extends": "@sirse-dev/eslint-config"
+    "extends": ["@sirse-dev/eslint-config"]
 }
