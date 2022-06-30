@@ -6,7 +6,7 @@
         "declaration": true,
         "strict": true,
         "esModuleInterop": true,
-        "lib": ["es5", "DOM"],
+        "lib": ["es2020", "DOM"],
         "noLib": false,
         "rootDir": "src",
         "skipLibCheck": true,
