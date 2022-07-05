@@ -1,26 +1,21 @@
 import { MessageEventType } from '../shared/MessageEventType.ts';
 import { ChatService } from './ChatService.ts';
-import { log, binaryParser, http } from './deps.ts';
+import { ChatWebSocket } from './ChatWebsocket.ts';
+import { log, http } from './deps.ts';
 import { MessageHandler } from './MessageHandler.ts';
 
 enum WebSocketStatusCode {
     UNSUPPORTED_DATA = 1003,
     POLICY_VIOLATION = 1008,
     INTERNAL_ERROR = 1011,
+    NORMAL_CLOSURE = 1000,
 }
-
-const WebSocketGenericError: Record<WebSocketStatusCode, string> = {
-    [WebSocketStatusCode.POLICY_VIOLATION]: 'Policy violation.',
-    [WebSocketStatusCode.INTERNAL_ERROR]: 'Internal server error.',
-    [WebSocketStatusCode.UNSUPPORTED_DATA]: 'Unsupported data.',
-};
 
 export class ChatServer {
     private readonly logger: log.Logger;
-    private socketRegistry = new Map<string, WebSocket>();
+    private socketRegistry = new Map<string, ChatWebSocket>();
     private userToSocketMapping = new Map<string, string[]>();
     private readonly messageHandler: MessageHandler;
-    private readonly messageParser: binaryParser.Parser;
     private readonly service: ChatService;
     private readonly MAX_SOCKET_PER_USER = 10;
 
@@ -28,12 +23,58 @@ export class ChatServer {
         this.service = service;
         this.logger = logger;
         this.messageHandler = new MessageHandler();
-        this.messageParser = new binaryParser.Parser().int16('version').int8('type').choice('payload', {
-            tag: 'type',
-            choices: {},
+
+        this.messageHandler.on(MessageEventType.OPEN, (event) => {
+            this.addSocket(event.target);
+            this.socketHeartbeat(event.target);
         });
-        this.messageParser.compile();
+        this.messageHandler.on(MessageEventType.CLOSE, (event) => {
+            if (event.data.payload.code !== WebSocketStatusCode.NORMAL_CLOSURE) {
+                this.logger.error(
+                    `Websocket closed with unexpected error: ${event.data.payload.reason} [${event.data.payload.code}].`,
+                );
+            }
+
+            this.removeSocket(event.target);
+        });
+        this.messageHandler.on(MessageEventType.ERROR, (event) => {
+            this.logger.error('Unexpected websocket error occurred.');
+            this.removeSocket(event.target);
+        });
     }
+
+    private addSocket = (socket: ChatWebSocket) => {
+        this.socketRegistry.set(socket.socketIdentifier, socket);
+        if (this.userToSocketMapping.has(socket.userIdentifier)) {
+            this.userToSocketMapping.get(socket.userIdentifier)!.push(socket.socketIdentifier);
+        } else {
+            this.userToSocketMapping.set(socket.userIdentifier, [socket.socketIdentifier]);
+        }
+    };
+
+    private removeSocket = (socket: ChatWebSocket) => {
+        this.socketRegistry.delete(socket.socketIdentifier);
+        const socketsAssociatedWithUser = this.userToSocketMapping.get(socket.userIdentifier);
+        if (!socketsAssociatedWithUser) {
+            this.logger.warning('Removed socket, that was not associated with any user.');
+            return;
+        }
+
+        const index = socketsAssociatedWithUser.indexOf(socket.socketIdentifier);
+        if (index === -1) {
+            this.logger.warning('Removed socket, that was not associated with any user.');
+            return;
+        }
+
+        socketsAssociatedWithUser.splice(index, 1);
+        if (socketsAssociatedWithUser.length === 0) {
+            this.userToSocketMapping.delete(socket.userIdentifier);
+        }
+    };
+
+    private socketHeartbeat = (socket: ChatWebSocket) => {
+        let isSocketAlive = true;
+    };
 
     private requestHandler = async (request: Request): Promise<Response> => {
         if (request.headers.get('upgrade') !== 'websocket') {
@@ -43,7 +84,7 @@ export class ChatServer {
 
         const socketIdentifier = crypto.randomUUID();
         if (this.socketRegistry.has(socketIdentifier)) {
-            this.logger.critical('Server generated socket identifier that already exists in socket registry');
+            this.logger.error('Server generated socket identifier that already exists in socket registry');
             return new Response(undefined, { status: 505 });
         }
 
@@ -57,16 +98,11 @@ export class ChatServer {
             return new Response(undefined, { status: 505 });
         }
 
-        socket.addEventListener;
+        const typedSocket: ChatWebSocket = socket as ChatWebSocket;
+        typedSocket.userIdentifier = userIdentifier;
+        typedSocket.socketIdentifier = socketIdentifier;
 
-        this.messageHandler.registerNewSocket(socket);
-
-        // this.socketRegistry.set(socketIdentifier, socket);
-        // if (this.userToSocketMapping.has(userIdentifier)) {
-        //     this.userToSocketMapping.get(userIdentifier)!.push(socketIdentifier);
-        // } else {
-        //     this.userToSocketMapping.set(userIdentifier, [socketIdentifier]);
-        // }
+        this.messageHandler.registerNewSocket(typedSocket);
 
         return response;
     };

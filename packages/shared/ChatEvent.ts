@@ -1,7 +1,7 @@
 import { MessageEventType } from './MessageEventType.ts';
 
-export type ChatEvent<TEventType extends MessageEventType = MessageEventType> = {
-    target: WebSocket;
+export type ChatEvent<TEventType extends MessageEventType = MessageEventType, TTarget = WebSocket> = {
+    target: TTarget;
     data: {
         type: TEventType;
         payload: ChatEventData[TEventType];
@@ -16,4 +16,5 @@ type ChatEventData = {
         wasClean: boolean;
     };
     [MessageEventType.ERROR]: undefined;
+    [MessageEventType.HEARTBEAT]: undefined;
 };
