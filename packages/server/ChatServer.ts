@@ -3,10 +3,11 @@ import { ChatWebSocket } from "./ChatWebsocket.ts";
 import { http, log, shared } from "./deps.ts";
 
 enum WebSocketStatusCode {
+	NORMAL_CLOSURE = 1000,
+	GOING_AWAY = 1001,
 	UNSUPPORTED_DATA = 1003,
 	POLICY_VIOLATION = 1008,
 	INTERNAL_ERROR = 1011,
-	NORMAL_CLOSURE = 1000,
 }
 
 export class ChatServer {
@@ -28,6 +29,19 @@ export class ChatServer {
 		event: shared.ChatEvent<shared.MessageEventType.OPEN, ChatWebSocket>,
 	) => {
 		const socket = event.target;
+
+		if (
+			this.userToSocketMapping.has(socket.userIdentifier) &&
+			this.userToSocketMapping.get(socket.userIdentifier)!.length >=
+				this.MAX_SOCKET_PER_USER
+		) {
+			this.logger.error("Too many WebSockets for one user open.");
+
+			socket.close(WebSocketStatusCode.POLICY_VIOLATION, "Too many WebSockets for one user open.");
+
+			return;
+		}
+
 		this.socketRegistry.set(socket.identifier, socket);
 		if (this.userToSocketMapping.has(socket.userIdentifier)) {
 			this.userToSocketMapping.get(socket.userIdentifier)!.push(
@@ -48,7 +62,9 @@ export class ChatServer {
 
 		if (type === shared.MessageEventType.ERROR) {
 			this.logger.error("Websocket closed due to unexpected error.");
-		} else if (payload && payload.code !== WebSocketStatusCode.NORMAL_CLOSURE) {
+		} else if (
+			payload && payload.code !== WebSocketStatusCode.NORMAL_CLOSURE && payload.code !== WebSocketStatusCode.GOING_AWAY
+		) {
 			this.logger.error(
 				`Websocket closed with error: ${payload.reason} [${payload.code}]`,
 			);
@@ -140,6 +156,18 @@ export class ChatServer {
 				"Unexpected exception occurred while trying to get user identifier: ",
 				error,
 			);
+
+			return new Response(undefined, {
+				status: http.Status.InternalServerError,
+			});
+		}
+
+		if (
+			this.userToSocketMapping.has(userIdentifier) &&
+			this.userToSocketMapping.get(userIdentifier)!.length >=
+				this.MAX_SOCKET_PER_USER
+		) {
+			this.logger.error("Too many WebSockets for one user open.");
 
 			return new Response(undefined, {
 				status: http.Status.InternalServerError,
