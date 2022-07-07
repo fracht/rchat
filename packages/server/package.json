@@ -1,4 +1,9 @@
 {
-    "name": "chat-server",
-    "private": true
+	"name": "chat-server",
+	"private": true,
+	"scripts": {
+		"dev": "deno run --allow-net --watch index.ts",
+		"format": "deno fmt",
+		"lint": "deno lint"
+	}
 }
