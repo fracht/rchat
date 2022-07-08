@@ -1,14 +1,6 @@
 import { ChatService } from "./ChatService.ts";
-import { ChatWebSocket } from "./ChatWebsocket.ts";
+import { ChatWebSocket } from "./ChatWebSocket.ts";
 import { http, log, shared } from "./deps.ts";
-
-enum WebSocketStatusCode {
-	NORMAL_CLOSURE = 1000,
-	GOING_AWAY = 1001,
-	UNSUPPORTED_DATA = 1003,
-	POLICY_VIOLATION = 1008,
-	INTERNAL_ERROR = 1011,
-}
 
 export class ChatServer {
 	private readonly logger: log.Logger;
@@ -26,7 +18,7 @@ export class ChatServer {
 	}
 
 	private registerSocket = (
-		event: shared.ChatEvent<shared.MessageEventType.OPEN, ChatWebSocket>,
+		event: shared.ChatEvent<shared.ChatEventType.OPEN, ChatWebSocket>,
 	) => {
 		const socket = event.target;
 
@@ -37,7 +29,7 @@ export class ChatServer {
 		) {
 			this.logger.error("Too many WebSockets for one user open.");
 
-			socket.close(WebSocketStatusCode.POLICY_VIOLATION, "Too many WebSockets for one user open.");
+			socket.close(shared.WebSocketStatusCode.POLICY_VIOLATION, "Too many WebSockets for one user open.");
 
 			return;
 		}
@@ -54,16 +46,17 @@ export class ChatServer {
 
 	private removeSocket = (
 		event: shared.ChatEvent<
-			shared.MessageEventType.CLOSE | shared.MessageEventType.ERROR,
+			shared.ChatEventType.CLOSE | shared.ChatEventType.SOCKET_ERROR,
 			ChatWebSocket
 		>,
 	) => {
 		const { type, payload } = event.data;
 
-		if (type === shared.MessageEventType.ERROR) {
+		if (type === shared.ChatEventType.SOCKET_ERROR) {
 			this.logger.error("Websocket closed due to unexpected error.");
 		} else if (
-			payload && payload.code !== WebSocketStatusCode.NORMAL_CLOSURE && payload.code !== WebSocketStatusCode.GOING_AWAY
+			payload && payload.code !== shared.WebSocketStatusCode.NORMAL_CLOSURE &&
+			payload.code !== shared.WebSocketStatusCode.GOING_AWAY
 		) {
 			this.logger.error(
 				`Websocket closed with error: ${payload.reason} [${payload.code}]`,
@@ -97,12 +90,12 @@ export class ChatServer {
 	};
 
 	private socketHeartbeat = (
-		event: shared.ChatEvent<shared.MessageEventType.OPEN, ChatWebSocket>,
+		event: shared.ChatEvent<shared.ChatEventType.OPEN, ChatWebSocket>,
 	) => {
 		const socket = event.target;
 		let isSocketAlive = true;
 
-		event.target.on(shared.MessageEventType.HEARTBEAT, () => {
+		event.target.on(shared.ChatEventType.HEARTBEAT, () => {
 			isSocketAlive = true;
 		});
 
@@ -112,7 +105,7 @@ export class ChatServer {
 				socket.readyState === WebSocket.CLOSING
 			) {
 				socket.close(
-					WebSocketStatusCode.POLICY_VIOLATION,
+					shared.WebSocketStatusCode.POLICY_VIOLATION,
 					"Socket isn't alive.",
 				);
 				clearInterval(interval);
@@ -120,12 +113,15 @@ export class ChatServer {
 
 			if (socket.readyState === WebSocket.OPEN) {
 				isSocketAlive = false;
-				socket.send(new Uint8Array([shared.MessageEventType.HEARTBEAT]));
+				socket.send({
+					type: shared.ChatEventType.HEARTBEAT,
+					payload: undefined,
+				});
 			}
 		}, 30000);
 
 		event.target.on(
-			shared.MessageEventType.CLOSE,
+			shared.ChatEventType.CLOSE,
 			() => clearInterval(interval),
 		);
 	};
@@ -178,12 +174,13 @@ export class ChatServer {
 			socket,
 			socketIdentifier,
 			userIdentifier,
+			this.logger,
 		);
 
-		chatSocket.once(shared.MessageEventType.OPEN, this.registerSocket);
-		chatSocket.once(shared.MessageEventType.CLOSE, this.removeSocket);
-		chatSocket.once(shared.MessageEventType.ERROR, this.removeSocket);
-		chatSocket.once(shared.MessageEventType.OPEN, this.socketHeartbeat);
+		chatSocket.once(shared.ChatEventType.OPEN, this.registerSocket);
+		chatSocket.once(shared.ChatEventType.CLOSE, this.removeSocket);
+		chatSocket.once(shared.ChatEventType.SOCKET_ERROR, this.removeSocket);
+		chatSocket.once(shared.ChatEventType.OPEN, this.socketHeartbeat);
 
 		return response;
 	};

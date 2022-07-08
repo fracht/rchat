@@ -1,27 +1,17 @@
-import { binaryParser, events, shared } from "./deps.ts";
+import { events, log, shared } from "./deps.ts";
 
 type ChatEvents = {
-	[K in shared.MessageEventType]: [event: shared.ChatEvent<K, ChatWebSocket>];
+	[K in shared.ChatEventType]: [event: shared.ChatEvent<K, ChatWebSocket>];
 };
-
-const messageParser = new binaryParser.Parser().uint8("type").choice(
-	"payload",
-	{
-		tag: "type",
-		choices: {
-			[shared.MessageEventType.HEARTBEAT]: new binaryParser.Parser(),
-		},
-	},
-);
 
 export class ChatWebSocket extends events.EventEmitter<ChatEvents> {
 	public constructor(
 		private readonly socket: WebSocket,
 		public readonly identifier: string,
 		public readonly userIdentifier: string,
+		private readonly logger: log.Logger,
 	) {
 		super();
-		socket.binaryType = "arraybuffer";
 		socket.addEventListener("open", this.handleOpenEvent);
 		socket.addEventListener("close", this.handleCloseEvent);
 		socket.addEventListener("error", this.handleErrorEvent);
@@ -36,25 +26,25 @@ export class ChatWebSocket extends events.EventEmitter<ChatEvents> {
 		this.socket.close(code, reason);
 	}
 
-	public send(data: ArrayBufferLike): void {
-		this.socket.send(data);
+	public send<TEventType extends shared.ChatEventType>(data: shared.ChatEventData<TEventType>): void {
+		this.socket.send(JSON.stringify(data));
 	}
 
 	private handleOpenEvent = () => {
-		this.emit(shared.MessageEventType.OPEN, {
+		this.emit(shared.ChatEventType.OPEN, {
 			target: this,
 			data: {
-				type: shared.MessageEventType.OPEN,
+				type: shared.ChatEventType.OPEN,
 				payload: undefined,
 			},
 		});
 	};
 
 	private handleCloseEvent = (event: CloseEvent) => {
-		this.emit(shared.MessageEventType.CLOSE, {
+		this.emit(shared.ChatEventType.CLOSE, {
 			target: this,
 			data: {
-				type: shared.MessageEventType.CLOSE,
+				type: shared.ChatEventType.CLOSE,
 				payload: {
 					code: event.code,
 					reason: event.reason,
@@ -65,30 +55,40 @@ export class ChatWebSocket extends events.EventEmitter<ChatEvents> {
 	};
 
 	private handleErrorEvent = () => {
-		this.emit(shared.MessageEventType.ERROR, {
+		this.emit(shared.ChatEventType.SOCKET_ERROR, {
 			target: this,
 			data: {
-				type: shared.MessageEventType.ERROR,
+				type: shared.ChatEventType.SOCKET_ERROR,
 				payload: undefined,
 			},
 		});
 	};
 
-	private handleMessageEvent = (event: MessageEvent<ArrayBuffer>) => {
-		const parsedData: shared.ChatEvent["data"] = messageParser.parse(
-			new Uint8Array(event.data),
-		);
+	private handleMessageEvent = (event: MessageEvent<string>) => {
+		let parsedData: shared.ChatEvent["data"] | undefined;
 
-		switch (parsedData.type) {
-			case shared.MessageEventType.HEARTBEAT:
-				this.emit(shared.MessageEventType.HEARTBEAT, {
-					target: this,
-					data: parsedData,
-				} as shared.ChatEvent<
-					shared.MessageEventType.HEARTBEAT,
-					ChatWebSocket
-				>);
-				break;
+		try {
+			parsedData = JSON.parse(event.data);
+		} catch (error) {
+			this.send({
+				type: shared.ChatEventType.ERROR,
+				payload: {
+					reason: "Invalid data format",
+					code: shared.WebSocketStatusCode.UNSUPPORTED_DATA,
+				},
+			});
+
+			this.logger.error(`Failed to parse data: ${error}`);
+
+			return;
 		}
+
+		this.emit(parsedData!.type, {
+			target: this,
+			data: parsedData,
+		} as shared.ChatEvent<
+			shared.ChatEventType.HEARTBEAT,
+			ChatWebSocket
+		>);
 	};
 }
