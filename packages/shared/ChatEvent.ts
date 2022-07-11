@@ -23,4 +23,9 @@ type ChatEventDataPayload = {
 		code: number;
 		reason: string;
 	};
+	[ChatEventType.MESSAGE]: {
+		channel: string;
+		message: unknown;
+		sender: string;
+	};
 };

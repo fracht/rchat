@@ -5,6 +5,7 @@ import { http, log, shared } from "./deps.ts";
 export class ChatServer {
 	private readonly logger: log.Logger;
 	private socketRegistry = new Map<string, ChatWebSocket>();
+	private channelRegistry = new Map<string, shared.Channel>();
 	private userToSocketMapping = new Map<string, string[]>();
 	private readonly service: ChatService;
 	private readonly MAX_SOCKET_PER_USER = 10;
@@ -126,6 +127,64 @@ export class ChatServer {
 		);
 	};
 
+	private socketError = (
+		socket: ChatWebSocket,
+		error: string,
+		errorCode = shared.WebSocketStatusCode.POLICY_VIOLATION,
+	) => {
+		socket.send({
+			type: shared.ChatEventType.ERROR,
+			payload: {
+				code: errorCode,
+				reason: error,
+			},
+		});
+	};
+
+	private onMessageReceived = async (event: shared.ChatEvent<shared.ChatEventType.MESSAGE, ChatWebSocket>) => {
+		const currentUserId = event.target.userIdentifier;
+		const currentChannelId = event.data.payload.channel;
+		let channel: shared.Channel;
+		let isNewChannel = false;
+
+		if (this.channelRegistry.has(currentChannelId)) {
+			channel = this.channelRegistry.get(currentChannelId)!;
+		} else {
+			const participantIdentifiers = await this.service.getChatParticipants(currentChannelId);
+
+			channel = { participantIdentifiers };
+			isNewChannel = true;
+		}
+
+		if (!channel.participantIdentifiers.includes(currentUserId)) {
+			this.socketError(event.target, "User not belongs to channel.");
+			return;
+		}
+
+		if (isNewChannel) {
+			this.channelRegistry.set(currentChannelId, channel);
+		}
+
+		for (const userIdentifier of channel.participantIdentifiers) {
+			const sockets = this.userToSocketMapping.get(userIdentifier);
+			if (sockets) {
+				for (const socketIdentifier of sockets) {
+					const socket = this.socketRegistry.get(socketIdentifier);
+					if (socket) {
+						socket.send({
+							type: shared.ChatEventType.MESSAGE,
+							payload: {
+								channel: currentChannelId,
+								message: event.data.payload.message,
+								sender: event.target.userIdentifier,
+							},
+						});
+					}
+				}
+			}
+		}
+	};
+
 	private requestHandler = async (request: Request): Promise<Response> => {
 		if (request.headers.get("upgrade") !== "websocket") {
 			return new Response(undefined, { status: http.Status.NotImplemented });
@@ -181,6 +240,7 @@ export class ChatServer {
 		chatSocket.once(shared.ChatEventType.CLOSE, this.removeSocket);
 		chatSocket.once(shared.ChatEventType.SOCKET_ERROR, this.removeSocket);
 		chatSocket.once(shared.ChatEventType.OPEN, this.socketHeartbeat);
+		chatSocket.on(shared.ChatEventType.MESSAGE, this.onMessageReceived);
 
 		return response;
 	};

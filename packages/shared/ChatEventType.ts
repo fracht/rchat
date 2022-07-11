@@ -4,4 +4,5 @@ export enum ChatEventType {
 	SOCKET_ERROR = 3,
 	HEARTBEAT = 4,
 	ERROR = 5,
+	MESSAGE = 6,
 }
