@@ -1,4 +1,11 @@
+import { ChatWebSocket } from "./ChatWebSocket.ts";
+
+export type ConnectionInfo = {
+	userIdentifier: string;
+	additional?: unknown;
+};
+
 export type ChatService = {
-	getUserIdentifier: (request: Request) => Promise<string>;
-	getChatParticipants: (chatIdentifier: string) => Promise<string[]>;
+	fetchConnectionInfo: (request: Request) => Promise<ConnectionInfo>;
+	fetchChatParticipants: (chatIdentifier: string, socket: ChatWebSocket) => Promise<string[]>;
 };

@@ -1,4 +1,5 @@
 import { events, log, shared } from "./deps.ts";
+import { ConnectionInfo } from "./ChatService.ts";
 
 type ChatEvents = {
 	[K in shared.ChatEventType]: [event: shared.ChatEvent<K, ChatWebSocket>];
@@ -8,7 +9,7 @@ export class ChatWebSocket extends events.EventEmitter<ChatEvents> {
 	public constructor(
 		private readonly socket: WebSocket,
 		public readonly identifier: string,
-		public readonly userIdentifier: string,
+		public readonly connectionInfo: ConnectionInfo,
 		private readonly logger: log.Logger,
 	) {
 		super();
