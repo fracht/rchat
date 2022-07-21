@@ -1,6 +1,7 @@
 {
-    "name": "awesome-react-chat",
+    "name": "@rchat/react",
     "version": "0.1.0",
+    "private": true,
     "description": "Awesome React chat",
     "main": "./dist/index.js",
     "module": "./dist/awesome-react-chat.esm.js",

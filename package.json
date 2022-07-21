@@ -1,5 +1,5 @@
 {
-    "name": "arc-mono",
+    "name": "rchat",
     "private": true,
     "workspaces": [
         "./packages/*"

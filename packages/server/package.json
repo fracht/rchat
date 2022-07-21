@@ -1,8 +1,8 @@
 {
-    "name": "chat-server",
+    "name": "@rchat/server",
     "private": true,
-    "main": "./dist/chat-server.cjs.development.js",
-    "types": "./dist/chat-server.d.ts",
+    "main": "./dist/server.cjs.development.js",
+    "types": "./dist/server.d.ts",
     "scripts": {
         "build": "aqu build"
     },
