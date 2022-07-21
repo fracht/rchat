@@ -1,9 +1,17 @@
 {
-	"name": "chat-server",
-	"private": true,
-	"scripts": {
-		"dev": "deno run --allow-net --watch index.ts",
-		"format": "deno fmt",
-		"lint": "deno lint"
-	}
+    "name": "chat-server",
+    "private": true,
+    "main": "./dist/chat-server.cjs.development.js",
+    "types": "./dist/chat-server.d.ts",
+    "scripts": {
+        "build": "aqu build"
+    },
+    "dependencies": {
+        "socket.io": "^4.5.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.18.2",
+        "@types/node": "^18.0.6",
+        "aqu": "0.3.2"
+    }
 }
