@@ -3,6 +3,9 @@
     "private": true,
     "main": "./dist/server.cjs.development.js",
     "types": "./dist/server.d.ts",
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "aqu build"
     },
