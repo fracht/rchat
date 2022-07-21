@@ -8,7 +8,8 @@
         "access": "public"
     },
     "scripts": {
-        "build": "aqu build"
+        "build": "aqu build",
+        "prepublishOnly": "pnpm run build"
     },
     "dependencies": {
         "socket.io": "^4.5.1"
