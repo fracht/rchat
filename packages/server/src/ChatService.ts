@@ -1,4 +1,7 @@
+import { IncomingMessage } from 'node:http';
+import { ConnectionInfo } from './ConnectionInfo';
+
 export type ChatService = {
-	getUserIdentifier: (request: Request) => Promise<string>;
-	getChatParticipants: (chatIdentifier: string) => Promise<string[]>;
+    fetchConnectionInfo: (request: IncomingMessage) => Promise<ConnectionInfo>;
+    getChatParticipants: (chatIdentifier: string) => Promise<string[]>;
 };
