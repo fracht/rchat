@@ -1,0 +1,22 @@
+{
+    "name": "@rchat/client",
+    "version": "0.0.0",
+    "description": "",
+    "types": "./dist/client.d.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/client.esm.js",
+    "scripts": {
+        "build": "aqu build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@babel/core": "^7.18.2",
+        "aqu": "0.3.2",
+        "socket.io-client": "^4.5.1"
+    },
+    "peerDependencies": {
+        "socket.io-client": "^4.5.1"
+    }
+}

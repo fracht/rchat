@@ -71,6 +71,7 @@
         "react": ">=16"
     },
     "dependencies": {
-        "chat-shared": "workspace:*"
+        "@rchat/client": "workspace:^",
+        "@sirse-dev/safe-context": "^0.3.0"
     }
 }

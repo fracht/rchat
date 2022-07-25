@@ -8,5 +8,6 @@
     "bracketSameLine": false,
     "bracketSpacing": true,
     "embeddedLanguageFormatting": "auto",
-    "jsxSingleQuote": false
+    "jsxSingleQuote": false,
+    "endOfLine": "auto"
 }
