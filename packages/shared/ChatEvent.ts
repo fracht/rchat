@@ -1,4 +1,4 @@
-import { ChatEventType } from "./ChatEventType.ts";
+import { ChatEventType } from './ChatEventType';
 
 export type ChatEvent<TEventType extends ChatEventType = ChatEventType, TTarget = WebSocket> = {
 	target: TTarget;
