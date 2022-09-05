@@ -1,4 +1,6 @@
 import { Socket, io } from 'socket.io-client';
+import { CustomEventTarget } from './CustomEventTarget';
+import { ChatEventMap } from '@rchat/shared';
 
 export type MessageFetchResult<TMessage> = {
 	messages: TMessage[];
@@ -13,45 +15,7 @@ export type MessageFetcher<TMessage> = (
 	after: TMessage | undefined,
 ) => Promise<MessageFetchResult<TMessage>>;
 
-export type CustomEventMap = Record<string, unknown>;
-
-export interface CustomEventListener<T> {
-	(event: CustomEvent<T>): void;
-}
-
-export class CustomEventTarget<TEventMap extends CustomEventMap> {
-	private readonly eventTarget: EventTarget;
-
-	public constructor() {
-		this.eventTarget = new EventTarget();
-	}
-
-	public dispatchEvent(event: CustomEvent<TEventMap[keyof TEventMap]>): boolean {
-		return this.eventTarget.dispatchEvent(event);
-	}
-
-	public addEventListener<TEventName extends keyof TEventMap>(
-		type: TEventName,
-		callback: CustomEventListener<TEventMap[TEventName]> | null,
-		options?: AddEventListenerOptions | boolean,
-	): void {
-		this.eventTarget.addEventListener(type as string, callback as EventListener, options);
-	}
-
-	public removeEventListener<TEventName extends keyof TEventMap>(
-		type: TEventName,
-		callback: CustomEventListener<TEventMap[TEventName]> | null,
-		options?: EventListenerOptions | boolean,
-	): void {
-		this.eventTarget.removeEventListener(type as string, callback as EventListener, options);
-	}
-}
-
-export type ChatClientEventMap<TMessage> = {
-	chatMessage: { roomIdentifier: string; message: TMessage };
-};
-
-export class ChatClient<TMessage> extends CustomEventTarget<ChatClientEventMap<TMessage>> {
+export class ChatClient<TMessage> extends CustomEventTarget<ChatEventMap<TMessage>> {
 	private readonly socket: Socket;
 
 	public constructor(url: string, fetchMessages: MessageFetcher<TMessage>);

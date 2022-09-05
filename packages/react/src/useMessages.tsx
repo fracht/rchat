@@ -1,20 +1,29 @@
 import { MessageFetchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { useBoundedArray } from './internal/useBoundedArray';
 import { useEvent } from './internal/useEvent';
 
 export type UseMessagesBag<T> = {
 	messages: T[];
 	onTopReached: () => void;
 	onBottomReached: () => void;
+	noMessagesBefore: boolean;
+	noMessagesAfter: boolean;
 };
 
 export type UseMessagesConfig<T> = {
+	compareItems: (a: T, b: T) => number;
 	initialChunkSize: number;
 	maxChunkSize: number;
 	additionalChunkSize: number;
 	chatClient: ChatClient<T>;
 	roomIdentifier: string;
+};
+
+// TODO: replace with binary search
+const findNewElementIndex = <T,>(elements: readonly T[], element: T, compare: (a: T, b: T) => number): number => {
+	return elements.findIndex((a) => compare(element, a) > 0);
 };
 
 export const useMessages = <TMessage,>({
@@ -23,34 +32,35 @@ export const useMessages = <TMessage,>({
 	additionalChunkSize,
 	chatClient,
 	roomIdentifier,
+	compareItems,
 }: UseMessagesConfig<TMessage>): UseMessagesBag<TMessage> => {
 	const isFetching = useRef(false);
 
-	const [messages, setMessages] = useState<TMessage[]>([]);
+	const [
+		messages,
+		{ push: pushMessages, unshift: unshiftMessages, set: setMessages, at: getMessage, getAll: getAllMessages },
+	] = useBoundedArray<TMessage>([], maxChunkSize);
 
-	const messagesState = useRef<MessageFetchResult<TMessage>>({
-		messages: [],
+	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>({
 		noMessagesAfter: true,
 		noMessagesBefore: false,
 	});
 
-	const setMessagesState = useCallback((state: MessageFetchResult<TMessage>) => {
-		messagesState.current = state;
-		setMessages(state.messages);
-	}, []);
-
 	const handleIncomingMessage = useCallback(
 		(event: CustomEvent<{ roomIdentifier: string; message: TMessage }>) => {
-			console.log(event);
 			if (event.detail.roomIdentifier === roomIdentifier && messagesState.current.noMessagesAfter) {
-				setMessagesState({
-					messages: [...messagesState.current.messages, event.detail.message],
-					noMessagesAfter: true,
-					noMessagesBefore: messagesState.current.noMessagesBefore,
-				});
+				// If(messagesState.current.messages === )
+
+				const incomingMessageIndex = findNewElementIndex(getAllMessages(), event.detail.message, compareItems);
+
+				// SetMessagesState({
+				// 	Messages: [...messagesState.current.messages, event.detail.message],
+				// 	NoMessagesAfter: true,
+				// 	NoMessagesBefore: messagesState.current.noMessagesBefore,
+				// });
 			}
 		},
-		[roomIdentifier, setMessagesState],
+		[roomIdentifier, getAllMessages, compareItems],
 	);
 
 	useEffect(() => {
@@ -68,11 +78,12 @@ export const useMessages = <TMessage,>({
 				undefined,
 			);
 
-			setMessagesState(fetchedMessagesState);
+			setMessages(fetchedMessagesState.messages, 'ending');
+			messagesState.current = fetchedMessagesState;
 		};
 
 		load();
-	}, [roomIdentifier, chatClient, initialChunkSize, setMessagesState]);
+	}, [roomIdentifier, chatClient, initialChunkSize, setMessages]);
 
 	const handleTopReached = useEvent(async () => {
 		if (messagesState.current.noMessagesBefore || isFetching.current) {
@@ -83,19 +94,17 @@ export const useMessages = <TMessage,>({
 		const { messages: fetchedMessages, noMessagesBefore } = await chatClient.fetchMessages(
 			roomIdentifier,
 			additionalChunkSize,
-			messagesState.current.messages[0],
+			getMessage(0),
 			undefined,
 		);
 
-		const newMessages = [...fetchedMessages, ...messagesState.current.messages];
+		const clipped = unshiftMessages(fetchedMessages);
 
 		const newState = {
-			messages: newMessages.slice(0, maxChunkSize),
 			noMessagesBefore,
-			noMessagesAfter: newMessages.length <= maxChunkSize && messagesState.current.noMessagesAfter,
+			noMessagesAfter: !clipped && messagesState.current.noMessagesAfter,
 		};
-
-		setMessagesState(newState);
+		messagesState.current = newState;
 		isFetching.current = false;
 	});
 
@@ -109,17 +118,16 @@ export const useMessages = <TMessage,>({
 			roomIdentifier,
 			additionalChunkSize,
 			undefined,
-			messagesState.current.messages[messagesState.current.messages.length - 1],
+			getMessage(-1),
 		);
 
-		const newMessages = [...messagesState.current.messages, ...fetchedMessages];
+		const clipped = pushMessages(fetchedMessages);
 		const newState = {
-			messages: newMessages.slice(-maxChunkSize),
 			noMessagesAfter,
-			noMessagesBefore: newMessages.length <= maxChunkSize && messagesState.current.noMessagesBefore,
+			noMessagesBefore: !clipped && messagesState.current.noMessagesBefore,
 		};
 
-		setMessagesState(newState);
+		messagesState.current = newState;
 		isFetching.current = false;
 	});
 
@@ -127,5 +135,7 @@ export const useMessages = <TMessage,>({
 		messages,
 		onTopReached: handleTopReached,
 		onBottomReached: handleBottomReached,
+		noMessagesBefore: messagesState.current.noMessagesBefore,
+		noMessagesAfter: messagesState.current.noMessagesAfter,
 	};
 };

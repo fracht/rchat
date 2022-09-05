@@ -15,8 +15,11 @@ importers:
   packages/client:
     specifiers:
       '@babel/core': ^7.18.2
+      '@rchat/shared': workspace:*
       aqu: 0.3.2
       socket.io-client: ^4.5.1
+    dependencies:
+      '@rchat/shared': link:../shared
     devDependencies:
       '@babel/core': 7.18.9
       aqu: 0.3.2_@babel+core@7.18.9
@@ -93,7 +96,12 @@ importers:
       aqu: 0.3.2_@babel+core@7.18.9
 
   packages/shared:
-    specifiers: {}
+    specifiers:
+      '@babel/core': ^7.18.2
+      aqu: 0.3.2
+    devDependencies:
+      '@babel/core': 7.18.9
+      aqu: 0.3.2_@babel+core@7.18.9
 
 packages:
 

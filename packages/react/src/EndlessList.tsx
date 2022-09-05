@@ -48,6 +48,8 @@ export type EndlessListProps<TMessageType> = {
 	compareItems: (first: TMessageType, second: TMessageType) => number;
 	focusedItem?: TMessageType;
 	jumpAnimDuration?: number;
+	canStickToBottom?: boolean;
+	onStickToBottomChange?: (sticked: boolean) => void;
 };
 
 const getElementReference = <E,>(
@@ -104,12 +106,15 @@ export const EndlessList = <T,>({
 	jumpAnimDuration = 500,
 	focusedItem,
 	ContainerComponent,
+	canStickToBottom,
+	onStickToBottomChange,
 }: EndlessListProps<T>) => {
 	const scrollableContainerReference = useRef<HTMLElement>(null);
 	const contentContainerReference = useRef<HTMLElement>(null);
 	const focusElementReference = useRef<HTMLElement>(null);
 	const topElementReference = useRef<HTMLElement>(null);
 	const bottomElementReference = useRef<HTMLElement>(null);
+	const stickToBottomReached = useRef(false);
 
 	const setBottomReached = useToggleEvent(onBottomReached ?? noop);
 	const setTopReached = useToggleEvent(onTopReached ?? noop);
@@ -141,7 +146,15 @@ export const EndlessList = <T,>({
 		return;
 	}, [compareItems, invalidate, items, jumpAnimDuration, keyExtractor, oldItems]);
 
-	const checkScrollPosition = useCallback(async () => {
+	const setStickToBottom = useCallback(
+		(stickToBottom: boolean) => {
+			onStickToBottomChange?.(stickToBottom);
+			stickToBottomReached.current = stickToBottom;
+		},
+		[onStickToBottomChange],
+	);
+
+	const checkScrollPosition = useCallback(() => {
 		if (
 			!topElementReference.current ||
 			!bottomElementReference.current ||
@@ -160,7 +173,13 @@ export const EndlessList = <T,>({
 
 		setBottomReached(distanceTillBottomElement <= triggerDistance);
 		setTopReached(distanceTillTopElement <= triggerDistance);
-	}, [triggerDistance, setBottomReached, setTopReached]);
+
+		if (distanceTillBottomElement <= 10 && canStickToBottom) {
+			setStickToBottom(true);
+		} else {
+			setStickToBottom(false);
+		}
+	}, [setBottomReached, triggerDistance, setTopReached, canStickToBottom, setStickToBottom]);
 
 	const handleScroll = useCallback(async () => {
 		if (isScrolling.current) {
@@ -200,6 +219,19 @@ export const EndlessList = <T,>({
 		setTopReached(false);
 		setBottomReached(false);
 	}, [items, setBottomReached, setTopReached]);
+
+	useLayoutEffect(() => {
+		if (stickToBottomReached.current) {
+			scrollableContainerReference.current!.scrollTop =
+				contentContainerReference.current!.getBoundingClientRect().height;
+		}
+	}, [items, canStickToBottom]);
+
+	useLayoutEffect(() => {
+		setTimeout(() => {
+			checkScrollPosition();
+		}, 10);
+	}, [items, checkScrollPosition, canStickToBottom]);
 
 	return (
 		<ContainerComponent

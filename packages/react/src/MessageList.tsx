@@ -18,12 +18,13 @@ export const MessageList = <T,>({}: MessageListProps<T>) => {
 	} = useSafeContext(RChatContext as SafeContext<RChatContextType<T>>);
 	const { roomIdentifier } = useSafeContext(RoomContext);
 
-	const { messages, onBottomReached, onTopReached } = useMessages({
+	const { messages, onBottomReached, onTopReached, noMessagesAfter } = useMessages({
 		chatClient: client,
 		initialChunkSize: 20,
 		additionalChunkSize: 20,
 		maxChunkSize: 100,
 		roomIdentifier,
+		compareItems,
 	});
 
 	return (
@@ -37,6 +38,7 @@ export const MessageList = <T,>({}: MessageListProps<T>) => {
 			PlaceholderComponent={PlaceholderComponent}
 			compareItems={compareItems}
 			itemKey={itemKey}
+			canStickToBottom={noMessagesAfter}
 		/>
 	);
 };
