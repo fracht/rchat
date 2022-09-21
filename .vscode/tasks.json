@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run @rchat/react storybook",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["--filter", "@rchat/react", "storybook"],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Run package watcher",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["dev"],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Develop @rchat/react",
+			"dependsOn": ["Run @rchat/react storybook", "Run package watcher"],
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

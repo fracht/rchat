@@ -74,6 +74,7 @@
 	},
 	"dependencies": {
 		"@rchat/client": "workspace:^",
-		"@sirse-dev/safe-context": "^0.3.0"
+		"@sirse-dev/safe-context": "^0.3.0",
+		"use-isomorphic-layout-effect": "^1.1.2"
 	}
 }

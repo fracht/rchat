@@ -10,17 +10,17 @@ type ExampleMessage = {
 };
 
 const UnStyledItemComponent = forwardRef(
-	({ item }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
+	({ value }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
 		<div ref={ref as React.Ref<HTMLDivElement>}>
-			{item.message} {item.id}
+			{value.message} {value.id}
 		</div>
 	),
 );
 
 const HighContrastItemComponent = forwardRef(
-	({ item }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
+	({ value }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
 		<div ref={ref as React.Ref<HTMLDivElement>} style={{ padding: 5, backgroundColor: 'red', marginBottom: 5 }}>
-			{item.message} {item.id}
+			{value.message} {value.id}
 		</div>
 	),
 );
@@ -72,16 +72,18 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 };
 
 const ChatItemComponent = forwardRef(
-	({ item, index, items }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
-		<div style={item.isLeft ? styles.leftContainer : styles.rightContainer}>
+	({ value, index, array, itemKey }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
+		<div style={value.isLeft ? styles.leftContainer : styles.rightContainer}>
+			{value.id}
 			<div
 				ref={ref as React.Ref<HTMLDivElement>}
+				data-key={itemKey}
 				style={{
-					...(item.isLeft ? styles.leftItem : styles.rightItem),
-					...getBorders(item, index, items),
+					...(value.isLeft ? styles.leftItem : styles.rightItem),
+					...getBorders(value, index, array),
 				}}
 			>
-				{item.message}
+				{value.message}
 			</div>
 		</div>
 	),
@@ -146,7 +148,7 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 		<Fragment>
 			<EndlessList
 				{...props}
-				focusedItem={focusedItem}
+				focusedItemKey={focusedItem?.id}
 				items={messages}
 				onTopReached={() => {
 					setMessages((old) => {
@@ -196,13 +198,12 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <TestComponent {...args} />;
 
 const Container = forwardRef(
-	({ innerContainerRef, onScroll, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
+	({ innerContainerRef, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
 		<div
 			style={{
 				overflow: 'auto',
 				height: 300,
 			}}
-			onScroll={onScroll}
 			ref={ref}
 		>
 			<div ref={innerContainerRef as React.Ref<HTMLDivElement>}>{children}</div>
@@ -213,8 +214,9 @@ const Container = forwardRef(
 export const Default = Template.bind({});
 Default.args = {
 	itemKey: 'id',
-	triggerDistance: 100,
-	compareItems: () => (Math.random() > 0.5 ? 1 : -1),
+	triggerDistance: 5,
+	compareItems: () => Math.random() - 0.5,
 	PlaceholderComponent: () => <div style={{ height: 400 }}>Placeholder!</div>,
 	ContainerComponent: Container,
+	canStickToBottom: false,
 } as Partial<EndlessListProps<ExampleMessage>>;
