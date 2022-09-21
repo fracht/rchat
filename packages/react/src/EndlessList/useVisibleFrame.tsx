@@ -27,7 +27,7 @@ export const useVisibleFrame = <TValue,>({
 			const key = (target as HTMLElement).dataset.key;
 
 			if (!key) {
-				throw new Error('// TODO: update error');
+				throw new Error('Item component doesn\'t have "data-key" attribute.');
 			}
 
 			visibilityRecord.current[key] = isIntersecting;
@@ -42,8 +42,8 @@ export const useVisibleFrame = <TValue,>({
 		}
 
 		let end = -1;
-		for (let index = items.length - 1; index >= 0; --index) {
-			if (visibilityRecord.current[getKey(items[index])]) {
+		for (let index = 0; index <= items.length; ++index) {
+			if (visibilityRecord.current[getKey(items.at(-index - 1)!)]) {
 				end = index;
 				break;
 			}

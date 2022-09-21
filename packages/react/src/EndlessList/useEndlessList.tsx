@@ -72,6 +72,11 @@ export const useEndlessList = <T,>({
 	}, [jump]);
 
 	const jumpItems = useMemo(() => {
+		if (items.length === 0 || oldItems.current.length === 0) {
+			oldItems.current = items;
+			return undefined;
+		}
+
 		const keys = items.map(getKey);
 		const oldKeys = oldItems.current.map(getKey);
 

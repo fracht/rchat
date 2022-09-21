@@ -12,6 +12,7 @@ type ExampleMessage = {
 	message: string;
 	isLeft: boolean;
 	id: number;
+	date: Date;
 };
 
 const styles: Record<string, CSSProperties> = {
@@ -61,16 +62,17 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 };
 
 const ChatItemComponent = forwardRef(
-	({ item, index, items }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
-		<div style={item.isLeft ? styles.leftContainer : styles.rightContainer}>
+	({ value, index, array, itemKey }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
+		<div style={value.isLeft ? styles.leftContainer : styles.rightContainer}>
 			<div
 				ref={ref as React.Ref<HTMLDivElement>}
+				data-key={itemKey}
 				style={{
-					...(item.isLeft ? styles.leftItem : styles.rightItem),
-					...getBorders(item, index, items),
+					...(value.isLeft ? styles.leftItem : styles.rightItem),
+					...getBorders(value, index, array),
 				}}
 			>
-				{item.id} {item.message}
+				{value.id} {value.message}
 			</div>
 		</div>
 	),
@@ -103,21 +105,23 @@ const generateMessageArray = (length: number) => {
 		'Pellentesque habitant.',
 	];
 
-	return new Array(length).fill(0).map(() => ({
+	const beginTimestamp = Date.now() - length * 10;
+
+	return new Array(length).fill(0).map((_, index) => ({
 		message: possibilities[Math.floor(Math.random() * possibilities.length)],
 		id: uuid(),
+		date: new Date(beginTimestamp + 10 * index),
 		isLeft: Math.random() > 0.5,
 	}));
 };
 
 const Container = forwardRef(
-	({ innerContainerRef, onScroll, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
+	({ innerContainerRef, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
 		<div
 			style={{
 				overflow: 'auto',
 				height: 300,
 			}}
-			onScroll={onScroll}
 			ref={ref}
 		>
 			<div ref={innerContainerRef as React.Ref<HTMLDivElement>}>{children}</div>
@@ -134,9 +138,7 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 		const [testClient, cleanup] = makeChatClientFromJson(
 			'123',
 			generateMessageArray(200),
-			(a, b) => {
-				return a.id > b.id;
-			},
+			(a, b) => a.date.getTime() - b.date.getTime(),
 			() => generateMessageArray(1)[0],
 		);
 
@@ -156,9 +158,9 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 			itemKey="id"
 			PlaceholderComponent={PlaceholderComponent}
 			compareItems={(a, b) => {
-				return a?.id - b?.id;
+				return a.date.getTime() - b.date.getTime();
 			}}
-			triggerDistance={100}
+			triggerDistance={3}
 			ContainerComponent={Container as ComponentType<ContainerComponentProps>}
 		>
 			<Room identifier="123">
@@ -171,9 +173,3 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <TestComponent {...args} />;
 
 export const Default = Template.bind({});
-// Default.args = {
-//     itemKey: 'id',
-//     triggerDistance: 100,
-//     compareItems: () => (Math.random() > 0.5 ? 1 : -1),
-//     PlaceholderComponent: () => <div style={{ height: 400 }}>Placeholder!</div>,
-// } as Partial<EndlessListProps<ExampleMessage>>;

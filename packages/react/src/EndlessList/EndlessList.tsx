@@ -41,7 +41,7 @@ export type EndlessListProps<TItemType> = {
 	focusedItemKey?: Key;
 	jumpAnimationDuration?: number;
 	canStickToBottom?: boolean;
-	onStickToBottomChange?: (sticked: boolean) => void;
+	onVisibleFrameChange?: (frame: Frame) => void;
 };
 
 const noop = () => {
@@ -61,7 +61,7 @@ export const EndlessList = <T,>({
 	focusedItemKey,
 	ContainerComponent,
 	canStickToBottom,
-	onStickToBottomChange,
+	onVisibleFrameChange,
 }: EndlessListProps<T>) => {
 	const scrollableContainerReference = useRef<HTMLElement>(null);
 	const contentContainerReference = useRef<HTMLElement>(null);
@@ -76,14 +76,6 @@ export const EndlessList = <T,>({
 	const getKey = useMemo(() => {
 		return typeof itemKey === 'function' ? itemKey : (value: T) => value[itemKey] as unknown as Key;
 	}, [itemKey]);
-
-	const setStickToBottom = useCallback(
-		(stickToBottom: boolean) => {
-			onStickToBottomChange?.(stickToBottom);
-			stickToBottomReached.current = stickToBottom;
-		},
-		[onStickToBottomChange],
-	);
 
 	useEffect(() => {
 		setBottomReached(false);
@@ -105,21 +97,21 @@ export const EndlessList = <T,>({
 	}, [items, canStickToBottom]);
 
 	const checkBounds = useEvent((frame: Frame = visibleFrame.current) => {
+		onVisibleFrameChange?.(frame);
 		visibleFrame.current = frame;
 		if (frame.begin === -1 || frame.end === -1 || isScrolling.current) {
 			return;
 		}
 
-		setBottomReached(frame.end >= items.length - triggerDistance - 1);
+		setBottomReached(frame.end <= triggerDistance);
 		setTopReached(frame.begin <= triggerDistance);
-		setStickToBottom(frame.end === items.length - 1);
+		stickToBottomReached.current = frame.end === 0;
 	});
 
 	const scrollToFocusItem = useCallback(async () => {
 		if (isScrolling.current || !scrollableContainerReference.current || !focusElementReference.current) {
 			return;
 		}
-
 		isScrolling.current = true;
 
 		await smoothScrollToCenter(

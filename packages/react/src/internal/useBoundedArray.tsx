@@ -23,6 +23,8 @@ export type BoundedArrayControl<T> = {
 	 *   ending - array will be clipped from the beginning.
 	 */
 	set: (items: T[], keep: KeepDirection) => boolean;
+
+	insert: (item: T, index: number, keep: KeepDirection) => boolean;
 	/**
 	 * Works exactly like "Array.prototype.at".
 	 */
@@ -85,7 +87,15 @@ export const useBoundedArray = <T,>(
 		return itemsReference.current.at(index);
 	}, []);
 
+	const insert = useCallback(
+		(item: T, index: number, keep: KeepDirection) => {
+			itemsReference.current.splice(index, 0, item);
+			return setItems([...itemsReference.current], keep);
+		},
+		[setItems],
+	);
+
 	const getAll = useCallback(() => itemsReference.current, []);
 
-	return [itemsState, { push, unshift, set: setItems, at, getAll }];
+	return [itemsState, { push, unshift, set: setItems, at, getAll, insert }];
 };

@@ -11,11 +11,12 @@ const pause = (ms: number) => {
 export const makeChatClientFromJson = <TMessage>(
 	roomIdentifier: string,
 	allMessages: TMessage[],
-	isLater: (a: TMessage, b: TMessage) => boolean,
+	compare: (a: TMessage, b: TMessage) => number,
 	generateMessage: () => TMessage,
 ): [client: ChatClient<TMessage>, cleanup: () => void] => {
 	const mockServer = new Server('ws://localhost:1234');
 
+	allMessages.sort(compare);
 	const reversedAllMessages = [...allMessages].reverse();
 
 	mockServer.on('connection', async (socket) => {
@@ -24,15 +25,17 @@ export const makeChatClientFromJson = <TMessage>(
 			await pause(1000 + Math.random() * 5000);
 
 			const newMessage = generateMessage();
-			socketIO.emit(
-				'chatMessage',
-				JSON.stringify({
-					roomIdentifier,
-					message: newMessage,
-				}),
-			);
-			allMessages.push(newMessage);
-			reversedAllMessages.unshift(newMessage);
+			pause(Number(Math.random() > 0.5) * 10000).then(() => {
+				socketIO.emit(
+					'chatMessage',
+					JSON.stringify({
+						roomIdentifier,
+						message: newMessage,
+					}),
+				);
+				allMessages.push(newMessage);
+				reversedAllMessages.unshift(newMessage);
+			});
 		}
 	});
 
@@ -40,13 +43,17 @@ export const makeChatClientFromJson = <TMessage>(
 
 	const realSocket: SocketIOClient = { ...socket } as SocketIOClient;
 	realSocket.on = (type, callback) => {
-		return socket.on(type, (msg) => callback(JSON.parse(msg as any)));
+		return socket.on(type, (msg) => {
+			const parsedMessage = JSON.parse(msg as unknown as string);
+			parsedMessage.message.date = new Date(parsedMessage.message.date);
+			callback(parsedMessage);
+		});
 	};
 
 	return [
 		new ChatClient(realSocket as unknown as Socket, async (_, count, before, after) => {
 			if (after !== undefined) {
-				const beginIndex = allMessages.findIndex((value) => isLater(value, after));
+				const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
 
 				if (beginIndex === -1) {
 					return {
@@ -64,7 +71,7 @@ export const makeChatClientFromJson = <TMessage>(
 			}
 
 			if (before !== undefined) {
-				const beginIndexReversed = reversedAllMessages.findIndex((value) => isLater(before, value));
+				const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
 				const beginIndex = allMessages.length - beginIndexReversed - 1;
 
 				if (beginIndexReversed === -1) {

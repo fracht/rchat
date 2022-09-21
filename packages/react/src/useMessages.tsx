@@ -1,7 +1,8 @@
 import { MessageFetchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
 import { useCallback, useEffect, useRef } from 'react';
-import { useBoundedArray } from './internal/useBoundedArray';
+import { Frame } from './EndlessList/useVisibleFrame';
+import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
 import { useEvent } from './internal/useEvent';
 
 export type UseMessagesBag<T> = {
@@ -10,6 +11,7 @@ export type UseMessagesBag<T> = {
 	onBottomReached: () => void;
 	noMessagesBefore: boolean;
 	noMessagesAfter: boolean;
+	onVisibleFrameChange: (frame: Frame) => void;
 };
 
 export type UseMessagesConfig<T> = {
@@ -23,7 +25,13 @@ export type UseMessagesConfig<T> = {
 
 // TODO: replace with binary search
 const findNewElementIndex = <T,>(elements: readonly T[], element: T, compare: (a: T, b: T) => number): number => {
-	return elements.findIndex((a) => compare(element, a) > 0);
+	return (
+		elements.length -
+		1 -
+		[...elements].reverse().findIndex((a) => {
+			return compare(element, a) > 0;
+		})
+	);
 };
 
 export const useMessages = <TMessage,>({
@@ -35,10 +43,18 @@ export const useMessages = <TMessage,>({
 	compareItems,
 }: UseMessagesConfig<TMessage>): UseMessagesBag<TMessage> => {
 	const isFetching = useRef(false);
+	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 
 	const [
 		messages,
-		{ push: pushMessages, unshift: unshiftMessages, set: setMessages, at: getMessage, getAll: getAllMessages },
+		{
+			push: pushMessages,
+			unshift: unshiftMessages,
+			set: setMessages,
+			insert: insertMessage,
+			at: getMessage,
+			getAll: getAllMessages,
+		},
 	] = useBoundedArray<TMessage>([], maxChunkSize);
 
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>({
@@ -49,18 +65,23 @@ export const useMessages = <TMessage,>({
 	const handleIncomingMessage = useCallback(
 		(event: CustomEvent<{ roomIdentifier: string; message: TMessage }>) => {
 			if (event.detail.roomIdentifier === roomIdentifier && messagesState.current.noMessagesAfter) {
-				// If(messagesState.current.messages === )
-
 				const incomingMessageIndex = findNewElementIndex(getAllMessages(), event.detail.message, compareItems);
 
-				// SetMessagesState({
-				// 	Messages: [...messagesState.current.messages, event.detail.message],
-				// 	NoMessagesAfter: true,
-				// 	NoMessagesBefore: messagesState.current.noMessagesBefore,
-				// });
+				const keepDirection: KeepDirection =
+					visibleFrame.current.begin < visibleFrame.current.end ? 'beginning' : 'ending';
+
+				const clipped = insertMessage(event.detail.message, incomingMessageIndex + 1, keepDirection);
+
+				if (clipped) {
+					if (keepDirection === 'beginning') {
+						messagesState.current.noMessagesBefore = false;
+					} else {
+						messagesState.current.noMessagesAfter = false;
+					}
+				}
 			}
 		},
-		[roomIdentifier, getAllMessages, compareItems],
+		[roomIdentifier, getAllMessages, compareItems, insertMessage],
 	);
 
 	useEffect(() => {
@@ -131,11 +152,16 @@ export const useMessages = <TMessage,>({
 		isFetching.current = false;
 	});
 
+	const onVisibleFrameChange = (frame: Frame) => {
+		visibleFrame.current = frame;
+	};
+
 	return {
 		messages,
 		onTopReached: handleTopReached,
 		onBottomReached: handleBottomReached,
 		noMessagesBefore: messagesState.current.noMessagesBefore,
 		noMessagesAfter: messagesState.current.noMessagesAfter,
+		onVisibleFrameChange,
 	};
 };
