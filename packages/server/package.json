@@ -1,21 +1,22 @@
 {
-    "name": "@rchat/server",
-    "version": "0.1.0",
-    "main": "./dist/server.cjs.development.js",
-    "types": "./dist/server.d.ts",
-    "publishConfig": {
-        "access": "public"
-    },
-    "scripts": {
-        "build": "aqu build",
-        "prepublishOnly": "pnpm run build"
-    },
-    "dependencies": {
-        "socket.io": "^4.5.1"
-    },
-    "devDependencies": {
-        "@babel/core": "^7.18.2",
-        "@types/node": "^18.0.6",
-        "aqu": "0.3.2"
-    }
+	"name": "@rchat/server",
+	"version": "0.1.0",
+	"main": "./dist/server.cjs.development.js",
+	"types": "./dist/server.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build": "aqu build",
+		"dev": "aqu watch --no-cleanup",
+		"prepublishOnly": "pnpm run build"
+	},
+	"dependencies": {
+		"socket.io": "^4.5.1"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.18.2",
+		"@types/node": "^18.0.6",
+		"aqu": "0.3.2"
+	}
 }

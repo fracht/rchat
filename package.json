@@ -1,10 +1,13 @@
 {
-    "name": "rchat",
-    "private": true,
-    "workspaces": [
-        "./packages/*"
-    ],
-    "devDependencies": {
-        "@changesets/cli": "^2.23.2"
-    }
+	"name": "rchat",
+	"private": true,
+	"devDependencies": {
+		"@changesets/cli": "^2.23.2",
+		"prettier": "^2.6.2",
+		"turbo": "^1.4.3"
+	},
+	"scripts": {
+		"dev": "turbo run dev --parallel",
+		"format": "prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
+	}
 }

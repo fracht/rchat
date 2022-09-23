@@ -1,4 +1,4 @@
 export type ConnectionInfo = {
-    userIdentifier: string;
-    additional?: unknown;
+	userIdentifier: string;
+	additional?: unknown;
 };

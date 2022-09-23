@@ -3,10 +3,11 @@
     "printWidth": 120,
     "trailingComma": "all",
     "singleQuote": true,
-    "useTabs": false,
+    "useTabs": true,
     "arrowParens": "always",
     "bracketSameLine": false,
     "bracketSpacing": true,
     "embeddedLanguageFormatting": "auto",
-    "jsxSingleQuote": false
+    "jsxSingleQuote": false,
+    "endOfLine": "auto"
 }

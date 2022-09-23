@@ -1,7 +1,7 @@
 {
-    "format": ["cjs"],
-    "cjsMode": "development",
-    "buildOptions": {
-        "platform": "node"
-    }
+	"format": ["cjs"],
+	"cjsMode": "development",
+	"buildOptions": {
+		"platform": "node"
+	}
 }

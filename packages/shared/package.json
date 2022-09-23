@@ -1,4 +1,14 @@
 {
-    "name": "@rchat/shared",
-    "private": true
+	"name": "@rchat/shared",
+	"main": "./dist/index.js",
+	"types": "./dist/shared.d.ts",
+	"module": "./dist/shared.esm.js",
+	"scripts": {
+		"dev": "aqu watch --no-cleanup",
+		"build": "aqu build"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.18.2",
+		"aqu": "0.3.2"
+	}
 }
