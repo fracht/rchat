@@ -74,9 +74,9 @@ export const useMessages = <TMessage,>({
 
 				if (clipped) {
 					if (keepDirection === 'beginning') {
-						messagesState.current.noMessagesBefore = false;
-					} else {
 						messagesState.current.noMessagesAfter = false;
+					} else {
+						messagesState.current.noMessagesBefore = false;
 					}
 				}
 			}

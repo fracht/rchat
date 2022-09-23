@@ -17,7 +17,7 @@ export const makeChatClientFromJson = <TMessage>(
 	const mockServer = new Server('ws://localhost:1234');
 
 	allMessages.sort(compare);
-	const reversedAllMessages = [...allMessages].reverse();
+	let reversedAllMessages = [...allMessages].reverse();
 
 	mockServer.on('connection', async (socket) => {
 		const socketIO = socket as unknown as SocketIOClient;
@@ -34,7 +34,8 @@ export const makeChatClientFromJson = <TMessage>(
 					}),
 				);
 				allMessages.push(newMessage);
-				reversedAllMessages.unshift(newMessage);
+				allMessages.sort(compare);
+				reversedAllMessages = [...allMessages].reverse();
 			});
 		}
 	});
