@@ -9,5 +9,10 @@
 	"scripts": {
 		"dev": "turbo run dev --parallel",
 		"format": "prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"dts-bundle-generator@6.13.0": "patches/dts-bundle-generator@6.13.0.patch"
+		}
 	}
 }

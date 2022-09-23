@@ -8,6 +8,7 @@ import {
 	useLayoutEffect,
 	useMemo,
 	useRef,
+	type Key,
 } from 'react';
 
 import { smoothScrollToCenter } from '../internal/smoothScrollToCenter';
@@ -19,7 +20,6 @@ import { ItemComponentType } from './ItemComponentType';
 import { useEndlessList } from './useEndlessList';
 import { Frame, useVisibleFrame } from './useVisibleFrame';
 import type { KeysOfType } from '../internal/KeysOfType';
-import type { Key } from 'react';
 
 export type ContainerComponentProps = PropsWithChildren<{
 	innerContainerRef: Ref<HTMLElement>;

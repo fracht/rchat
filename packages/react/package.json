@@ -3,8 +3,8 @@
 	"version": "0.1.0",
 	"description": "Awesome React chat",
 	"main": "./dist/index.js",
-	"module": "./dist/react.esm.js",
-	"types": "./dist/react.d.ts",
+	"module": "./dist/rchat-react.esm.js",
+	"types": "./dist/rchat-react.d.ts",
 	"files": [
 		"dist"
 	],
@@ -46,7 +46,7 @@
 		"@storybook/testing-library": "^0.0.13",
 		"@types/react": "^18.0.9",
 		"@types/react-dom": "^18.0.5",
-		"aqu": "0.3.2",
+		"aqu": "0.4.3",
 		"babel-loader": "^8.2.5",
 		"eslint": "^8.18.0",
 		"mock-socket": "^9.1.5",

@@ -4,9 +4,7 @@ import { RChatContext, RChatContextType } from './internal/RChatContext';
 import { RoomContext } from './internal/RoomContext';
 import { useMessages } from './useMessages';
 
-export type MessageListProps<T> = {};
-
-export const MessageList = <T,>({}: MessageListProps<T>) => {
+export const MessageList = <T,>() => {
 	const {
 		client,
 		MessageComponent,
