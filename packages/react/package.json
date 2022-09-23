@@ -1,23 +1,12 @@
 {
 	"name": "@rchat/react",
 	"version": "0.1.0",
-	"private": true,
 	"description": "Awesome React chat",
 	"main": "./dist/index.js",
-	"module": "./dist/awesome-react-chat.esm.js",
-	"types": "./dist/awesome-react-chat.d.ts",
+	"module": "./dist/react.esm.js",
+	"types": "./dist/react.d.ts",
 	"files": [
 		"dist"
-	],
-	"size-limit": [
-		{
-			"path": "dist/awesome-react-chat.cjs.production.min.js",
-			"limit": "10 KB"
-		},
-		{
-			"path": "dist/awesome-react-chat.esm.js",
-			"limit": "10 KB"
-		}
 	],
 	"scripts": {
 		"build": "aqu build",
