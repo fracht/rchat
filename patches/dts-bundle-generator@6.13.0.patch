@@ -1,0 +1,59 @@
+diff --git a/dist/types-usage-evaluator.js b/dist/types-usage-evaluator.js
+index 9aa5834331e2a010fc5b7dad8ff4dd59af30a8f2..1bb1929e7c949fa6f4fb0743a6618d9c50871b36 100644
+--- a/dist/types-usage-evaluator.js
++++ b/dist/types-usage-evaluator.js
+@@ -51,7 +51,10 @@ var TypesUsageEvaluator = /** @class */ (function () {
+         }
+         else if ((0, typescript_1.isNodeNamedDeclaration)(node) && node.name) {
+             var childSymbol = this.getSymbol(node.name);
+-            this.computeUsagesRecursively(node, childSymbol);
++
++            if(childSymbol){
++                this.computeUsagesRecursively(node, childSymbol);
++            }
+         }
+         else if (ts.isVariableStatement(node)) {
+             for (var _b = 0, _c = node.declarationList.declarations; _b < _c.length; _b++) {
+@@ -75,17 +78,21 @@ var TypesUsageEvaluator = /** @class */ (function () {
+                 if ((0, typescript_1.isNamedTupleMember)(child.parent) && child.parent.name === child) {
+                     continue;
+                 }
+-                var childSymbols = (0, typescript_1.splitTransientSymbol)(this.getSymbol(child), this.typeChecker);
+-                for (var _a = 0, childSymbols_1 = childSymbols; _a < childSymbols_1.length; _a++) {
+-                    var childSymbol = childSymbols_1[_a];
+-                    var symbols = this.nodesParentsMap.get(childSymbol);
+-                    if (symbols === undefined) {
+-                        symbols = new Set();
+-                        this.nodesParentsMap.set(childSymbol, symbols);
+-                    }
+-                    // to avoid infinite recursion
+-                    if (childSymbol !== parentSymbol) {
+-                        symbols.add(parentSymbol);
++                var symbol = this.getSymbol(child);
++
++                if(symbol){
++                    var childSymbols = (0, typescript_1.splitTransientSymbol)(symbol, this.typeChecker);
++                    for (var _a = 0, childSymbols_1 = childSymbols; _a < childSymbols_1.length; _a++) {
++                        var childSymbol = childSymbols_1[_a];
++                        var symbols = this.nodesParentsMap.get(childSymbol);
++                        if (symbols === undefined) {
++                            symbols = new Set();
++                            this.nodesParentsMap.set(childSymbol, symbols);
++                        }
++                        // to avoid infinite recursion
++                        if (childSymbol !== parentSymbol) {
++                            symbols.add(parentSymbol);
++                        }
+                     }
+                 }
+             }
+@@ -94,7 +101,8 @@ var TypesUsageEvaluator = /** @class */ (function () {
+     TypesUsageEvaluator.prototype.getSymbol = function (node) {
+         var nodeSymbol = this.typeChecker.getSymbolAtLocation(node);
+         if (nodeSymbol === undefined) {
+-            throw new Error("Cannot find symbol for node: ".concat(node.getText()));
++            console.warn("Cannot find symbol for node: ".concat(node.getText()));
++            return undefined;
+         }
+         return this.getActualSymbol(nodeSymbol);
+     };

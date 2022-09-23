@@ -32,22 +32,5 @@ export const EndlessListItemView = <TMessageType,>({
 		return <PlaceholderComponent />;
 	}
 
-	return (
-		<ItemComponent
-			ref={mergeReferences(itemReference, item.focused && focusElementReference)}
-			{...item}
-			/*
-			Ref={mergeReferences(
-				createReference(keyExtractor(item)),
-				getFocusReference(
-					focusedItem,
-					focusIndex,
-					normalIndex,
-					jumpItems.actual,
-					normalArray,
-					focusElementReference,
-				),
-			)}*/
-		/>
-	);
+	return <ItemComponent ref={mergeReferences(itemReference, item.focused && focusElementReference)} {...item} />;
 };

@@ -1,11 +1,9 @@
-import React from 'react';
+import { Ref, MutableRefObject } from 'react';
 
 export const mergeReferences = <T>(
-	...inputReferences: Array<React.Ref<T> | React.MutableRefObject<T> | undefined | false>
-): React.Ref<T> | undefined => {
-	const filteredInputReferences = inputReferences.filter(
-		Boolean as unknown as (value: unknown) => value is React.Ref<T>,
-	);
+	...inputReferences: Array<Ref<T> | MutableRefObject<T> | undefined | false>
+): Ref<T> | undefined => {
+	const filteredInputReferences = inputReferences.filter(Boolean as unknown as (value: unknown) => value is Ref<T>);
 
 	if (filteredInputReferences.length <= 1) {
 		return filteredInputReferences[0];
