@@ -1,0 +1,51 @@
+{
+	"name": "@rchat/material",
+	"version": "0.0.0",
+	"main": "./dist/index.js",
+	"module": "./dist/material.esm.js",
+	"types": "./dist/material.d.ts",
+	"scripts": {
+		"build": "aqu build",
+		"dev": "aqu watch --no-cleanup",
+		"lint": "eslint **/*.{ts,tsx}",
+		"lint:fix": "eslint . --fix",
+		"test": "aqu test --passWithNoTests",
+		"test:watch": "aqu test --passWithNoTests --watch",
+		"release": "np",
+		"storybook": "start-storybook -p 6006",
+		"build-storybook": "build-storybook"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.18.9",
+		"@emotion/react": "^11.10.4",
+		"@emotion/styled": "^11.10.4",
+		"@mui/material": "^5.10.6",
+		"@mui/styled-engine": "^5.10.6",
+		"@mui/types": "^7.2.0",
+		"@storybook/addon-actions": "^6.5.12",
+		"@storybook/addon-essentials": "^6.5.12",
+		"@storybook/addon-interactions": "^6.5.12",
+		"@storybook/addon-links": "^6.5.12",
+		"@storybook/builder-webpack4": "^6.5.12",
+		"@storybook/manager-webpack4": "^6.5.12",
+		"@storybook/react": "^6.5.12",
+		"@storybook/testing-library": "^0.0.13",
+		"@types/react": "^18.0.9",
+		"aqu": "^0.4.3",
+		"babel-loader": "^8.2.5",
+		"react": "^18.1.0",
+		"react-dom": "^18.1.0",
+		"typescript": "^4.7.2"
+	},
+	"peerDependencies": {
+		"@emotion/react": "^11.10.4",
+		"@emotion/styled": "^11.10.4",
+		"@mui/material": "^5.10.6",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
+	},
+	"dependencies": {
+		"@mui/system": "^5.10.6",
+		"@rchat/react": "workspace:^0.1.0"
+	}
+}

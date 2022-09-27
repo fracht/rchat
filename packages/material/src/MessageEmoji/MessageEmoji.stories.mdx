@@ -1,0 +1,71 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { MessageEmoji } from './MessageEmoji';
+import { MessageBox } from '../MessageBox';
+import { Typography, Box } from '@mui/material';
+import { Fragment } from 'react';
+
+<Meta
+	title="Messages/MessageEmoji"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={MessageEmoji}
+/>
+
+# MessageEmoji
+
+The MessageEmoji component is used to properly display chat message, that contains only emojis.
+
+<Canvas>
+	<Story name="Overview">
+		<MessageBox position="start" orientation="left" component={MessageEmoji}>
+			👋
+		</MessageBox>
+		<MessageBox position="end" orientation="left" component={MessageEmoji}>
+			🚶❔
+		</MessageBox>
+		<MessageBox position="start" orientation="right" component={MessageEmoji}>
+			⌚🤔
+		</MessageBox>
+		<MessageBox position="start" orientation="left" component={MessageEmoji}>
+			🕢
+		</MessageBox>
+		<MessageBox position="start" orientation="right" component={MessageEmoji}>
+			👍
+		</MessageBox>
+	</Story>
+</Canvas>
+
+It's better to use this component with MessageBox, but using out of it is also allowed. For instance:
+
+export const Template = (args) => <MessageEmoji {...args} />;
+
+<Canvas>
+	<Story
+		args={{
+			children: '😔',
+		}}
+		name="Standalone"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+## API
+
+<Canvas>
+	<Story args={{ children: '✏️🙋' }} name="API">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+<ArgsTable story="API" />

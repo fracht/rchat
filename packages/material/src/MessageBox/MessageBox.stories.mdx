@@ -1,0 +1,151 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { MessageBox } from './MessageBox';
+import { MessageText } from '../MessageText';
+import { MessageEmoji } from '../MessageEmoji';
+import { Typography, Box } from '@mui/material';
+import { Fragment } from 'react';
+
+<Meta
+	title="Messages/MessageBox"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={MessageBox}
+/>
+
+# MessageBox
+
+The MessageBox component is a wrapper for the content of chat message.
+
+<Canvas>
+	<Story name="Overview">
+		<MessageBox position="start" orientation="left" component={MessageText}>
+			MessageBox adds only necessary styles depending on message position(corners, margins, alignment). It doesn't
+			provide any other styles, so you can have any UI for your custom messages! For instance, that's a long
+			message rendered with MessageText component.
+		</MessageBox>
+		<MessageBox position="middle" orientation="left" component={MessageText}>
+			That's a short message.
+		</MessageBox>
+		<MessageBox
+			position="end"
+			orientation="left"
+			component="img"
+			alt="Sample image from lorem picsum"
+			src="https://picsum.photos/200/300"
+		/>
+		<MessageBox position="start" orientation="right" component={MessageText} color="primary">
+			Yeah, this component is amazing!
+		</MessageBox>
+		<MessageBox position="middle" orientation="right" component={MessageText} color="primary">
+			I really love it!
+		</MessageBox>
+		<MessageBox component={MessageEmoji} position="end" orientation="right">
+			😍
+		</MessageBox>
+	</Story>
+</Canvas>
+
+Message box could be composed with other components, to create various message UI's, that follow design system. For instance, you can use it with MessageText component to create standard message:
+
+export const TextMessageTemplate = (args) => <MessageBox component={MessageText} {...args} />;
+
+<Canvas>
+	<Story
+		name="Text"
+		args={{
+			children: 'Hello, world!',
+			orientation: 'right',
+			position: 'start',
+		}}
+	>
+		{TextMessageTemplate.bind({})}
+	</Story>
+</Canvas>
+
+Or with MessageEmoji, to display emoji separately:
+
+export const EmojiMessageTemplate = (args) => <MessageBox {...args} component={MessageEmoji} />;
+
+<Canvas>
+	<Story
+		name="Emoji"
+		args={{
+			children: '🤣🤣🤣',
+			orientation: 'right',
+			position: 'start',
+		}}
+	>
+		{EmojiMessageTemplate.bind({})}
+	</Story>
+</Canvas>
+
+Or custom UI:
+
+export const CustomMessageTemplate = (args) => (
+	<MessageBox sx={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }} {...args}>
+		<iframe
+			width="280"
+			height="157"
+			src="https://www.youtube.com/embed/ze8ycxc1UzE"
+			title="YouTube video player"
+			frameBorder={0}
+			allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+			allowFullScreen
+		/>
+		<Box
+			sx={{
+				width: 280,
+				bgcolor: 'grey.200',
+				padding: '8px 12px',
+				boxSizing: 'border-box',
+			}}
+		>
+			<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+				Next.js Conf - Special Edition
+			</Typography>
+			<Typography sx={{ wordBreak: 'break-word' }} variant="body2">
+				Hosted by Vercel, creators of Next.js, with special guests from Google Chrome and the Next.js
+				Community.nextjs.org/11nextjs.org/livenextjs.org/giveSpeakers:G...
+			</Typography>
+		</Box>
+	</MessageBox>
+);
+
+<Canvas>
+	<Story
+		args={{
+			orientation: 'right',
+			position: 'start',
+		}}
+		name="Custom UI"
+	>
+		{CustomMessageTemplate.bind({})}
+	</Story>
+</Canvas>
+
+## API
+
+<Canvas>
+	<Story
+		args={{
+			children: 'Change me via controls below!',
+			orientation: 'right',
+			position: 'start',
+		}}
+		name="API"
+	>
+		{TextMessageTemplate.bind({})}
+	</Story>
+</Canvas>
+
+<ArgsTable story="API" />
