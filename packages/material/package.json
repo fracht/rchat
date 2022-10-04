@@ -45,6 +45,7 @@
 		"react-dom": "^18.0.0"
 	},
 	"dependencies": {
+		"@mui/icons-material": "^5.10.6",
 		"@mui/system": "^5.10.6",
 		"@rchat/react": "workspace:^0.1.0"
 	}

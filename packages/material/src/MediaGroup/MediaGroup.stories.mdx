@@ -1,0 +1,142 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { MediaGroup } from './MediaGroup';
+import { MediaGroupItem } from '../MediaGroupItem';
+import { MessageBox } from '../MessageBox';
+import { MessageText } from '../MessageText';
+import { Box } from '@mui/material';
+import { Fragment } from 'react';
+
+export const Template = ({ imageCount, ...props }) => (
+	<MessageBox position="start" orientation="right" {...props} component={MediaGroup}>
+		{new Array(imageCount).fill().map((_, key) => (
+			<MediaGroupItem
+				key={key}
+				component="img"
+				src={`https://picsum.photos/seed/rchat-${key}/125/125`}
+				alt="Lorem Picsum"
+			/>
+		))}
+	</MessageBox>
+);
+
+<Meta
+	title="Messages/MediaGroup"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={MediaGroup}
+/>
+
+# MediaGroup
+
+The MediaGroup component is used to display one or more media attachments, such as images or videos.
+
+<Canvas>
+	<Story name="Overview">
+		<MessageBox position="start" orientation="left" component={MessageText}>
+			Hey! Check this out:
+		</MessageBox>
+		<MessageBox position="end" orientation="left" component={MediaGroup}>
+			<MediaGroupItem component="img" src="https://picsum.photos/200/300" alt="Lorem Picsum" />
+			<MediaGroupItem component="img" src="https://picsum.photos/100/100" alt="Lorem Picsum" />
+			<MediaGroupItem component="img" src="https://picsum.photos/1000/1000" alt="Lorem Picsum" />
+			<MediaGroupItem component="video">
+				<source src="//samplelib.com/lib/preview/mp4/sample-5s.mp4" type="video/mp4" />
+			</MediaGroupItem>
+			<MediaGroupItem component="img" src="https://picsum.photos/1000/1000" alt="Lorem Picsum" />
+		</MessageBox>
+		<MessageBox position="start" orientation="right" color="primary" component={MessageText}>
+			Nice!
+		</MessageBox>
+	</Story>
+</Canvas>
+
+## Grouping variants
+
+In order to correctly display different amounts of images, MediaGroup has a simple algorithm.
+
+One image will be 125x125, displayed without additional grouping:
+
+<Canvas>
+	<Story
+		args={{
+			imageCount: 1,
+		}}
+		name="One image"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+Two images appear in single row:
+
+<Canvas>
+	<Story
+		args={{
+			imageCount: 2,
+		}}
+		name="Two images"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+When displaying three images, only first two are visible, the third one is available by pressing on "+1" label.
+
+<Canvas>
+	<Story
+		args={{
+			imageCount: 3,
+		}}
+		name="Three images"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+Four images are displayed on the grid:
+
+<Canvas>
+	<Story
+		args={{
+			imageCount: 4,
+		}}
+		name="Four images"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+And all further images will be hidden under last image:
+
+<Canvas>
+	<Story
+		args={{
+			imageCount: 6,
+		}}
+		name="4+ images"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+## Preview
+
+MediaGroup component also automatically adds previews for your media components. By pressing on any image, the preview popup will be shown:
+
+<Canvas>
+	<Story name="Large image preview">
+		<MessageBox position="start" orientation="right" component={MediaGroup}>
+			<MediaGroupItem component="img" src={`https://picsum.photos/1000/1000`} alt="Lorem Picsum" />
+		</MessageBox>
+	</Story>
+</Canvas>
