@@ -1,10 +1,12 @@
 import { ElementType, ReactElement } from 'react';
+import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
+import { MuiAccountInfo } from '../helpers/MuiAccountInfo';
 import { styled } from '../styles/styled';
 
 export type MessageOrientation = 'left' | 'right';
 
-export type MessagePosition = 'start' | 'middle' | 'end';
+export type MessagePosition = 'start' | 'middle' | 'end' | 'single';
 
 type MessageBoxState = {
 	orientation: MessageOrientation;
@@ -16,12 +18,23 @@ const MessageBoxRoot = styled<MessageBoxState, 'div'>('div', {
 	slot: 'Root',
 	overridesResolver: (_, styles) => styles.root,
 })(({ theme, ownerState: { orientation, position } }) => {
+	return {
+		marginBottom: ['end', 'single'].includes(position) ? theme.spacing(1.5) : theme.spacing(0.25),
+		display: 'flex',
+		justifyContent: 'flex-start',
+		flexDirection: orientation === 'left' ? 'row' : 'row-reverse',
+		gap: theme.spacing(1),
+	};
+});
+
+const MessageBoxContent = styled<MessageBoxState, 'div'>('div', {
+	name: 'MessageBox',
+	slot: 'Content',
+})(({ theme, ownerState: { orientation, position } }) => {
 	const topSideRadius = ['start', 'middle'].includes(position) ? 0.5 : 2.25;
 	const bottomSideRadius = ['end', 'middle'].includes(position) ? 0.5 : 2.25;
 
 	return {
-		marginBottom: position === 'end' ? theme.spacing(1.5) : theme.spacing(0.25),
-		alignSelf: orientation === 'left' ? 'flex-start' : 'flex-end',
 		borderRadius:
 			orientation === 'left'
 				? theme.spacing(bottomSideRadius, 2.25, 2.25, topSideRadius)
@@ -29,14 +42,29 @@ const MessageBoxRoot = styled<MessageBoxState, 'div'>('div', {
 	};
 });
 
+const MessageBoxAvatarWrapper = styled<MessageBoxState, 'div'>('div', {
+	name: 'MessageBox',
+	slot: 'Avatar',
+})(({ ownerState: { orientation } }) => ({
+	width: 28,
+	alignSelf: 'flex-end',
+	display: orientation === 'right' ? 'none' : undefined,
+}));
+
 type InternalMessageBoxProps = {
+	author?: MuiAccountInfo;
 	children: ReactElement;
 } & MessageBoxState;
 
 export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
-	({ children, component, orientation, position, ...props }) => (
-		<MessageBoxRoot ownerState={{ orientation, position }} as={component} {...props}>
-			{children}
+	({ children, component, orientation, position, author, ...props }) => (
+		<MessageBoxRoot ownerState={{ orientation, position }}>
+			<MessageBoxAvatarWrapper ownerState={{ orientation, position }}>
+				{author && <AccountAvatar {...author} />}
+			</MessageBoxAvatarWrapper>
+			<MessageBoxContent as={component} ownerState={{ orientation, position }} {...props}>
+				{children}
+			</MessageBoxContent>
 		</MessageBoxRoot>
 	),
 );
