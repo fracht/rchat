@@ -19,8 +19,8 @@
 		"release": "np",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
-		"prepublishOnly": "rm -rf ./package && clean-publish",
-		"postpublish": "rm -rf ./package"
+		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
+		"postpublish": "rm -rf ./prepared-package"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
