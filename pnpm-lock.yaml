@@ -52,6 +52,7 @@ importers:
       '@types/react': ^18.0.9
       aqu: ^0.4.3
       babel-loader: ^8.2.5
+      clean-publish: ^4.0.1
       react: ^18.1.0
       react-dom: ^18.1.0
       typescript: ^4.7.2
@@ -77,6 +78,7 @@ importers:
       '@types/react': 18.0.15
       aqu: 0.4.3_@babel+core@7.18.9
       babel-loader: 8.2.5_@babel+core@7.18.9
+      clean-publish: 4.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       typescript: 4.8.3
@@ -9668,6 +9670,17 @@ packages:
     engines: {node: '>= 4.0'}
     dependencies:
       source-map: 0.6.1
+    dev: true
+
+  /clean-publish/4.0.1:
+    resolution: {integrity: sha512-6v0bh5kQD5FDlxBgXDVNNc6KmAB7iIP/GHD91q9xsGVZT5XB9Y8TNqB7dL5u9PTZlBeLpBw+A1AseRlEEJLSWA==}
+    engines: {node: '>= 16.0.0'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+      fast-glob: 3.2.11
+      lilconfig: 2.0.6
+      micromatch: 4.0.5
     dev: true
 
   /clean-regexp/1.0.0:
