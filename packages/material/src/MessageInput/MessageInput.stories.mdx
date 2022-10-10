@@ -1,0 +1,28 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { MessageInput } from './MessageInput';
+import { Box } from '@mui/material';
+
+<Meta
+	title="MessageInput"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={MessageInput}
+/>
+
+# MessageInput
+
+<Canvas>
+	<Story name="Overview">
+		<MessageInput />
+	</Story>
+</Canvas>

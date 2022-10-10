@@ -1,0 +1,99 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { AccountAvatar } from './AccountAvatar';
+import { MessageBox } from '../MessageBox';
+import { MessageText } from '../MessageText';
+import { Box } from '@mui/material';
+import { Fragment } from 'react';
+
+export const Template = (args) => <AccountAvatar {...args} />;
+
+<Meta
+	title="Messages/AccountAvatar"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={AccountAvatar}
+/>
+
+# AccountAvatar
+
+Simple & cool-looking avatar of person, who sends the message.
+
+<Canvas>
+	<Story name="Overview">
+		<MessageBox author={{ username: 'A' }} position="single" orientation="left" component={MessageText}>
+			I'm light green 🥗
+		</MessageBox>
+		<MessageBox author={{ username: 'B' }} position="single" orientation="left" component={MessageText}>
+			I'm light blue ☁️
+		</MessageBox>
+		<MessageBox author={{ username: 'C' }} position="single" orientation="left" component={MessageText}>
+			I'm indigo 🥶
+		</MessageBox>
+		<MessageBox author={{ username: 'D' }} position="single" orientation="left" component={MessageText}>
+			I'm cyan 🤷
+		</MessageBox>
+		<MessageBox author={{ username: 'E' }} position="single" orientation="left" component={MessageText}>
+			I'm purple 💅
+		</MessageBox>
+		<MessageBox author={{ username: 'F' }} position="single" orientation="left" component={MessageText}>
+			I'm pink 😍
+		</MessageBox>
+		<MessageBox author={{ username: 'G' }} position="single" orientation="left" component={MessageText}>
+			I'm dark purple 🪄
+		</MessageBox>
+		<MessageBox author={{ username: 'H' }} position="single" orientation="left" component={MessageText}>
+			I'm grey 🧱
+		</MessageBox>
+		<MessageBox author={{ username: 'I' }} position="single" orientation="left" component={MessageText}>
+			I'm dark grey 🥷
+		</MessageBox>
+		<MessageBox author={{ username: 'J' }} position="single" orientation="left" component={MessageText}>
+			I'm red 🩸
+		</MessageBox>
+		<MessageBox author={{ username: 'K' }} position="single" orientation="left" component={MessageText}>
+			I'm yellow ☀️
+		</MessageBox>
+		<MessageBox author={{ username: 'L' }} position="single" orientation="left" component={MessageText}>
+			I'm green ☘️
+		</MessageBox>
+	</Story>
+</Canvas>
+
+By default, AccountAvatar component displays 2 first letters of author's username, on unique-colored background, based on username hash.
+
+<Canvas>
+	<Story args={{ username: 'My Name Is Longer Than 2 Words' }} name="Placeholder">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+However, if user has profile image, the abbreviation won't be displayed:
+
+<Canvas>
+	<Story
+		args={{ username: "I'm not displayed!", profileUrl: 'https://picsum.photos/200/200' }}
+		name="Custom profile image"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+## API
+
+<Canvas>
+	<Story args={{ username: 'Change Me' }} name="API">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+<ArgsTable story="API" />

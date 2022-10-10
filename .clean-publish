@@ -1,0 +1,11 @@
+{
+	"withoutPublish": true,
+	"tempDir": "prepared-package",
+	"packageManager": "pnpm",
+	"files": [
+		"src",
+		".storybook",
+		"aqu.config.json",
+		"tsconfig.json"
+	]
+}

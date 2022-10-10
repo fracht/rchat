@@ -1,0 +1,67 @@
+import { ArgsTable, Canvas, Meta, Story } from '@storybook/addon-docs';
+import { MessageText } from './MessageText';
+import { MessageBox } from '../MessageBox';
+import { Typography, Box } from '@mui/material';
+import { Fragment } from 'react';
+
+<Meta
+	title="Messages/MessageText"
+	decorators={[
+		(Story) => (
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+				}}
+			>
+				<Story />
+			</Box>
+		),
+	]}
+	component={MessageText}
+/>
+
+# MessageText
+
+The MessageText component used to display text of chat message. Should be wrapped into MessageBox to display for user.
+
+<Canvas>
+	<Story name="Overview">
+		<MessageBox author={{ username: 'Hello World' }} position="single" orientation="left" component={MessageText}>
+			That's a message text wrapped into MessageBox component.
+		</MessageBox>
+	</Story>
+</Canvas>
+
+MessageText is a simple view component that can be used alone.
+
+export const Template = (args) => <MessageText {...args} />;
+
+<Canvas>
+	<Story
+		args={{
+			children: "Hey! I'm a standalone message text!",
+		}}
+		name="Standalone"
+	>
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+You can also change the color of message:
+
+<Canvas>
+	<Story args={{ color: 'primary', children: 'I am colored!' }} name="Colored">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+## API
+
+<Canvas>
+	<Story args={{ children: 'Change me with controls below!' }} name="API">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+<ArgsTable story="API" />
