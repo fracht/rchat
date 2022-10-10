@@ -1,5 +1,6 @@
 {
 	"name": "rchat",
+	"version": "0.0.0",
 	"private": true,
 	"devDependencies": {
 		"@changesets/cli": "^2.23.2",
