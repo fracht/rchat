@@ -5,6 +5,9 @@
 	"types": "./dist/client.d.ts",
 	"main": "./dist/index.js",
 	"module": "./dist/client.esm.js",
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"dev": "aqu watch --no-cleanup",
 		"build": "aqu build"

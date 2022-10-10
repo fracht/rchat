@@ -5,6 +5,9 @@
 	"main": "./dist/index.js",
 	"module": "./dist/rchat-react.esm.js",
 	"types": "./dist/rchat-react.d.ts",
+	"publishConfig": {
+		"access": "public"
+	},
 	"files": [
 		"dist"
 	],
