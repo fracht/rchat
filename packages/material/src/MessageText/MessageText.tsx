@@ -1,8 +1,8 @@
 import Typography from '@mui/material/Typography';
-import { OverridableStringUnion } from '@mui/types';
 import { ElementType, ReactElement } from 'react';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
+import type { OverridableStringUnion } from '@mui/types';
 
 export interface MessageTextColorOverrides {}
 
@@ -40,7 +40,7 @@ export const MessageText = createMuiComponent<InternalMessageTextProps, 'div'>(
 	),
 );
 
-export type MessageBoxProps<TComponent extends ElementType = 'div', TAdditionalProps = {}> = MuiComponentProps<
+export type MessageTextProps<TComponent extends ElementType = 'div', TAdditionalProps = {}> = MuiComponentProps<
 	InternalMessageTextProps,
 	TComponent,
 	TAdditionalProps

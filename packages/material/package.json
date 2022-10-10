@@ -1,9 +1,7 @@
 {
 	"name": "@rchat/material",
 	"version": "0.0.0",
-	"main": "./dist/index.js",
-	"module": "./dist/material.esm.js",
-	"types": "./dist/material.d.ts",
+	"sideEffects": false,
 	"scripts": {
 		"build": "aqu build",
 		"dev": "aqu watch --no-cleanup",
