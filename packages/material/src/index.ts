@@ -6,3 +6,5 @@ export * from './MessageBox';
 export * from './MessageEmoji';
 export * from './MessageInput';
 export * from './MessageText';
+export * from './ChatOverlay';
+export * from './ChatButton';

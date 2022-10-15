@@ -2,6 +2,9 @@
 	"name": "@rchat/material",
 	"version": "0.0.1",
 	"sideEffects": false,
+	"types": "./dist/material.d.ts",
+	"main": "./dist/material.d.ts",
+	"module": "./dist/material.esm.js",
 	"publishConfig": {
 		"access": "public",
 		"directory": "prepared-package"

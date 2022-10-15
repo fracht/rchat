@@ -1,8 +1,8 @@
 import { ElementType, ReactElement } from 'react';
+import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MuiAccountInfo } from '../helpers/MuiAccountInfo';
 import { styled } from '../styles/styled';
-import { AccountAvatar } from '../AccountAvatar';
 
 export type MessageOrientation = 'left' | 'right';
 
