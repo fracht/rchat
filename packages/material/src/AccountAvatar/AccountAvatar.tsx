@@ -10,7 +10,6 @@ const AccountAvatarRoot = styled(Avatar, {
 	width: 28,
 	height: 28,
 	fontSize: theme.typography.body2.fontSize,
-	alignSelf: 'flex-end',
 }));
 
 const getInitials = (username: string) => {

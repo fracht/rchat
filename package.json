@@ -4,6 +4,7 @@
 	"private": true,
 	"devDependencies": {
 		"@changesets/cli": "^2.23.2",
+		"@types/jest": "^29.2.0",
 		"prettier": "^2.6.2",
 		"turbo": "^1.4.3"
 	},
