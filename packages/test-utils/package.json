@@ -1,0 +1,35 @@
+{
+	"name": "@rchat/test-utils",
+	"version": "0.0.1",
+	"sideEffects": false,
+	"publishConfig": {
+		"access": "public",
+		"directory": "prepared-package"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "aqu build",
+		"dev": "aqu watch --no-cleanup",
+		"lint": "eslint **/*.{ts,tsx}",
+		"lint:fix": "eslint . --fix",
+		"test": "aqu test --passWithNoTests",
+		"test:watch": "aqu test --passWithNoTests --watch",
+		"release": "np",
+		"storybook": "start-storybook -p 6006",
+		"build-storybook": "build-storybook",
+		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
+		"postpublish": "rm -rf ./prepared-package",
+		"start": "nodemon ./dist/index.js"
+	},
+	"dependencies": {
+		"aqu": "^0.4.3",
+		"socket.io": "^4.5.1",
+		"socket.io-client": "^4.5.1"
+	},
+	"devDependencies": {
+		"@rchat/server": "workspace:^0.1.0",
+		"nodemon": "^2.0.20"
+	}
+}

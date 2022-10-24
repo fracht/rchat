@@ -1,5 +1,5 @@
 import { IncomingMessage } from 'node:http';
-import { ConnectionInfo } from './ConnectionInfo';
+import { ConnectionInfo } from '@rchat/shared';
 
 export type ChatService = {
 	fetchConnectionInfo: (request: IncomingMessage) => Promise<ConnectionInfo>;

@@ -1,36 +1,26 @@
-import CloseIcon from '@mui/icons-material/Close';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import { AccountAvatar } from '../AccountAvatar';
+import { MessageList } from '@rchat/react';
+import { MessageInput } from '../MessageInput';
 import { styled } from '../styles/styled';
+import { RoomPopupBodyRoot } from './RoomPopupBody';
+import { RoomPopupHeader } from './RoomPopupHeader';
 
 export const RoomPopupRoot = styled(Paper, {
 	name: 'RoomPopup',
 	slot: 'Root',
 })({
-	width: 260,
+	width: 280,
+	height: 340,
+	display: 'flex',
+	flexDirection: 'column',
 });
 
-export const RoomPopupHeader = styled('header', {
-	name: 'RoomPopup',
-	slot: 'Header',
-})(({ theme }) => ({
-	display: 'flex',
-	justifyContent: 'center',
-	alignItems: 'center',
-	gap: theme.spacing(1),
-	padding: theme.spacing(1),
-}));
-
 export const RoomPopup = () => (
-	<RoomPopupRoot elevation={2}>
-		<RoomPopupHeader>
-			<AccountAvatar username="Hello World" />
-			<Typography flex={1}>Hello World</Typography>
-			<IconButton size="small">
-				<CloseIcon />
-			</IconButton>
-		</RoomPopupHeader>
+	<RoomPopupRoot elevation={6}>
+		<RoomPopupHeader name="Hello world" />
+		<RoomPopupBodyRoot>
+			<MessageList />
+			<MessageInput />
+		</RoomPopupBodyRoot>
 	</RoomPopupRoot>
 );

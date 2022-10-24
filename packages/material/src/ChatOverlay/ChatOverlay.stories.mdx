@@ -3,7 +3,27 @@ import { ChatOverlay } from './ChatOverlay';
 import { ChatButton } from '../ChatButton';
 import { RoomPopup } from '../RoomPopup';
 
-<Meta title="ChatOverlay" component={ChatOverlay} />
+<Meta
+	decorators={[
+		(Story) => (
+			<Chat
+				client={client}
+				MessageComponent={ChatItemComponent}
+				itemKey="id"
+				PlaceholderComponent={PlaceholderComponent}
+				compareItems={(a, b) => {
+					return a.date.getTime() - b.date.getTime();
+				}}
+				triggerDistance={3}
+				ContainerComponent={Container}
+			>
+				<Story />
+			</Chat>
+		),
+	]}
+	title="ChatOverlay"
+	component={ChatOverlay}
+/>
 
 # ChatOverlay
 
