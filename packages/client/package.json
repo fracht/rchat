@@ -1,20 +1,23 @@
 {
 	"name": "@rchat/client",
-	"version": "0.0.0",
 	"description": "",
-	"types": "./dist/client.d.ts",
+	"version": "0.0.0",
 	"main": "./dist/index.js",
 	"module": "./dist/client.esm.js",
+	"types": "./dist/client.d.ts",
+	"author": "",
+	"license": "ISC",
+	"keywords": [],
 	"publishConfig": {
 		"access": "public"
 	},
 	"scripts": {
-		"dev": "aqu watch --no-cleanup",
-		"build": "aqu build"
+		"build": "aqu build",
+		"dev": "aqu watch --no-cleanup"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"dependencies": {
+		"@rchat/shared": "workspace:*"
+	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
 		"aqu": "0.4.3",
@@ -22,8 +25,5 @@
 	},
 	"peerDependencies": {
 		"socket.io-client": "^4.5.1"
-	},
-	"dependencies": {
-		"@rchat/shared": "workspace:*"
 	}
 }

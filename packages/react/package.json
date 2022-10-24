@@ -1,39 +1,36 @@
 {
 	"name": "@rchat/react",
-	"version": "0.1.0",
 	"description": "Awesome React chat",
+	"version": "0.1.0",
 	"main": "./dist/index.js",
 	"module": "./dist/rchat-react.esm.js",
 	"types": "./dist/rchat-react.d.ts",
+	"bugs": "https://github.com/ArtiomTr/awesome-react-chat/issues",
+	"homepage": "https://github.com/ArtiomTr/awesome-react-chat#readme",
+	"repository": "ArtiomTr/awesome-react-chat.git",
+	"author": "Artiom Tretjakovas <artiom.tretjakovas2@gmail.com>",
+	"license": "MIT",
 	"publishConfig": {
 		"access": "public"
 	},
-	"files": [
-		"dist"
-	],
 	"scripts": {
 		"build": "aqu build",
+		"build-storybook": "build-storybook",
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch",
-		"test:coverage": "aqu test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
 		"release": "np",
 		"size": "size-limit",
 		"size:why": "size-limit --why",
 		"storybook": "start-storybook -p 6006",
-		"build-storybook": "build-storybook"
+		"test": "aqu test --passWithNoTests",
+		"test:coverage": "aqu test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
+		"test:watch": "aqu test --passWithNoTests --watch"
 	},
-	"author": "Artiom Tretjakovas <artiom.tretjakovas2@gmail.com>",
-	"license": "MIT",
-	"homepage": "https://github.com/ArtiomTr/awesome-react-chat#readme",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/ArtiomTr/awesome-react-chat.git"
-	},
-	"bugs": {
-		"url": "https://github.com/ArtiomTr/awesome-react-chat/issues"
+	"dependencies": {
+		"@rchat/client": "workspace:^",
+		"@sirse-dev/safe-context": "^0.3.0",
+		"use-isomorphic-layout-effect": "^1.1.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
@@ -63,10 +60,5 @@
 	},
 	"peerDependencies": {
 		"react": ">=16"
-	},
-	"dependencies": {
-		"@rchat/client": "workspace:^",
-		"@sirse-dev/safe-context": "^0.3.0",
-		"use-isomorphic-layout-effect": "^1.1.2"
 	}
 }

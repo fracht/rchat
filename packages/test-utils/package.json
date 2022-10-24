@@ -6,22 +6,19 @@
 		"access": "public",
 		"directory": "prepared-package"
 	},
-	"files": [
-		"dist"
-	],
 	"scripts": {
 		"build": "aqu build",
+		"build-storybook": "build-storybook",
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch",
-		"release": "np",
-		"storybook": "start-storybook -p 6006",
-		"build-storybook": "build-storybook",
-		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
 		"postpublish": "rm -rf ./prepared-package",
-		"start": "nodemon ./dist/index.js"
+		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
+		"release": "np",
+		"start": "nodemon ./dist/index.js",
+		"storybook": "start-storybook -p 6006",
+		"test": "aqu test --passWithNoTests",
+		"test:watch": "aqu test --passWithNoTests --watch"
 	},
 	"dependencies": {
 		"aqu": "^0.4.3",

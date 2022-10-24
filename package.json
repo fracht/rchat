@@ -2,15 +2,16 @@
 	"name": "rchat",
 	"version": "0.0.0",
 	"private": true,
+	"scripts": {
+		"dev": "turbo run dev --parallel",
+		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
+	},
 	"devDependencies": {
 		"@changesets/cli": "^2.23.2",
 		"@types/jest": "^29.2.0",
 		"prettier": "^2.6.2",
+		"syncpack": "^8.2.4",
 		"turbo": "^1.4.3"
-	},
-	"scripts": {
-		"dev": "turbo run dev --parallel",
-		"format": "prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
 	},
 	"pnpm": {
 		"patchedDependencies": {
