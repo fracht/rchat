@@ -2,28 +2,30 @@
 	"name": "@rchat/material",
 	"version": "0.0.1",
 	"sideEffects": false,
-	"types": "./dist/material.d.ts",
 	"main": "./dist/material.d.ts",
 	"module": "./dist/material.esm.js",
+	"types": "./dist/material.d.ts",
 	"publishConfig": {
 		"access": "public",
 		"directory": "prepared-package"
 	},
-	"files": [
-		"dist"
-	],
 	"scripts": {
 		"build": "aqu build",
+		"build-storybook": "build-storybook",
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch",
+		"postpublish": "rm -rf ./prepared-package",
+		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
 		"release": "np",
 		"storybook": "start-storybook -p 6006",
-		"build-storybook": "build-storybook",
-		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
-		"postpublish": "rm -rf ./prepared-package"
+		"test": "aqu test --passWithNoTests",
+		"test:watch": "aqu test --passWithNoTests --watch"
+	},
+	"dependencies": {
+		"@mui/icons-material": "^5.10.6",
+		"@mui/system": "^5.10.6",
+		"@rchat/react": "workspace:^0.1.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
@@ -54,10 +56,5 @@
 		"@mui/material": "^5.10.6",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0"
-	},
-	"dependencies": {
-		"@mui/icons-material": "^5.10.6",
-		"@mui/system": "^5.10.6",
-		"@rchat/react": "workspace:^0.1.0"
 	}
 }

@@ -9,10 +9,10 @@
 	"scripts": {
 		"build": "aqu build",
 		"dev": "aqu watch --no-cleanup",
+		"prepublishOnly": "pnpm run build",
 		"test": "jest",
-		"test:watch": "pnpm run test --watch",
 		"test:coverage": "pnpm run test --coverage",
-		"prepublishOnly": "pnpm run build"
+		"test:watch": "pnpm run test --watch"
 	},
 	"dependencies": {
 		"@isaacs/ttlcache": "^1.2.1",
