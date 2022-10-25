@@ -10,6 +10,7 @@
 		".turbo",
 		"stories",
 		"coverage",
-		"tests"
+		"tests",
+		"tsconfig.test.json"
 	]
 }
