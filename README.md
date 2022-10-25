@@ -1,4 +1,4 @@
-# awesome-react-chat
+# RCHAT
 
 > Awesome React chat
 
