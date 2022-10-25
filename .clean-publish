@@ -6,6 +6,11 @@
 		"src",
 		".storybook",
 		"aqu.config.json",
-		"tsconfig.json"
+		"tsconfig.json",
+		".turbo",
+		"stories",
+		"coverage",
+		"tests",
+		"tsconfig.test.json"
 	]
 }
