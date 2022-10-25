@@ -63,14 +63,16 @@ export const useMessages = <TMessage,>({
 	});
 
 	const handleIncomingMessage = useCallback(
-		(event: CustomEvent<{ roomIdentifier: string; message: TMessage }>) => {
-			if (event.detail.roomIdentifier === roomIdentifier && messagesState.current.noMessagesAfter) {
-				const incomingMessageIndex = findNewElementIndex(getAllMessages(), event.detail.message, compareItems);
+		(event: CustomEvent<[message: TMessage, roomIdentifier: string]>) => {
+			const [message, messageRoomIdentifier] = event.detail;
+
+			if (messageRoomIdentifier === roomIdentifier && messagesState.current.noMessagesAfter) {
+				const incomingMessageIndex = findNewElementIndex(getAllMessages(), message, compareItems);
 
 				const keepDirection: KeepDirection =
 					visibleFrame.current.begin < visibleFrame.current.end ? 'beginning' : 'ending';
 
-				const clipped = insertMessage(event.detail.message, incomingMessageIndex + 1, keepDirection);
+				const clipped = insertMessage(message, incomingMessageIndex + 1, keepDirection);
 
 				if (clipped) {
 					if (keepDirection === 'beginning') {
@@ -85,9 +87,9 @@ export const useMessages = <TMessage,>({
 	);
 
 	useEffect(() => {
-		chatClient.addEventListener('chatMessage', handleIncomingMessage);
+		chatClient.addEventListener('receiveMessage', handleIncomingMessage);
 
-		return () => chatClient.removeEventListener('chatMessage', handleIncomingMessage);
+		return () => chatClient.removeEventListener('receiveMessage', handleIncomingMessage);
 	}, [chatClient, handleIncomingMessage]);
 
 	useEffect(() => {

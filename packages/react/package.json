@@ -11,7 +11,8 @@
 	"author": "Artiom Tretjakovas <artiom.tretjakovas2@gmail.com>",
 	"license": "MIT",
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"directory": "prepared-package"
 	},
 	"scripts": {
 		"build": "aqu build",
@@ -19,6 +20,8 @@
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
+		"postpublish": "rimraf ./prepared-package",
+		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
 		"release": "np",
 		"size": "size-limit",
 		"size:why": "size-limit --why",
@@ -54,6 +57,7 @@
 		"prettier": "^2.6.2",
 		"react": "^18.1.0",
 		"react-dom": "^18.1.0",
+		"rimraf": "^3.0.2",
 		"size-limit": "^7.0.8",
 		"socket.io-client": "^4.5.1",
 		"typescript": "^4.7.2"

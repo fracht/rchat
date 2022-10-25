@@ -12,8 +12,8 @@
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"postpublish": "rm -rf ./prepared-package",
-		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
+		"postpublish": "rimraf ./prepared-package",
+		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
 		"release": "np",
 		"start": "nodemon ./dist/index.js",
 		"storybook": "start-storybook -p 6006",
@@ -27,6 +27,7 @@
 	},
 	"devDependencies": {
 		"@rchat/server": "workspace:^0.2.0",
-		"nodemon": "^2.0.20"
+		"nodemon": "^2.0.20",
+		"rimraf": "^3.0.2"
 	}
 }

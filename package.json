@@ -3,6 +3,8 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
+		"build": "turbo run build",
+		"ci": "turbo run lint test build",
 		"dev": "turbo run dev --parallel",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
 	},

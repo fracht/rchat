@@ -1,1 +1,3 @@
-export const createDummyClient = () => {};
+export const createDummyClient = () => {
+	/** */
+};
