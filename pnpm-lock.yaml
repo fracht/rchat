@@ -26,12 +26,14 @@ importers:
       '@babel/core': ^7.18.2
       '@rchat/shared': workspace:*
       aqu: 0.4.3
+      rimraf: ^3.0.2
       socket.io-client: ^4.5.1
     dependencies:
       '@rchat/shared': link:../shared
     devDependencies:
       '@babel/core': 7.18.9
       aqu: 0.4.3_@babel+core@7.18.9
+      rimraf: 3.0.2
       socket.io-client: 4.5.1
 
   packages/material:
@@ -44,7 +46,7 @@ importers:
       '@mui/styled-engine': ^5.10.6
       '@mui/system': ^5.10.6
       '@mui/types': ^7.2.0
-      '@rchat/react': workspace:^0.1.0
+      '@rchat/react': workspace:^0.2.0
       '@storybook/addon-actions': ^6.5.12
       '@storybook/addon-essentials': ^6.5.12
       '@storybook/addon-interactions': ^6.5.12
@@ -59,6 +61,7 @@ importers:
       clean-publish: ^4.0.1
       react: ^18.1.0
       react-dom: ^18.1.0
+      rimraf: ^3.0.2
       typescript: ^4.7.2
     dependencies:
       '@mui/icons-material': 5.10.6_a6rbrczjjsdi7feyyperm2ybmm
@@ -85,7 +88,9 @@ importers:
       clean-publish: 4.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      rimraf: 3.0.2
       typescript: 4.8.3
+    publishDirectory: prepared-package
 
   packages/react:
     specifiers:
@@ -112,6 +117,7 @@ importers:
       prettier: ^2.6.2
       react: ^18.1.0
       react-dom: ^18.1.0
+      rimraf: ^3.0.2
       size-limit: ^7.0.8
       socket.io-client: ^4.5.1
       typescript: ^4.7.2
@@ -142,6 +148,7 @@ importers:
       prettier: 2.7.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      rimraf: 3.0.2
       size-limit: 7.0.8
       socket.io-client: 4.5.1
       typescript: 4.7.4
@@ -150,13 +157,14 @@ importers:
     specifiers:
       '@babel/core': ^7.18.2
       '@isaacs/ttlcache': ^1.2.1
-      '@rchat/shared': workspace:^0.0.0
+      '@rchat/shared': workspace:^0.1.0
       '@types/jest': ^29.2.0
       '@types/node': ^18.0.6
       aqu: 0.4.3
       jest: ^29.2.1
       jest-watch-typeahead: ^2.2.0
       lru-cache: ^7.14.0
+      rimraf: ^3.0.2
       socket.io: ^4.5.1
     dependencies:
       '@isaacs/ttlcache': 1.2.1
@@ -170,22 +178,29 @@ importers:
       '@types/node': 18.6.1
       aqu: 0.4.3_oofsk5z6znjspt7k5jqbsapfii
       jest-watch-typeahead: 2.2.0_jest@29.2.1
+      rimraf: 3.0.2
 
   packages/shared:
     specifiers:
       '@babel/core': ^7.18.2
       aqu: 0.4.3
+      rimraf: ^3.0.2
       socket.io: ^4.5.1
+      socket.io-client: ^4.5.1
     devDependencies:
       '@babel/core': 7.18.9
       aqu: 0.4.3_@babel+core@7.18.9
+      rimraf: 3.0.2
       socket.io: 4.5.1
+      socket.io-client: 4.5.1
+    publishDirectory: prepared-package
 
   packages/test-utils:
     specifiers:
-      '@rchat/server': workspace:^0.1.0
+      '@rchat/server': workspace:^0.2.0
       aqu: ^0.4.3
       nodemon: ^2.0.20
+      rimraf: ^3.0.2
       socket.io: ^4.5.1
       socket.io-client: ^4.5.1
     dependencies:
@@ -195,6 +210,8 @@ importers:
     devDependencies:
       '@rchat/server': link:../server
       nodemon: 2.0.20
+      rimraf: 3.0.2
+    publishDirectory: prepared-package
 
 packages:
 
@@ -8951,13 +8968,13 @@ packages:
       fs-extra: 10.1.0
       github-username: 6.0.0
       inquirer: 7.3.3
-      jest: 29.2.1_@types+node@18.6.1
-      jest-watch-typeahead: 2.2.0_jest@29.2.1
+      jest: 29.0.3_@types+node@18.6.1
+      jest-watch-typeahead: 2.2.0_jest@29.0.3
       lodash: 4.17.21
       ora: 5.4.1
       prettier: 2.7.1
       rimraf: 3.0.2
-      ts-jest: 29.0.1_kr4lkmcgycdtwe3boi3m5lllue
+      ts-jest: 29.0.1_5xfex5ckwskt2rxpawjadaqwlu
       typescript: 4.8.3
       webpack-merge: 5.8.0
       yup: 0.32.11
@@ -14174,6 +14191,34 @@ packages:
       - supports-color
       - ts-node
 
+  /jest-cli/29.0.3_@types+node@18.6.1:
+    resolution: {integrity: sha512-aUy9Gd/Kut1z80eBzG10jAn6BgS3BoBbXyv+uXEqBJ8wnnuZ5RpNfARoskSrTIy1GY4a8f32YGuCMwibtkl9CQ==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 29.0.3
+      '@jest/test-result': 29.0.3
+      '@jest/types': 29.0.3
+      chalk: 4.1.2
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      import-local: 3.1.0
+      jest-config: 29.0.3_@types+node@18.6.1
+      jest-util: 29.0.3
+      jest-validate: 29.0.3
+      prompts: 2.4.2
+      yargs: 17.5.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - supports-color
+      - ts-node
+    dev: true
+
   /jest-cli/29.2.1_@types+node@18.6.1:
     resolution: {integrity: sha512-UIMD5aNqvPKpdlJSaeUAoLfxsh9TZvOkaMETx5qXnkboc317bcbb0eLHbIj8sFBHdcJAIAM+IRKnIU7Wi61MBw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -14866,8 +14911,8 @@ packages:
       ansi-escapes: 5.0.0
       chalk: 4.1.2
       jest: 29.0.3
-      jest-regex-util: 29.0.0
-      jest-watcher: 29.0.3
+      jest-regex-util: 29.2.0
+      jest-watcher: 29.2.1
       slash: 4.0.0
       string-length: 5.0.1
       strip-ansi: 7.0.1
@@ -14967,6 +15012,26 @@ packages:
       - '@types/node'
       - supports-color
       - ts-node
+
+  /jest/29.0.3_@types+node@18.6.1:
+    resolution: {integrity: sha512-ElgUtJBLgXM1E8L6K1RW1T96R897YY/3lRYqq9uVcPWtP2AAl/nQ16IYDh/FzQOOQ12VEuLdcPU83mbhG2C3PQ==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 29.0.3
+      '@jest/types': 29.0.3
+      import-local: 3.1.0
+      jest-cli: 29.0.3_@types+node@18.6.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - supports-color
+      - ts-node
+    dev: true
 
   /jest/29.2.1_@types+node@18.6.1:
     resolution: {integrity: sha512-K0N+7rx+fv3Us3KhuwRSJt55MMpZPs9Q3WSO/spRZSnsalX8yEYOTQ1PiSN7OvqzoRX4JEUXCbOJRlP4n8m5LA==}
@@ -16795,7 +16860,7 @@ packages:
     resolution: {integrity: sha512-7Wjy+9E3WwLOEL30D+m8TSTF7qJJUJLONBnwQp0518siuMxUQUbgZwssaFX+QKlZkjHZcw/IpZCt/H0srrntSg==}
     engines: {node: '>=6'}
     dependencies:
-      ts-pnp: 1.2.0_typescript@4.8.3
+      ts-pnp: 1.2.0_typescript@4.7.4
     transitivePeerDependencies:
       - typescript
     dev: true
@@ -18918,41 +18983,6 @@ packages:
       yargs-parser: 21.0.1
     dev: true
 
-  /ts-jest/29.0.1_kr4lkmcgycdtwe3boi3m5lllue:
-    resolution: {integrity: sha512-htQOHshgvhn93QLxrmxpiQPk69+M1g7govO1g6kf6GsjCv4uvRV0znVmDrrvjUrVCnTYeY4FBxTYYYD4airyJA==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    hasBin: true
-    peerDependencies:
-      '@babel/core': '>=7.0.0-beta.0 <8'
-      '@jest/types': ^29.0.0
-      babel-jest: ^29.0.0
-      esbuild: '*'
-      jest: ^29.0.0
-      typescript: '>=4.3'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@jest/types':
-        optional: true
-      babel-jest:
-        optional: true
-      esbuild:
-        optional: true
-    dependencies:
-      '@babel/core': 7.18.9
-      bs-logger: 0.2.6
-      esbuild: 0.15.9
-      fast-json-stable-stringify: 2.1.0
-      jest: 29.2.1_@types+node@18.6.1
-      jest-util: 29.0.3
-      json5: 2.2.1
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.3.7
-      typescript: 4.8.3
-      yargs-parser: 21.0.1
-    dev: true
-
   /ts-jest/29.0.1_xqdqigz244m3lt4wgbpk45wbrm:
     resolution: {integrity: sha512-htQOHshgvhn93QLxrmxpiQPk69+M1g7govO1g6kf6GsjCv4uvRV0znVmDrrvjUrVCnTYeY4FBxTYYYD4airyJA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -18986,6 +19016,18 @@ packages:
       typescript: 4.8.3
       yargs-parser: 21.0.1
     dev: false
+
+  /ts-pnp/1.2.0_typescript@4.7.4:
+    resolution: {integrity: sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==}
+    engines: {node: '>=6'}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.7.4
+    dev: true
 
   /ts-pnp/1.2.0_typescript@4.8.3:
     resolution: {integrity: sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==}
@@ -19324,6 +19366,7 @@ packages:
   /unified/9.2.0:
     resolution: {integrity: sha512-vx2Z0vY+a3YoTj8+pttM3tiJHCwY5UFbYdiWrwBEbHmK8pvsPj2rtAX2BFfgXen8T39CJWblWRDT4L5WGXtDdg==}
     dependencies:
+      '@types/unist': 2.0.6
       bail: 1.0.5
       extend: 3.0.2
       is-buffer: 2.0.5

@@ -1,7 +1,10 @@
-export type CustomEventMap = Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFunction = (...parameters: any[]) => void;
 
-export interface CustomEventListener<T> {
-	(event: CustomEvent<T>): void;
+export type CustomEventMap = Record<string, AnyFunction>;
+
+export interface CustomEventListener<T extends AnyFunction> {
+	(event: CustomEvent<Parameters<T>>): void;
 }
 
 export class CustomEventTarget<TEventMap extends CustomEventMap> {
@@ -11,7 +14,7 @@ export class CustomEventTarget<TEventMap extends CustomEventMap> {
 		this.eventTarget = new EventTarget();
 	}
 
-	public dispatchEvent(event: CustomEvent<TEventMap[keyof TEventMap]>): boolean {
+	public dispatchEvent(event: CustomEvent<Parameters<TEventMap[keyof TEventMap]>>): boolean {
 		return this.eventTarget.dispatchEvent(event);
 	}
 

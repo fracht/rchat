@@ -1,6 +1,6 @@
-import { Socket, io } from 'socket.io-client';
+import { ChatClientSocket, ChatSocketListenMap } from '@rchat/shared';
+import { io } from 'socket.io-client';
 import { CustomEventTarget } from './CustomEventTarget';
-import { ChatEventMap } from '@rchat/shared';
 
 export type MessageFetchResult<TMessage> = {
 	messages: TMessage[];
@@ -15,28 +15,28 @@ export type MessageFetcher<TMessage> = (
 	after: TMessage | undefined,
 ) => Promise<MessageFetchResult<TMessage>>;
 
-export class ChatClient<TMessage> extends CustomEventTarget<ChatEventMap<TMessage>> {
-	private readonly socket: Socket;
+export class ChatClient<TMessage> extends CustomEventTarget<ChatSocketListenMap<TMessage>> {
+	private readonly socket: ChatClientSocket<TMessage>;
 
 	public constructor(url: string, fetchMessages: MessageFetcher<TMessage>);
-	public constructor(socket: Socket, fetchMessages: MessageFetcher<TMessage>);
-	public constructor(urlOrSocket: string | Socket, public readonly fetchMessages: MessageFetcher<TMessage>) {
+	public constructor(socket: ChatClientSocket<TMessage>, fetchMessages: MessageFetcher<TMessage>);
+	public constructor(
+		urlOrSocket: string | ChatClientSocket<TMessage>,
+		public readonly fetchMessages: MessageFetcher<TMessage>,
+	) {
 		super();
 		if (typeof urlOrSocket === 'string') {
 			this.socket = io(urlOrSocket);
 		} else {
 			this.socket = urlOrSocket;
 		}
-		this.socket.on('chatMessage', (message: { message: TMessage; roomIdentifier: string }) => {
-			this.dispatchEvent(new CustomEvent('chatMessage', { detail: message }));
+		this.socket.on('receiveMessage', (message: TMessage, roomIdentifier: string) => {
+			this.dispatchEvent(new CustomEvent('receiveMessage', { detail: [message, roomIdentifier] }));
 		});
 	}
 
-	public sendMessage = (roomIdentifier: string, message: TMessage) => {
-		this.socket.emit('chatMessage', {
-			roomIdentifier,
-			message,
-		});
+	public sendMessage = (message: TMessage, roomIdentifier: string) => {
+		this.socket.emit('sendMessage', message, roomIdentifier);
 	};
 
 	public close = () => {

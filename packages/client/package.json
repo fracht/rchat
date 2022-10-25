@@ -9,11 +9,14 @@
 	"license": "ISC",
 	"keywords": [],
 	"publishConfig": {
-		"access": "public"
+		"access": "public",
+		"directory": "prepared-package"
 	},
 	"scripts": {
 		"build": "aqu build",
-		"dev": "aqu watch --no-cleanup"
+		"dev": "aqu watch --no-cleanup",
+		"postpublish": "rimraf ./prepared-package",
+		"prepublishOnly": "rimraf ./prepared-package && clean-publish"
 	},
 	"dependencies": {
 		"@rchat/shared": "workspace:*"
@@ -21,6 +24,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
 		"aqu": "0.4.3",
+		"rimraf": "^3.0.2",
 		"socket.io-client": "^4.5.1"
 	},
 	"peerDependencies": {

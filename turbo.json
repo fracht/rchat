@@ -4,6 +4,21 @@
 		"dev": {
 			"cache": false,
 			"dependsOn": ["^dev"]
+		},
+		"build": {
+			"cache": true,
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", "build/**"],
+			"inputs": ["src/**/*.tsx", "src/**/*.ts"]
+		},
+		"test": {
+			"cache": true,
+			"dependsOn": [],
+			"outputs": [],
+			"inputs": ["src/**/*.tsx", "src/**/*.ts", "tests/**/*.ts", "tests/**/*.tsx"]
+		},
+		"lint": {
+			"outputs": []
 		}
 	}
 }

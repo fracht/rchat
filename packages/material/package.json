@@ -15,8 +15,8 @@
 		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"postpublish": "rm -rf ./prepared-package",
-		"prepublishOnly": "rm -rf ./prepared-package && clean-publish",
+		"postpublish": "rimraf ./prepared-package",
+		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
 		"release": "np",
 		"storybook": "start-storybook -p 6006",
 		"test": "aqu test --passWithNoTests",
@@ -48,6 +48,7 @@
 		"clean-publish": "^4.0.1",
 		"react": "^18.1.0",
 		"react-dom": "^18.1.0",
+		"rimraf": "^3.0.2",
 		"typescript": "^4.7.2"
 	},
 	"peerDependencies": {
