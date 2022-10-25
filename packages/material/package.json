@@ -45,7 +45,6 @@
 		"@types/react": "^18.0.9",
 		"aqu": "^0.4.3",
 		"babel-loader": "^8.2.5",
-		"clean-publish": "^4.0.1",
 		"react": "^18.1.0",
 		"react-dom": "^18.1.0",
 		"rimraf": "^3.0.2",

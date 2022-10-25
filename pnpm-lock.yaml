@@ -11,12 +11,14 @@ importers:
     specifiers:
       '@changesets/cli': ^2.23.2
       '@types/jest': ^29.2.0
+      clean-publish: ^4.0.1
       prettier: ^2.6.2
       syncpack: ^8.2.4
       turbo: ^1.4.3
     devDependencies:
       '@changesets/cli': 2.23.2
       '@types/jest': 29.2.0
+      clean-publish: 4.0.1
       prettier: 2.7.1
       syncpack: 8.2.4
       turbo: 1.4.3
@@ -58,7 +60,6 @@ importers:
       '@types/react': ^18.0.9
       aqu: ^0.4.3
       babel-loader: ^8.2.5
-      clean-publish: ^4.0.1
       react: ^18.1.0
       react-dom: ^18.1.0
       rimraf: ^3.0.2
@@ -85,7 +86,6 @@ importers:
       '@types/react': 18.0.15
       aqu: 0.4.3_@babel+core@7.18.9
       babel-loader: 8.2.5_@babel+core@7.18.9
-      clean-publish: 4.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
