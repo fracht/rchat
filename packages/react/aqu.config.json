@@ -2,7 +2,11 @@
 	"name": "rchat-react",
 	"buildOptions": {
 		"target": ["es2019", "chrome58", "firefox57", "safari11", "edge18", "node12"],
-		"preserveSymlinks": true
+		"preserveSymlinks": true,
+		"jsxFactory": "_jsx",
+		"banner": {
+			"js": "import {jsx as _jsx} from 'react/jsx-runtime';"
+		}
 	},
 	"dtsBundleGeneratorOptions": {
 		"libraries": {
