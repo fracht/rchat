@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.1.1
+
+### Patch Changes
+
+-   cc2d168: Fix React transforms
+-   Updated dependencies [cc2d168]
+    -   @rchat/react@0.2.1
+
 ## 0.1.0
 
 ### Minor Changes
