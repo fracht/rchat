@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.1.2
+
+### Patch Changes
+
+-   23f3c11: Set pointer-events to none for a ChatOverlay
+
 ## 0.1.1
 
 ### Patch Changes

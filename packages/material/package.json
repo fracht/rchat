@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/material",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"sideEffects": false,
 	"main": "./dist/material.d.ts",
 	"module": "./dist/material.esm.js",
