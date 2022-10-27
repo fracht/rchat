@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.2.2
+
+### Patch Changes
+
+-   d712295: Fix react transform (for the second time ;)
+
 ## 0.2.1
 
 ### Patch Changes

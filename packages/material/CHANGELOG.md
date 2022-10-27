@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.1.3
+
+### Patch Changes
+
+-   d712295: Fix react transform (for the second time ;)
+-   Updated dependencies [d712295]
+    -   @rchat/react@0.2.2
+
 ## 0.1.2
 
 ### Patch Changes
