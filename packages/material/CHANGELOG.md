@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.1.4
+
+### Patch Changes
+
+-   Rebuild
+-   Updated dependencies
+    -   @rchat/react@0.2.3
+
 ## 0.1.3
 
 ### Patch Changes
