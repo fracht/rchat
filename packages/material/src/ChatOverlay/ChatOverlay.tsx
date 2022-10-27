@@ -12,6 +12,7 @@ const ChatOverlayRoot = styled('div', {
 	display: 'flex',
 	justifyContent: 'flex-end',
 	alignItems: 'flex-end',
+	pointerEvents: 'none',
 }));
 
 const ChatOverlayGrid = styled('div', {
