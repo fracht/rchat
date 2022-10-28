@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.2.4
+
+### Patch Changes
+
+-   6d9f686: Fixed children property type for ChatOverlay
+    -   @rchat/react@0.2.4
+
 ## 0.1.6
 
 ### Patch Changes
