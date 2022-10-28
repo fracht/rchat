@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.1.5
+
+### Patch Changes
+
+-   cd004f6: Fixed ChatOverlay types
+-   cf7fee5: Increased hit zone for ChatButton
+
 ## 0.1.4
 
 ### Patch Changes
