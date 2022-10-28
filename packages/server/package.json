@@ -19,7 +19,6 @@
 	"dependencies": {
 		"@isaacs/ttlcache": "^1.2.1",
 		"@rchat/shared": "workspace:^0.1.0",
-		"jest": "^29.2.1",
 		"lru-cache": "^7.14.0",
 		"socket.io": "^4.5.1"
 	},
@@ -28,6 +27,7 @@
 		"@types/jest": "^29.2.0",
 		"@types/node": "^18.0.6",
 		"aqu": "0.4.3",
+		"jest": "^29.2.2",
 		"jest-watch-typeahead": "^2.2.0",
 		"rimraf": "^3.0.2"
 	}
