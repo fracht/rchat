@@ -1,5 +1,5 @@
-import { ComponentProps, ReactElement } from 'react';
-import { createMuiComponent } from '../helpers/createMuiComponent';
+import { ComponentProps, ElementType, ReactElement } from 'react';
+import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
 
 const ChatOverlayRoot = styled('div', {
@@ -26,8 +26,8 @@ const ChatOverlayGrid = styled('div', {
 }));
 
 type InternalChatOverlayProps = {
-	gridProps: ComponentProps<typeof ChatOverlayGrid>;
-	children: ReactElement;
+	gridProps?: ComponentProps<typeof ChatOverlayGrid>;
+	children?: ReactElement;
 };
 
 export const ChatOverlay = createMuiComponent<InternalChatOverlayProps, 'div'>(
@@ -37,3 +37,9 @@ export const ChatOverlay = createMuiComponent<InternalChatOverlayProps, 'div'>(
 		</ChatOverlayRoot>
 	),
 );
+
+export type ChatOverlayProps<TComponent extends ElementType = 'div', TAdditionalProps = {}> = MuiComponentProps<
+	InternalChatOverlayProps,
+	TComponent,
+	TAdditionalProps
+>;
