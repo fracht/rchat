@@ -17,8 +17,6 @@ export const createMuiComponent = <TProperties, TDefaultElement extends ElementT
 };
 
 // eslint-disable-next-line unicorn/prevent-abbreviations
-export type MuiComponentProps<
-	TProperties,
-	TDefaultComponent extends ElementType,
-	TAdditionalProperties,
-> = OverrideProps<GenericTypeMap<TProperties, TDefaultComponent, TAdditionalProperties>, TDefaultComponent>;
+export type MuiComponentProps<TProperties, TDefaultComponent extends ElementType, TAdditionalProperties> = Partial<
+	OverrideProps<GenericTypeMap<TProperties, TDefaultComponent, TAdditionalProperties>, TDefaultComponent>
+>;
