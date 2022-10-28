@@ -1,4 +1,4 @@
-import { ComponentProps, ElementType, ReactElement } from 'react';
+import { ComponentProps, ElementType, ReactNode } from 'react';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
 
@@ -27,7 +27,7 @@ const ChatOverlayGrid = styled('div', {
 
 type InternalChatOverlayProps = {
 	gridProps?: ComponentProps<typeof ChatOverlayGrid>;
-	children?: ReactElement;
+	children?: ReactNode;
 };
 
 export const ChatOverlay = createMuiComponent<InternalChatOverlayProps, 'div'>(
