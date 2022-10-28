@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.1.6
+
+### Patch Changes
+
+-   56e57ae: Add exports for new components
+
 ## 0.1.5
 
 ### Patch Changes
