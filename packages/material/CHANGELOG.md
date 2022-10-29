@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.2.5
+
+### Patch Changes
+
+-   f54c4dc: Added Room & RoomList components
+    -   @rchat/react@0.2.5
+
 ## 0.2.4
 
 ### Patch Changes
