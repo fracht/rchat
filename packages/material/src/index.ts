@@ -1,6 +1,7 @@
 export * from './AccountAvatar';
 export * from './ChatButton';
 export * from './ChatOverlay';
+export * from './ChatPopup';
 export * from './MediaGroup';
 export * from './MediaGroupItem';
 export * from './MediaGroupViewer';
@@ -8,4 +9,5 @@ export * from './MessageBox';
 export * from './MessageEmoji';
 export * from './MessageInput';
 export * from './MessageText';
-export * from './RoomPopup';
+export * from './Room';
+export * from './RoomList';

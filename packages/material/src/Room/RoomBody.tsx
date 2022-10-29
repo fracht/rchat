@@ -1,7 +1,7 @@
 import { styled } from '../styles/styled';
 
-export const RoomPopupBodyRoot = styled('div', {
-	name: 'RoomPopup',
+export const RoomBody = styled('div', {
+	name: 'Room',
 	slot: 'Body',
 })(({ theme }) => ({
 	flex: 1,
