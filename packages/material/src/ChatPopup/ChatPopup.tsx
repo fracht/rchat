@@ -7,4 +7,5 @@ export const ChatPopup = styled(Paper, {
 })({
 	width: 280,
 	height: 340,
+	pointerEvents: 'all',
 });
