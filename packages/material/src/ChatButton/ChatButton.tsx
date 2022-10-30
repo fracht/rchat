@@ -8,6 +8,7 @@ const ChatButtonClickZone = styled('div', {
 })(({ theme }) => ({
 	padding: theme.spacing(2),
 	margin: theme.spacing(0, -2, -2, 0),
+	pointerEvents: 'all',
 }));
 
 const ChatButtonRoot = styled(Fab, {
@@ -16,7 +17,6 @@ const ChatButtonRoot = styled(Fab, {
 })(({ theme }) => ({
 	background: theme.palette.background.paper,
 	color: theme.palette.text.secondary,
-	pointerEvents: 'all',
 }));
 
 export const ChatButton = () => (
