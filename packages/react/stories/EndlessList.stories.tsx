@@ -162,10 +162,8 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 				onBottomReached={() => {
 					setMessages((old) => {
 						const newMsgs = generateMessageArray(20);
-
 						return [...old, ...newMsgs].slice(-100);
 					});
-
 					props.onBottomReached?.();
 				}}
 			/>
@@ -197,19 +195,17 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 
 const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <TestComponent {...args} />;
 
-const Container = forwardRef(
-	({ innerContainerRef, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
-		<div
-			style={{
-				overflow: 'auto',
-				height: 300,
-			}}
-			ref={ref}
-		>
-			<div ref={innerContainerRef as React.Ref<HTMLDivElement>}>{children}</div>
-		</div>
-	),
-);
+const Container = forwardRef(({ children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
+	<div
+		style={{
+			overflow: 'auto',
+			height: 300,
+		}}
+		ref={ref}
+	>
+		{children}
+	</div>
+));
 
 export const Default = Template.bind({});
 Default.args = {
