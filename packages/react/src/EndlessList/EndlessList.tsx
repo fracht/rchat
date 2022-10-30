@@ -1,7 +1,6 @@
 import {
 	ComponentType,
 	PropsWithChildren,
-	Ref,
 	RefAttributes,
 	useCallback,
 	useEffect,
@@ -21,10 +20,7 @@ import { useEndlessList } from './useEndlessList';
 import { Frame, useVisibleFrame } from './useVisibleFrame';
 import type { KeysOfType } from '../internal/KeysOfType';
 
-export type ContainerComponentProps = PropsWithChildren<{
-	innerContainerRef: Ref<HTMLElement>;
-}> &
-	RefAttributes<HTMLElement>;
+export type ContainerComponentProps = PropsWithChildren<RefAttributes<HTMLElement>>;
 
 export type ItemKey<T> = KeysOfType<T, Key> | ((value: T) => Key);
 
@@ -64,7 +60,6 @@ export const EndlessList = <T,>({
 	onVisibleFrameChange,
 }: EndlessListProps<T>) => {
 	const scrollableContainerReference = useRef<HTMLElement>(null);
-	const contentContainerReference = useRef<HTMLElement>(null);
 	const focusElementReference = useRef<HTMLElement>(null);
 	const stickToBottomReached = useRef(false);
 	const isScrolling = useRef(false);
@@ -83,16 +78,16 @@ export const EndlessList = <T,>({
 	}, [items, setBottomReached, setTopReached]);
 
 	useLayoutEffect(() => {
-		if (scrollableContainerReference.current && contentContainerReference.current) {
-			scrollableContainerReference.current.scrollTop =
-				contentContainerReference.current.getBoundingClientRect().height;
+		const container = scrollableContainerReference.current;
+		if (container) {
+			container.scrollTo({ top: container.scrollHeight });
 		}
 	}, []);
 
 	useLayoutEffect(() => {
-		if (stickToBottomReached.current && canStickToBottom) {
-			scrollableContainerReference.current!.scrollTop =
-				contentContainerReference.current!.getBoundingClientRect().height;
+		const container = scrollableContainerReference.current;
+		if (container && stickToBottomReached.current && canStickToBottom) {
+			container.scrollTo({ top: container.scrollHeight });
 		}
 	}, [items, canStickToBottom]);
 
@@ -147,7 +142,7 @@ export const EndlessList = <T,>({
 	});
 
 	return (
-		<ContainerComponent ref={scrollableContainerReference} innerContainerRef={contentContainerReference}>
+		<ContainerComponent ref={scrollableContainerReference}>
 			{visibleItems.map((item) => (
 				<EndlessListItemView
 					key={item.itemKey}
