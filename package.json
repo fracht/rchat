@@ -6,7 +6,9 @@
 		"build": "turbo run build",
 		"ci": "turbo run lint test build",
 		"dev": "turbo run dev --parallel",
-		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}"
+		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
+		"release": "pnpm build && pnpm publish -r",
+		"bump": "changeset version && pnpm i --lockfile-only"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.23.2",
