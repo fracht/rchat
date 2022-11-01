@@ -1,5 +1,14 @@
 # @rchat/material
 
+## 0.3.0
+
+### Patch Changes
+
+-   7593f4e: Make ChatPopup receive pointer events
+-   1e0b1f4: Fixed click zone for ChatButton component
+-   Updated dependencies [dcfd53a]
+    -   @rchat/react@0.3.0
+
 ## 0.2.5
 
 ### Patch Changes

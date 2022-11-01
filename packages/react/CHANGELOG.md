@@ -1,5 +1,15 @@
 # @rchat/react
 
+## 0.3.0
+
+### Minor Changes
+
+-   dcfd53a: Removed innerRef property from EndlessList's container component
+
+### Patch Changes
+
+-   @rchat/client@0.3.0
+
 ## 0.2.5
 
 ### Patch Changes
