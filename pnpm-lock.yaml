@@ -49,7 +49,6 @@ importers:
       '@mui/styled-engine': ^5.10.6
       '@mui/system': ^5.10.6
       '@mui/types': ^7.2.0
-      '@rchat/react': workspace:^0.5.1
       '@storybook/addon-actions': ^6.5.13
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/addon-interactions': ^6.5.13
@@ -68,7 +67,6 @@ importers:
     dependencies:
       '@mui/icons-material': 5.10.6_a6rbrczjjsdi7feyyperm2ybmm
       '@mui/system': 5.10.6_kcpiyy5fhbit5pkf4mbuqi3fyu
-      '@rchat/react': link:../react
     devDependencies:
       '@babel/core': 7.18.9
       '@emotion/react': 11.10.4_szkdlbnthht4v3jvm76fn7u6na
@@ -96,7 +94,6 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.18.2
-      '@rchat/client': workspace:^
       '@sirse-dev/eslint-config': ^1.0.6
       '@sirse-dev/safe-context': ^0.3.0
       '@size-limit/preset-small-lib': ^7.0.8
@@ -124,7 +121,6 @@ importers:
       typescript: ^4.7.2
       use-isomorphic-layout-effect: ^1.1.2
     dependencies:
-      '@rchat/client': link:../client
       '@sirse-dev/safe-context': 0.3.0_react@18.2.0
       use-isomorphic-layout-effect: 1.1.2
     devDependencies:
