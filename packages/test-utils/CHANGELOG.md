@@ -1,5 +1,11 @@
 # @rchat/test-utils
 
+## 0.4.1
+
+### Patch Changes
+
+-   3cdb898: Attached connection information for service
+
 ## 0.4.0
 
 ## 0.3.0

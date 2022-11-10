@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.4.1
+
+### Patch Changes
+
+-   3cdb898: Attached connection information for service
+    -   @rchat/shared@0.4.1
+
 ## 0.4.0
 
 ### Minor Changes
