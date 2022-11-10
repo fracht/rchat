@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.4.1
+
+### Patch Changes
+
+-   @rchat/react@0.4.1
+
 ## 0.4.0
 
 ### Patch Changes
