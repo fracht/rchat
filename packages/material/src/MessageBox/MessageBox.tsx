@@ -1,3 +1,4 @@
+import { CSSObject, Typography } from '@mui/material';
 import { ElementType, ReactElement } from 'react';
 import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
@@ -13,6 +14,20 @@ type MessageBoxState = {
 	position: MessagePosition;
 };
 
+const getGridProperties = (orientation: MessageOrientation): CSSObject => {
+	if (orientation === 'left') {
+		return {
+			gridTemplateAreas: '"avatar content" ". time"',
+			gridTemplateColumns: '28px auto',
+		};
+	}
+
+	return {
+		gridTemplateAreas: '"content" "time"',
+		gridTemplateColumns: 'auto',
+	};
+};
+
 const MessageBoxRoot = styled<MessageBoxState, 'div'>('div', {
 	name: 'MessageBox',
 	slot: 'Root',
@@ -20,10 +35,9 @@ const MessageBoxRoot = styled<MessageBoxState, 'div'>('div', {
 })(({ theme, ownerState: { orientation, position } }) => {
 	return {
 		marginBottom: ['end', 'single'].includes(position) ? theme.spacing(1.5) : theme.spacing(0.25),
-		display: 'flex',
-		justifyContent: 'flex-start',
-		flexDirection: orientation === 'left' ? 'row' : 'row-reverse',
-		gap: theme.spacing(1),
+		display: 'grid',
+		columnGap: theme.spacing(1),
+		...getGridProperties(orientation),
 	};
 });
 
@@ -35,6 +49,8 @@ const MessageBoxContent = styled<MessageBoxState, 'div'>('div', {
 	const bottomSideRadius = ['end', 'middle'].includes(position) ? 0.5 : 2.25;
 
 	return {
+		gridArea: 'content',
+		justifySelf: orientation === 'left' ? 'flex-start' : 'flex-end',
 		borderRadius:
 			orientation === 'left'
 				? theme.spacing(bottomSideRadius, 2.25, 2.25, topSideRadius)
@@ -42,29 +58,75 @@ const MessageBoxContent = styled<MessageBoxState, 'div'>('div', {
 	};
 });
 
-const MessageBoxAvatarWrapper = styled<MessageBoxState, 'div'>('div', {
+const MessageBoxAvatarWrapper = styled('div', {
 	name: 'MessageBox',
 	slot: 'Avatar',
-})(({ ownerState: { orientation } }) => ({
-	width: 28,
+})({
 	alignSelf: 'flex-end',
-	display: orientation === 'right' ? 'none' : undefined,
+	gridArea: 'avatar',
+});
+
+const MessageBoxTime = styled<MessageBoxState, typeof Typography>(Typography, {
+	name: 'MessageBox',
+	slot: 'Time',
+})(({ theme, ownerState: { orientation } }) => ({
+	gridArea: 'time',
+	justifySelf: orientation === 'left' ? 'flex-start' : 'flex-end',
+	...theme.typography.body2,
+	color: theme.palette.grey[600],
+	padding: theme.spacing(0, 1),
 }));
 
 type InternalMessageBoxProps = {
 	author?: MuiAccountInfo;
+	time?: Date;
 	children: ReactElement;
 } & MessageBoxState;
 
+const formatTime = (time: Date) => {
+	const diff = (time.getTime() - Date.now()) / 1000;
+
+	const relativeFormat = new Intl.RelativeTimeFormat(undefined, { localeMatcher: 'best fit' });
+
+	if (-diff < 60) {
+		return relativeFormat.format(Math.round(diff), 'second');
+	}
+
+	if (-diff < 3600) {
+		return relativeFormat.format(Math.round(diff / 60), 'minute');
+	}
+
+	if (-diff < 43_200) {
+		return relativeFormat.format(Math.round(diff / 3600), 'hours');
+	}
+
+	const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: 'numeric',
+		hour12: false,
+		minute: '2-digit',
+		localeMatcher: 'best fit',
+	});
+
+	return dateTimeFormat.format(time);
+};
+
 export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
-	({ children, component, orientation, position, author, ...props }) => (
+	({ children, component, orientation, position, time, author, ...props }) => (
 		<MessageBoxRoot ownerState={{ orientation, position }}>
-			<MessageBoxAvatarWrapper ownerState={{ orientation, position }}>
-				{author && <AccountAvatar {...author} />}
-			</MessageBoxAvatarWrapper>
+			{author && (
+				<MessageBoxAvatarWrapper>
+					<AccountAvatar {...author} />
+				</MessageBoxAvatarWrapper>
+			)}
 			<MessageBoxContent as={component} ownerState={{ orientation, position }} {...props}>
 				{children}
 			</MessageBoxContent>
+			{time && position === 'end' && (
+				<MessageBoxTime ownerState={{ orientation, position }}>{formatTime(time)}</MessageBoxTime>
+			)}
 		</MessageBoxRoot>
 	),
 );
