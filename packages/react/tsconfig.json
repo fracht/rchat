@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "es6",
 		"jsx": "react-jsx",
-		"module": "esnext",
+		"module": "CommonJS",
 		"declaration": true,
 		"strict": true,
 		"esModuleInterop": true,
@@ -17,8 +17,8 @@
 		"noFallthroughCasesInSwitch": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noEmit": true
+		"outDir": "dist"
 	},
-	"include": ["src", "stories"],
+	"include": ["src"],
 	"exclude": ["node_modules", "test", "example"]
 }

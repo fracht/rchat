@@ -2,12 +2,13 @@
 	"compilerOptions": {
 		"target": "es6",
 		"jsx": "react-jsx",
-		"module": "esnext",
+		"module": "CommonJS",
 		"declaration": true,
 		"strict": true,
 		"esModuleInterop": true,
 		"lib": ["es2022", "DOM"],
 		"noLib": false,
+		"outDir": "dist",
 		"rootDir": ".",
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
@@ -16,8 +17,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
 		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": true
+		"isolatedModules": true
 	},
 	"include": ["src", "stories"],
 	"exclude": ["node_modules", "test", "example"]
