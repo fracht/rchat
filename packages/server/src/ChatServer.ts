@@ -31,7 +31,7 @@ export class ChatServer<TMessageType> {
 	) => {
 		const [broadcastChannel, savedMessage] = await Promise.all([
 			this.roomManager.broadcast(socket, roomIdentifier),
-			this.service.saveMessage(socket.data as ConnectionInfo, message),
+			this.service.saveMessage(socket.data as ConnectionInfo, message, roomIdentifier),
 		]);
 
 		broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
