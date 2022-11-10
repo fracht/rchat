@@ -1,5 +1,13 @@
 # @rchat/client
 
+## 0.5.1
+
+### Patch Changes
+
+-   c0fdf6a: Fix clean-publish configuration
+-   Updated dependencies [c0fdf6a]
+    -   @rchat/shared@0.5.1
+
 ## 0.5.0
 
 ### Patch Changes
