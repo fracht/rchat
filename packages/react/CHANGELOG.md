@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.5.2
+
+### Patch Changes
+
+-   ce354b9: Fixed type mismatches
+    -   @rchat/client@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes
