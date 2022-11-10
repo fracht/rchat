@@ -190,6 +190,9 @@ importers:
       rimraf: ^3.0.2
       socket.io: ^4.5.1
       socket.io-client: ^4.5.1
+      zod: ^3.19.1
+    dependencies:
+      zod: 3.19.1
     devDependencies:
       '@babel/core': 7.18.9
       aqu: 0.4.3_@babel+core@7.18.9
@@ -20211,6 +20214,10 @@ packages:
       nanoclone: 0.2.1
       property-expr: 2.0.5
       toposort: 2.0.2
+
+  /zod/3.19.1:
+    resolution: {integrity: sha512-LYjZsEDhCdYET9ikFu6dVPGp2YH9DegXjdJToSzD9rO6fy4qiRYFoyEYwps88OseJlPyl2NOe2iJuhEhL7IpEA==}
+    dev: false
 
   /zwitch/1.0.5:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}

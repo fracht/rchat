@@ -1,49 +1,35 @@
-import { ChatService } from './ChatService';
-import type { ExtendedError } from 'socket.io/dist/namespace';
-import { ChatServerType, ChatSocketType } from '@rchat/shared';
-import { RoomManager } from './RoomManager';
+import {
+	createTransfer,
+	createTransferPlugin,
+	Transfer,
+	TransferEventMap,
+	TransferPlugin,
+	EventMapToHandlers,
+} from '@rchat/shared';
 
-export class ChatServer<TMessageType> {
-	private readonly roomManager;
-	private readonly service;
-	private readonly server;
+type ServerEventMap<TPlugin extends TransferPlugin<TransferEventMap, TransferEventMap>> =
+	TPlugin extends TransferPlugin<infer TServerEventMap, TransferEventMap> ? TServerEventMap : never;
 
-	public constructor(service: ChatService, server: ChatServerType<TMessageType>) {
-		this.server = server;
-		this.service = service;
-		this.roomManager = new RoomManager<TMessageType>(server, service.getChatParticipants);
-		this.initializeServer();
-	}
+type ConvertNames<T extends string | number | symbol> = T extends string ? `handle${Capitalize<T>}` : never;
+type ReverseName<T extends string> = T extends `handle${infer OriginalName}` ? Uncapitalize<OriginalName> : T;
 
-	private initializeServer = () => {
-		this.server.use(this.authentication);
-		this.server.on('connection', this.handleConnection);
-	};
+export type ServerEventHandler<TPlugin extends TransferPlugin<TransferEventMap, TransferEventMap>> = {
+	[TKey in ConvertNames<keyof EventMapToHandlers<ServerEventMap<TPlugin>>>]: EventMapToHandlers<
+		ServerEventMap<TPlugin>
+	>[ReverseName<TKey>];
+};
 
-	private handleConnection = async (socket: ChatSocketType<TMessageType>) => {
-		socket.on('sendMessage', (message, roomIdentifier) => this.handleMessage(socket, message, roomIdentifier));
-	};
+export type PluginsToHandlers<TPlugins extends readonly TransferPlugin<TransferEventMap, TransferEventMap>[]> = {
+	[TKey in keyof TPlugins]: ServerEventHandler<TPlugins[TKey]>;
+};
 
-	private handleMessage = async (
-		socket: ChatSocketType<TMessageType>,
-		message: TMessageType,
-		roomIdentifier: string,
-	) => {
-		const broadcastChannel = await this.roomManager.broadcast(socket, roomIdentifier);
+export type TransferToHandlers<
+	TTransfer extends Transfer<readonly TransferPlugin<TransferEventMap, TransferEventMap>[]>,
+> = TTransfer extends Transfer<infer TPlugins> ? PluginsToHandlers<TPlugins> : never;
 
-		broadcastChannel.emit('receiveMessage', message, roomIdentifier);
-	};
-
-	private authentication = async (socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) => {
-		try {
-			const connectionInfo = await this.service.fetchConnectionInfo(socket.request);
-
-			socket.data = connectionInfo;
-
-			next();
-		} catch (error) {
-			console.error('Unexpected error occurred while trying to get user identifier', error);
-			next(new Error('Forbidden'));
-		}
-	};
-}
+export const createChatServer = <
+	TTransfer extends Transfer<readonly TransferPlugin<TransferEventMap, TransferEventMap>[]>,
+>(
+	transfer: TTransfer,
+	handlers: TransferToHandlers<TTransfer>,
+) => {};
