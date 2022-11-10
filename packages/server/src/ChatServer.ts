@@ -1,6 +1,6 @@
 import { ChatService } from './ChatService';
 import type { ExtendedError } from 'socket.io/dist/namespace';
-import { ChatServerType, ChatSocketType } from '@rchat/shared';
+import { ChatServerType, ChatSocketType, ConnectionInfo } from '@rchat/shared';
 import { RoomManager } from './RoomManager';
 
 export class ChatServer<TMessageType> {
@@ -31,7 +31,7 @@ export class ChatServer<TMessageType> {
 	) => {
 		const [broadcastChannel, savedMessage] = await Promise.all([
 			this.roomManager.broadcast(socket, roomIdentifier),
-			this.service.saveMessage(message),
+			this.service.saveMessage(socket.data as ConnectionInfo, message),
 		]);
 
 		broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
