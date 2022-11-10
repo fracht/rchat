@@ -1,5 +1,11 @@
 # @rchat/shared
 
+## 0.5.1
+
+### Patch Changes
+
+-   c0fdf6a: Fix clean-publish configuration
+
 ## 0.5.0
 
 ## 0.4.4

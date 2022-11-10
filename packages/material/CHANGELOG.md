@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.5.1
+
+### Patch Changes
+
+-   c0fdf6a: Fix clean-publish configuration
+-   Updated dependencies [c0fdf6a]
+    -   @rchat/react@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes
