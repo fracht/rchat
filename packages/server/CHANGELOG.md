@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.4.2
+
+### Patch Changes
+
+-   5e3cd0d: Added roomIdentifier for saveMessage function in ChatService
+    -   @rchat/shared@0.4.2
+
 ## 0.4.1
 
 ### Patch Changes
