@@ -35,6 +35,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
+		"@rchat/client": "workspace:^0.5.1",
 		"@sirse-dev/eslint-config": "^1.0.6",
 		"@size-limit/preset-small-lib": "^7.0.8",
 		"@storybook/addon-actions": "^6.5.9",
@@ -61,7 +62,7 @@
 		"typescript": "^4.7.2"
 	},
 	"peerDependencies": {
-		"react": ">=16",
-		"@rchat/client": "workspace:^"
+		"@rchat/client": "workspace:^",
+		"react": ">=16"
 	}
 }
