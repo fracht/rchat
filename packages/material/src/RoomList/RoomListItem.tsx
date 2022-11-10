@@ -1,13 +1,28 @@
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
+import { ElementType } from 'react';
 import { AccountAvatar } from '../AccountAvatar';
+import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 
-export const RoomListItem = () => (
-	<ListItem>
-		<ListItemAvatar>
-			<AccountAvatar username="Hello World" />
-		</ListItemAvatar>
-		<ListItemText primary="Hello World" secondary="Lorem ipsum dolor sit amet" />
-	</ListItem>
+type InternalRootListItemProps = {
+	name: string;
+	thumbUrl?: string;
+	unseenMessageText: string;
+};
+
+export const RoomListItem = createMuiComponent<InternalRootListItemProps, typeof ListItem>(
+	({ name, thumbUrl, unseenMessageText, ...other }) => (
+		<ListItem {...other}>
+			<ListItemAvatar>
+				<AccountAvatar username={name} profileUrl={thumbUrl} />
+			</ListItemAvatar>
+			<ListItemText primary={name} secondary={unseenMessageText} />
+		</ListItem>
+	),
 );
+
+export type RoomListItemProps<
+	TComponent extends ElementType = typeof ListItem,
+	TAdditionalProps = {},
+> = MuiComponentProps<InternalRootListItemProps, TComponent, TAdditionalProps>;
