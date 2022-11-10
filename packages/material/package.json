@@ -23,8 +23,7 @@
 	},
 	"dependencies": {
 		"@mui/icons-material": "^5.10.6",
-		"@mui/system": "^5.10.6",
-		"@rchat/react": "workspace:^0.5.1"
+		"@mui/system": "^5.10.6"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
@@ -54,6 +53,7 @@
 		"@emotion/styled": "^11.10.4",
 		"@mui/material": "^5.10.6",
 		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
+		"react-dom": "^18.0.0",
+		"@rchat/react": "workspace:^"
 	}
 }
