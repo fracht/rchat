@@ -8,7 +8,7 @@ export class ChatServer<TMessageType> {
 	private readonly service;
 	private readonly server;
 
-	public constructor(service: ChatService, server: ChatServerType<TMessageType>) {
+	public constructor(service: ChatService<TMessageType>, server: ChatServerType<TMessageType>) {
 		this.server = server;
 		this.service = service;
 		this.roomManager = new RoomManager<TMessageType>(server, service.getChatParticipants);
@@ -29,9 +29,12 @@ export class ChatServer<TMessageType> {
 		message: TMessageType,
 		roomIdentifier: string,
 	) => {
-		const broadcastChannel = await this.roomManager.broadcast(socket, roomIdentifier);
+		const [broadcastChannel, savedMessage] = await Promise.all([
+			this.roomManager.broadcast(socket, roomIdentifier),
+			this.service.saveMessage(message),
+		]);
 
-		broadcastChannel.emit('receiveMessage', message, roomIdentifier);
+		broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
 	};
 
 	private authentication = async (socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) => {
