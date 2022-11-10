@@ -15,6 +15,7 @@ export function createMemChatServer() {
 			getChatParticipants: async () => {
 				return [];
 			},
+			saveMessage: async (message) => message,
 		},
 		socketIoServer,
 	);
