@@ -1,5 +1,5 @@
-import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { ElementType } from 'react';
 import { AccountAvatar } from '../AccountAvatar';
@@ -11,18 +11,18 @@ type InternalRootListItemProps = {
 	unseenMessageText: string;
 };
 
-export const RoomListItem = createMuiComponent<InternalRootListItemProps, typeof ListItem>(
+export const RoomListItem = createMuiComponent<InternalRootListItemProps, typeof ListItemButton>(
 	({ name, thumbUrl, unseenMessageText, ...other }) => (
-		<ListItem {...other}>
+		<ListItemButton {...other}>
 			<ListItemAvatar>
 				<AccountAvatar username={name} profileUrl={thumbUrl} />
 			</ListItemAvatar>
 			<ListItemText primary={name} secondary={unseenMessageText} />
-		</ListItem>
+		</ListItemButton>
 	),
 );
 
 export type RoomListItemProps<
-	TComponent extends ElementType = typeof ListItem,
+	TComponent extends ElementType = typeof ListItemButton,
 	TAdditionalProps = {},
 > = MuiComponentProps<InternalRootListItemProps, TComponent, TAdditionalProps>;
