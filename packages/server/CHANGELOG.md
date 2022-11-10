@@ -1,15 +1,5 @@
 # @rchat/server
 
-## 0.4.0
-
-### Minor Changes
-
--   1455dec: Created possibility to save messages
-
-### Patch Changes
-
--   @rchat/shared@0.4.0
-
 ## 0.3.0
 
 ### Patch Changes
