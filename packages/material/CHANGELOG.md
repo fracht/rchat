@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.4.4
+
+### Patch Changes
+
+-   c4c9c19: Made RoomListItem clickable
+    -   @rchat/react@0.4.4
+
 ## 0.4.3
 
 ### Patch Changes
