@@ -1,5 +1,15 @@
 # @rchat/react
 
+## 0.5.0
+
+### Minor Changes
+
+-   b947a46: Migrated to tsc
+
+### Patch Changes
+
+-   @rchat/client@0.5.0
+
 ## 0.4.4
 
 ### Patch Changes

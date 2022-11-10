@@ -1,5 +1,16 @@
 # @rchat/material
 
+## 0.5.0
+
+### Minor Changes
+
+-   b947a46: Migrated to tsc
+
+### Patch Changes
+
+-   Updated dependencies [b947a46]
+    -   @rchat/react@0.5.0
+
 ## 0.4.4
 
 ### Patch Changes
