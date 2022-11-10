@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.4.3
+
+### Patch Changes
+
+-   88a36bb: Added time for chat messages
+-   765560b: Fixed RoomListItem props
+    -   @rchat/react@0.4.3
+
 ## 0.4.2
 
 ### Patch Changes
