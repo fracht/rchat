@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.5.2
+
+### Patch Changes
+
+-   f4381db: Fixed type mismatches
+-   Updated dependencies [f4381db]
+    -   @rchat/react@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes

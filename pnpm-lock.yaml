@@ -155,7 +155,7 @@ importers:
     specifiers:
       '@babel/core': ^7.18.2
       '@isaacs/ttlcache': ^1.2.1
-      '@rchat/shared': workspace:^0.5.1
+      '@rchat/shared': workspace:^0.5.2
       '@types/jest': ^29.2.0
       '@types/node': ^18.0.6
       aqu: 0.4.3
@@ -196,7 +196,7 @@ importers:
 
   packages/test-utils:
     specifiers:
-      '@rchat/server': workspace:^0.5.1
+      '@rchat/server': workspace:^0.5.2
       aqu: ^0.4.3
       nodemon: ^2.0.20
       rimraf: ^3.0.2
