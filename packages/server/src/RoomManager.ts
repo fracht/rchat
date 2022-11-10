@@ -1,4 +1,4 @@
-import { ChatServerType, ChatSocketType } from '@rchat/shared';
+import { ChatServerType, ChatSocketType, ConnectionInfo } from '@rchat/shared';
 
 import LRUCache from 'lru-cache';
 import TTLCache from '@isaacs/ttlcache';
@@ -11,12 +11,14 @@ export class RoomManager<TMessageType> {
 	private readonly server;
 	private readonly userSockets;
 	private readonly activeRooms;
+	private readonly fetchParticipants;
 
 	public constructor(
 		server: ChatServerType<TMessageType>,
-		fetchParticipants: (roomIdentifier: string) => Promise<string[]>,
+		fetchParticipants: (connectionInfo: ConnectionInfo, roomIdentifier: string) => Promise<string[]>,
 	) {
 		this.server = server;
+		this.fetchParticipants = fetchParticipants;
 		this.userSockets = new Map<string, Set<ChatSocketType<TMessageType>>>();
 		this.activeRooms = new TTLCache<string, true>({
 			noDisposeOnSet: true,
@@ -28,19 +30,26 @@ export class RoomManager<TMessageType> {
 		this.roomParticipants = new LRUCache<string, Set<string>>({
 			max: 1000,
 			allowStale: false,
-			fetchMethod: async (roomIdentifier) => {
-				try {
-					const participants = await fetchParticipants(roomIdentifier);
-					return new Set(participants);
-				} catch (error) {
-					// TODO: add logging here
-					return undefined;
-				}
-			},
 		});
 
 		this.server.on('connect', this.handleSocketConnect);
 	}
+
+	private getRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
+		if (!this.roomParticipants.has(roomIdentifier)) {
+			let fetchedParticipants: Set<string>;
+			try {
+				const participants = await this.fetchParticipants(socket.data as ConnectionInfo, roomIdentifier);
+				fetchedParticipants = new Set(participants);
+			} catch (error) {
+				fetchedParticipants = new Set();
+				console.error('Failed to fetch participants.', error);
+			}
+			this.roomParticipants.set(roomIdentifier, fetchedParticipants);
+		}
+
+		return this.roomParticipants.get(roomIdentifier);
+	};
 
 	private static readonly getSocketIORoomIdentifier = (roomIdentifier: string) => `chat-room-${roomIdentifier}`;
 
@@ -56,7 +65,7 @@ export class RoomManager<TMessageType> {
 
 		// Join to all active rooms
 		for (const [room] of this.activeRooms) {
-			const participants = await this.roomParticipants.fetch(room);
+			const participants = await this.getRoomParticipants(socket, room);
 			if (participants?.has(identifier)) {
 				await socket.join(room);
 			}
@@ -75,15 +84,15 @@ export class RoomManager<TMessageType> {
 	public broadcast = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		const socketIORoom = RoomManager.getSocketIORoomIdentifier(roomIdentifier);
 		if (!this.activeRooms.get(socketIORoom)) {
-			await this.preheatRoom(roomIdentifier);
+			await this.preheatRoom(socket, roomIdentifier);
 		}
 
 		this.activeRooms.setTTL(roomIdentifier, TTL_LONG);
 		return socket.to(socketIORoom);
 	};
 
-	public preheatRoom = async (roomIdentifier: string) => {
-		const participants = await this.roomParticipants.fetch(roomIdentifier);
+	public preheatRoom = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
+		const participants = await this.getRoomParticipants(socket, roomIdentifier);
 
 		if (!participants) {
 			throw new Error('No such room!'); // TODO: better exceptions

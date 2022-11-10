@@ -3,6 +3,6 @@ import { ConnectionInfo } from '@rchat/shared';
 
 export type ChatService<TMessageType> = {
 	fetchConnectionInfo: (request: IncomingMessage) => Promise<ConnectionInfo>;
-	getChatParticipants: (chatIdentifier: string) => Promise<string[]>;
-	saveMessage: (message: TMessageType) => Promise<TMessageType>;
+	getChatParticipants: (connectionInfo: ConnectionInfo, chatIdentifier: string) => Promise<string[]>;
+	saveMessage: (connectionInfo: ConnectionInfo, message: TMessageType) => Promise<TMessageType>;
 };
