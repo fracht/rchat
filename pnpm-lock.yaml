@@ -49,6 +49,7 @@ importers:
       '@mui/styled-engine': ^5.10.6
       '@mui/system': ^5.10.6
       '@mui/types': ^7.2.0
+      '@rchat/react': workspace:^0.5.1
       '@storybook/addon-actions': ^6.5.13
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/addon-interactions': ^6.5.13
@@ -74,6 +75,7 @@ importers:
       '@mui/material': 5.10.6_njmfh6tqiikqhlkdqi5f76pbxy
       '@mui/styled-engine': 5.10.6_hfzxdiydbrbhhfpkwuv3jhvwmq
       '@mui/types': 7.2.0_@types+react@18.0.15
+      '@rchat/react': link:../react
       '@storybook/addon-actions': 6.5.13_biqbaboplfbrettd7655fr4n2y
       '@storybook/addon-essentials': 6.5.13_ahwhw5tro5vrvv6juv5w3mmdqy
       '@storybook/addon-interactions': 6.5.13_jttgo2wwvppil2em44w5eksf2i
@@ -94,6 +96,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.18.2
+      '@rchat/client': workspace:^0.5.1
       '@sirse-dev/eslint-config': ^1.0.6
       '@sirse-dev/safe-context': ^0.3.0
       '@size-limit/preset-small-lib': ^7.0.8
@@ -125,6 +128,7 @@ importers:
       use-isomorphic-layout-effect: 1.1.2
     devDependencies:
       '@babel/core': 7.18.9
+      '@rchat/client': link:../client
       '@sirse-dev/eslint-config': 1.0.12_7wmdnazylordkmmp5xylrck47q
       '@size-limit/preset-small-lib': 7.0.8_size-limit@7.0.8
       '@storybook/addon-actions': 6.5.9_biqbaboplfbrettd7655fr4n2y

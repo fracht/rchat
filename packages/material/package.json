@@ -32,6 +32,7 @@
 		"@mui/material": "^5.10.6",
 		"@mui/styled-engine": "^5.10.6",
 		"@mui/types": "^7.2.0",
+		"@rchat/react": "workspace:^0.5.1",
 		"@storybook/addon-actions": "^6.5.13",
 		"@storybook/addon-essentials": "^6.5.13",
 		"@storybook/addon-interactions": "^6.5.13",
@@ -52,8 +53,8 @@
 		"@emotion/react": "^11.10.4",
 		"@emotion/styled": "^11.10.4",
 		"@mui/material": "^5.10.6",
+		"@rchat/react": "workspace:^",
 		"react": "^18.0.0",
-		"react-dom": "^18.0.0",
-		"@rchat/react": "workspace:^"
+		"react-dom": "^18.0.0"
 	}
 }
