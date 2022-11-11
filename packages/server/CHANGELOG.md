@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.5.4
+
+### Patch Changes
+
+-   08d837f: Fixed new message broadcasting
+    -   @rchat/shared@0.5.4
+
 ## 0.5.3
 
 ### Patch Changes
