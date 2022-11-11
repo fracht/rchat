@@ -26,6 +26,8 @@ const MessageInputRoot = styled(
 )(({ theme }) => ({
 	display: 'flex',
 	gap: theme.spacing(1),
+	background: theme.palette.background.default,
+	padding: theme.spacing(1),
 }));
 
 type InternalMessageInputProps = {
