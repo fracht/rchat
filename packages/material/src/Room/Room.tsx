@@ -24,11 +24,12 @@ export const Room = createMuiComponent<InternalRoomProps, 'div'>(
 	({ name, identifier, thumbUrl, component, ...other }) => (
 		<RoomRoot as={component} {...other}>
 			<RoomHeader name={name} thumbUrl={thumbUrl} />
-			<RoomProvider identifier={identifier}>
-				<RoomBody />
-				<MessageList />
-			</RoomProvider>
-			<MessageInput />
+			<RoomBody>
+				<RoomProvider identifier={identifier}>
+					<MessageList />
+					<MessageInput />
+				</RoomProvider>
+			</RoomBody>
 		</RoomRoot>
 	),
 );
