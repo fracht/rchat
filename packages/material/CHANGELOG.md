@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.5.5
+
+### Patch Changes
+
+-   fc15bbf: Fixed Room styles
+-   fece512: Fixed MessageInput styles
+    -   @rchat/react@0.5.5
+
 ## 0.5.4
 
 ### Patch Changes
