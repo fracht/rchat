@@ -18,16 +18,17 @@ type InternalRoomProps = {
 	name: string;
 	identifier: string;
 	thumbUrl?: string;
+	onMessageSent: (message: string) => void;
 };
 
 export const Room = createMuiComponent<InternalRoomProps, 'div'>(
-	({ name, identifier, thumbUrl, component, ...other }) => (
+	({ name, identifier, thumbUrl, onMessageSent, component, ...other }) => (
 		<RoomRoot as={component} {...other}>
 			<RoomHeader name={name} thumbUrl={thumbUrl} />
 			<RoomBody>
 				<RoomProvider identifier={identifier}>
 					<MessageList />
-					<MessageInput />
+					<MessageInput onMessageSent={onMessageSent} />
 				</RoomProvider>
 			</RoomBody>
 		</RoomRoot>
