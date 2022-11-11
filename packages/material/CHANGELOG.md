@@ -1,5 +1,14 @@
 # @rchat/material
 
+## 0.5.3
+
+### Patch Changes
+
+-   a1cc2b6: Fixed ChatButton props
+-   4a4c7be: Added possibility to send message
+-   0f6e4d2: Fixed Room padding
+    -   @rchat/react@0.5.3
+
 ## 0.5.2
 
 ### Patch Changes
