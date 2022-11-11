@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import SendIcon from '@mui/icons-material/Send';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
@@ -15,6 +13,7 @@ const MessageInputBase = styled(InputBase, {
 	flex: 1,
 	borderRadius: 20,
 	backgroundColor: theme.palette.grey[100],
+	// eslint-disable-next-line @typescript-eslint/naming-convention
 	'& .MuiInputBase-input': {
 		padding: theme.spacing(1, 2),
 	},
@@ -37,11 +36,6 @@ export const MessageInput = () => {
 
 	return (
 		<MessageInputRoot>
-			<Tooltip title="Attach files">
-				<IconButton>
-					<AttachFileIcon />
-				</IconButton>
-			</Tooltip>
 			<MessageInputBase value={text} onChange={handleTextChange} placeholder="Message" />
 			<Tooltip title="Send">
 				<IconButton>
