@@ -88,7 +88,7 @@ export class RoomManager<TMessageType> {
 		}
 
 		this.activeRooms.setTTL(roomIdentifier, TTL_LONG);
-		return socket.to(socketIORoom);
+		return this.server.to(socketIORoom);
 	};
 
 	public preheatRoom = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
