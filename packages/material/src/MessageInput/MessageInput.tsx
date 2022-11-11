@@ -2,7 +2,8 @@ import SendIcon from '@mui/icons-material/Send';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import Tooltip from '@mui/material/Tooltip';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { createMuiComponent } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
 
 const MessageInputBase = styled(InputBase, {
@@ -20,28 +21,45 @@ const MessageInputBase = styled(InputBase, {
 }));
 
 const MessageInputRoot = styled(
-	'div',
+	'form',
 	{},
 )(({ theme }) => ({
 	display: 'flex',
 	gap: theme.spacing(1),
 }));
 
-export const MessageInput = () => {
-	const [text, setText] = useState('');
-
-	const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setText(event.target.value);
-	};
-
-	return (
-		<MessageInputRoot>
-			<MessageInputBase value={text} onChange={handleTextChange} placeholder="Message" />
-			<Tooltip title="Send">
-				<IconButton>
-					<SendIcon />
-				</IconButton>
-			</Tooltip>
-		</MessageInputRoot>
-	);
+type InternalMessageInputProps = {
+	onMessageSent: (text: string) => void;
 };
+
+export const MessageInput = createMuiComponent<InternalMessageInputProps, typeof InputBase>(
+	({ component, onMessageSent, ...other }) => {
+		const [text, setText] = useState('');
+
+		const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+			setText(event.target.value);
+		};
+
+		const handleSubmit = (event: FormEvent | MouseEvent) => {
+			event.preventDefault();
+			onMessageSent(text);
+		};
+
+		return (
+			<MessageInputRoot onSubmit={handleSubmit}>
+				<MessageInputBase
+					{...other}
+					as={component}
+					value={text}
+					onChange={handleTextChange}
+					placeholder="Message"
+				/>
+				<Tooltip title="Send">
+					<IconButton onClick={handleSubmit}>
+						<SendIcon />
+					</IconButton>
+				</Tooltip>
+			</MessageInputRoot>
+		);
+	},
+);
