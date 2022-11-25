@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.6
+
+### Patch Changes
+
+-   8f5bd8d: Forwarded ref for MessageBox component
+    -   @rchat/react@0.5.6
+
 ## 0.5.5
 
 ### Patch Changes
