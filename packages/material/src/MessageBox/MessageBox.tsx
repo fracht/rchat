@@ -1,5 +1,5 @@
 import { CSSObject, Typography } from '@mui/material';
-import { ElementType, ReactElement } from 'react';
+import { ElementType, forwardRef, ReactElement, Ref } from 'react';
 import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MuiAccountInfo } from '../helpers/MuiAccountInfo';
@@ -114,20 +114,22 @@ const formatTime = (time: Date) => {
 };
 
 export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
-	({ children, component, orientation, position, time, author, ...props }) => (
-		<MessageBoxRoot ownerState={{ orientation, position }}>
-			{author && (
-				<MessageBoxAvatarWrapper>
-					<AccountAvatar {...author} />
-				</MessageBoxAvatarWrapper>
-			)}
-			<MessageBoxContent as={component} ownerState={{ orientation, position }} {...props}>
-				{children}
-			</MessageBoxContent>
-			{time && position === 'end' && (
-				<MessageBoxTime ownerState={{ orientation, position }}>{formatTime(time)}</MessageBoxTime>
-			)}
-		</MessageBoxRoot>
+	forwardRef(
+		({ children, component, orientation, position, time, author, ...props }, reference: Ref<HTMLDivElement>) => (
+			<MessageBoxRoot ownerState={{ orientation, position }}>
+				{author && (
+					<MessageBoxAvatarWrapper>
+						<AccountAvatar {...author} />
+					</MessageBoxAvatarWrapper>
+				)}
+				<MessageBoxContent {...props} ref={reference} as={component} ownerState={{ orientation, position }}>
+					{children}
+				</MessageBoxContent>
+				{time && position === 'end' && (
+					<MessageBoxTime ownerState={{ orientation, position }}>{formatTime(time)}</MessageBoxTime>
+				)}
+			</MessageBoxRoot>
+		),
 	),
 );
 
