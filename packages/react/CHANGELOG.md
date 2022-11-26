@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.5.7
+
+### Patch Changes
+
+-   2df9478: Fixed scrolling to bottom after initial message load
+    -   @rchat/client@0.5.7
+
 ## 0.5.6
 
 ### Patch Changes
