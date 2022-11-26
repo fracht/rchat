@@ -1,12 +1,5 @@
 # @rchat/react
 
-## 1.0.0
-
-### Patch Changes
-
--   Updated dependencies [5034787]
-    -   @rchat/client@1.0.0
-
 ## 0.5.9
 
 ### Patch Changes
