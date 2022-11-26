@@ -1,5 +1,16 @@
 # @rchat/material
 
+## 0.5.7
+
+### Patch Changes
+
+-   c17a31a: Showing time for <MessageBox position="single" />
+-   ae24784: MessageBox time formatting: replaced "n seconds ago" with "just now"
+-   08d2830: MessageInput component: clearing input after submit
+-   d28b414: MessageTime component: set up automatic message update
+-   Updated dependencies [2df9478]
+    -   @rchat/react@0.5.7
+
 ## 0.5.6
 
 ### Patch Changes
