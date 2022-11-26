@@ -58,7 +58,7 @@ type InternalMessageTimeProps = {
 
 export const MessageTime = createMuiComponent<InternalMessageTimeProps, typeof Typography>(
 	forwardRef(({ orientation, time, component, ...other }, reference: Ref<HTMLElement>) => {
-		const [formattedTime, setFormattedTime] = useState('');
+		const [formattedTime, setFormattedTime] = useState(() => formatTime(time)[0]);
 
 		useEffect(() => {
 			let timeoutId: number | undefined = undefined;
