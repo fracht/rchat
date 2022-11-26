@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.8
+
+### Patch Changes
+
+-   e1edc1b: MessageTime: set default value for formattedTime
+    -   @rchat/react@0.5.8
+
 ## 0.5.7
 
 ### Patch Changes
