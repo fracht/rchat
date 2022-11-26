@@ -5,4 +5,5 @@ export type ChatSocketEmitMap<TMessage> = {
 
 export type ChatSocketListenMap<TMessage> = {
 	receiveMessage: (message: TMessage, roomIdentifier: string) => void;
+	receiveError: (roomIdentifier?: string) => void;
 };

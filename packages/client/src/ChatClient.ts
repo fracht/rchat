@@ -33,6 +33,9 @@ export class ChatClient<TMessage> extends CustomEventTarget<ChatSocketListenMap<
 		this.socket.on('receiveMessage', (message: TMessage, roomIdentifier: string) => {
 			this.dispatchEvent(new CustomEvent('receiveMessage', { detail: [message, roomIdentifier] }));
 		});
+		this.socket.on('receiveError', (roomIdentifier) => {
+			this.dispatchEvent(new CustomEvent('receiveError', { detail: [roomIdentifier] }));
+		});
 	}
 
 	public sendMessage = (message: TMessage, roomIdentifier: string) => {

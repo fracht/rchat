@@ -29,11 +29,16 @@ export class ChatServer<TMessageType> {
 		message: TMessageType,
 		roomIdentifier: string,
 	) => {
-		const broadcastChannel = await this.roomManager.broadcast(socket, roomIdentifier);
+		try {
+			const broadcastChannel = await this.roomManager.broadcast(socket, roomIdentifier);
 
-		const savedMessage = await this.service.saveMessage(socket.data as ConnectionInfo, message, roomIdentifier);
+			const savedMessage = await this.service.saveMessage(socket.data as ConnectionInfo, message, roomIdentifier);
 
-		broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
+			broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
+		} catch (error) {
+			console.error('Failed to send message');
+			socket.emit('receiveError', roomIdentifier);
+		}
 	};
 
 	private authentication = async (socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) => {
