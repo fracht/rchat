@@ -45,6 +45,7 @@ export const MessageInput = createMuiComponent<InternalMessageInputProps, typeof
 		const handleSubmit = (event: FormEvent | MouseEvent) => {
 			event.preventDefault();
 			onMessageSent(text);
+			setText('');
 		};
 
 		return (
