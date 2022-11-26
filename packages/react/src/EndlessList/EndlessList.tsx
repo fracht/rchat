@@ -1,6 +1,7 @@
 import {
 	ComponentType,
 	PropsWithChildren,
+	Ref,
 	RefAttributes,
 	useCallback,
 	useEffect,
@@ -10,6 +11,7 @@ import {
 	type Key,
 } from 'react';
 
+import { mergeReferences } from '../internal/mergeReferences';
 import { smoothScrollToCenter } from '../internal/smoothScrollToCenter';
 import { useEvent } from '../internal/useEvent';
 import { useToggleEvent } from '../internal/useToggleEvent';
@@ -38,6 +40,7 @@ export type EndlessListProps<TItemType> = {
 	jumpAnimationDuration?: number;
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
+	containerReference?: Ref<HTMLElement>;
 };
 
 const noop = () => {
@@ -58,8 +61,9 @@ export const EndlessList = <T,>({
 	ContainerComponent,
 	canStickToBottom,
 	onVisibleFrameChange,
+	containerReference: propsContainerReference,
 }: EndlessListProps<T>) => {
-	const scrollableContainerReference = useRef<HTMLElement>(null);
+	const containerReference = useRef<HTMLElement>(null);
 	const focusElementReference = useRef<HTMLElement>(null);
 	const stickToBottomReached = useRef(false);
 	const isScrolling = useRef(false);
@@ -78,14 +82,7 @@ export const EndlessList = <T,>({
 	}, [items, setBottomReached, setTopReached]);
 
 	useLayoutEffect(() => {
-		const container = scrollableContainerReference.current;
-		if (container) {
-			container.scrollTo({ top: container.scrollHeight });
-		}
-	}, []);
-
-	useLayoutEffect(() => {
-		const container = scrollableContainerReference.current;
+		const container = containerReference.current;
 		if (container && stickToBottomReached.current && canStickToBottom) {
 			container.scrollTo({ top: container.scrollHeight });
 		}
@@ -104,16 +101,12 @@ export const EndlessList = <T,>({
 	});
 
 	const scrollToFocusItem = useCallback(async () => {
-		if (isScrolling.current || !scrollableContainerReference.current || !focusElementReference.current) {
+		if (isScrolling.current || !containerReference.current || !focusElementReference.current) {
 			return;
 		}
 		isScrolling.current = true;
 
-		await smoothScrollToCenter(
-			scrollableContainerReference.current,
-			focusElementReference.current,
-			jumpAnimationDuration,
-		);
+		await smoothScrollToCenter(containerReference.current, focusElementReference.current, jumpAnimationDuration);
 
 		isScrolling.current = false;
 
@@ -135,14 +128,14 @@ export const EndlessList = <T,>({
 	}, [focusedItemKey, scrollToFocusItem]);
 
 	const { observer } = useVisibleFrame({
-		containerReference: scrollableContainerReference,
+		containerReference,
 		items,
 		getKey,
 		onVisibleFrameUpdated: checkBounds,
 	});
 
 	return (
-		<ContainerComponent ref={scrollableContainerReference}>
+		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
 			{visibleItems.map((item) => (
 				<EndlessListItemView
 					key={item.itemKey}

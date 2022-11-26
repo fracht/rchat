@@ -1,6 +1,6 @@
 import { MessageFetchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
-import { useCallback, useEffect, useRef } from 'react';
+import { Ref, useCallback, useEffect, useRef, useState } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
 import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
 import { useEvent } from './internal/useEvent';
@@ -12,6 +12,7 @@ export type UseMessagesBag<T> = {
 	noMessagesBefore: boolean;
 	noMessagesAfter: boolean;
 	onVisibleFrameChange: (frame: Frame) => void;
+	containerReference: Ref<HTMLElement>;
 };
 
 export type UseMessagesConfig<T> = {
@@ -44,6 +45,8 @@ export const useMessages = <TMessage,>({
 }: UseMessagesConfig<TMessage>): UseMessagesBag<TMessage> => {
 	const isFetching = useRef(false);
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
+	const containerReference = useRef<HTMLElement>(null);
+	const [isLoaded, setIsLoaded] = useState(false);
 
 	const [
 		messages,
@@ -102,11 +105,28 @@ export const useMessages = <TMessage,>({
 			);
 
 			setMessages(fetchedMessagesState.messages, 'ending');
+			setIsLoaded(true);
 			messagesState.current = fetchedMessagesState;
 		};
 
 		load();
 	}, [roomIdentifier, chatClient, initialChunkSize, setMessages]);
+
+	useEffect(() => {
+		if (isLoaded) {
+			const container = containerReference.current;
+			if (container) {
+				container.scrollTo({ top: container.scrollHeight });
+			} else {
+				// eslint-disable-next-line no-console
+				console.warn(
+					"RChat: container reference wasn't passed into EndlessList," +
+						' so scrolling to the bottom after initial chat load failed.' +
+						' This may cause inconsistent behavior',
+				);
+			}
+		}
+	}, [isLoaded]);
 
 	const handleTopReached = useEvent(async () => {
 		if (messagesState.current.noMessagesBefore || isFetching.current) {
@@ -165,5 +185,6 @@ export const useMessages = <TMessage,>({
 		noMessagesBefore: messagesState.current.noMessagesBefore,
 		noMessagesAfter: messagesState.current.noMessagesAfter,
 		onVisibleFrameChange,
+		containerReference,
 	};
 };
