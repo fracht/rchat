@@ -89,7 +89,7 @@ const formatTime = (time: Date) => {
 	const relativeFormat = new Intl.RelativeTimeFormat(undefined, { localeMatcher: 'best fit' });
 
 	if (-diff < 60) {
-		return relativeFormat.format(Math.round(diff), 'second');
+		return 'just now';
 	}
 
 	if (-diff < 3600) {
