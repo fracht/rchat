@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.5.9
+
+### Patch Changes
+
+-   b01b3ee: ChatPopup: fixed rounded corner
+-   cca0aad: MessageText: added long text wrapping
+    -   @rchat/react@0.5.9
+
 ## 0.5.8
 
 ### Patch Changes
