@@ -7,7 +7,7 @@
 		"ci": "turbo run lint test build",
 		"dev": "turbo run dev --parallel",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
-		"release": "pnpm build && pnpm publish -r",
+		"release": "pnpm build && changeset tag && pnpm publish -r",
 		"bump": "changeset version && pnpm i --lockfile-only"
 	},
 	"devDependencies": {
