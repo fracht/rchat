@@ -1,0 +1,311 @@
+{
+    "packages": {
+        "": {
+            "path": ".",
+            "package": {
+                "name": "rchat",
+                "version": "0.0.0",
+                "private": true,
+                "scripts": {
+                    "build": "turbo run build",
+                    "ci": "turbo run lint test build",
+                    "dev": "turbo run dev --parallel",
+                    "format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
+                    "release": "pnpm build && pnpm publish -r",
+                    "bump": "changeset version && pnpm i --lockfile-only"
+                },
+                "devDependencies": {
+                    "@changesets/cli": "^2.23.2",
+                    "@types/jest": "^29.2.0",
+                    "clean-publish": "^4.0.1",
+                    "prettier": "^2.6.2",
+                    "syncpack": "^8.2.4",
+                    "turbo": "^1.4.3"
+                },
+                "pnpm": {
+                    "patchedDependencies": {
+                        "dts-bundle-generator@6.13.0": "patches/dts-bundle-generator@6.13.0.patch"
+                    }
+                },
+                "_id": "rchat@0.0.0"
+            }
+        },
+        "@rchat/client": {
+            "path": "packages/client",
+            "package": {
+                "name": "@rchat/client",
+                "description": "",
+                "version": "0.5.9",
+                "main": "./dist/index.js",
+                "module": "./dist/client.esm.js",
+                "types": "./dist/client.d.ts",
+                "author": "",
+                "license": "ISC",
+                "keywords": [],
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "aqu build",
+                    "dev": "aqu watch --no-cleanup",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish"
+                },
+                "dependencies": {
+                    "@rchat/shared": "workspace:*"
+                },
+                "devDependencies": {
+                    "@babel/core": "^7.18.2",
+                    "aqu": "0.4.3",
+                    "rimraf": "^3.0.2",
+                    "socket.io-client": "^4.5.1"
+                },
+                "peerDependencies": {
+                    "socket.io-client": "^4.5.1"
+                },
+                "_id": "@rchat/client@0.5.9"
+            }
+        },
+        "@rchat/material": {
+            "path": "packages/material",
+            "package": {
+                "name": "@rchat/material",
+                "version": "0.5.9",
+                "sideEffects": false,
+                "main": "./dist/src/index.js",
+                "types": "./dist/src/index.d.ts",
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "tsc",
+                    "build-storybook": "build-storybook",
+                    "dev": "tsc --watch",
+                    "lint": "eslint **/*.{ts,tsx}",
+                    "lint:fix": "eslint . --fix",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish",
+                    "release": "np",
+                    "storybook": "start-storybook -p 6006",
+                    "test": "aqu test --passWithNoTests",
+                    "test:watch": "aqu test --passWithNoTests --watch"
+                },
+                "dependencies": {
+                    "@mui/icons-material": "^5.10.6",
+                    "@mui/system": "^5.10.6"
+                },
+                "devDependencies": {
+                    "@babel/core": "^7.18.9",
+                    "@emotion/react": "^11.10.4",
+                    "@emotion/styled": "^11.10.4",
+                    "@mui/material": "^5.10.6",
+                    "@mui/styled-engine": "^5.10.6",
+                    "@mui/types": "^7.2.0",
+                    "@rchat/react": "workspace:^0.5.9",
+                    "@storybook/addon-actions": "^6.5.13",
+                    "@storybook/addon-essentials": "^6.5.13",
+                    "@storybook/addon-interactions": "^6.5.13",
+                    "@storybook/addon-links": "^6.5.13",
+                    "@storybook/builder-webpack4": "^6.5.13",
+                    "@storybook/manager-webpack4": "^6.5.13",
+                    "@storybook/react": "^6.5.13",
+                    "@storybook/testing-library": "^0.0.13",
+                    "@types/react": "^18.0.9",
+                    "aqu": "^0.4.3",
+                    "babel-loader": "^8.2.5",
+                    "react": "^18.1.0",
+                    "react-dom": "^18.1.0",
+                    "rimraf": "^3.0.2",
+                    "typescript": "^4.7.2"
+                },
+                "peerDependencies": {
+                    "@emotion/react": "^11.10.4",
+                    "@emotion/styled": "^11.10.4",
+                    "@mui/material": "^5.10.6",
+                    "@rchat/react": "workspace:^",
+                    "react": "^18.0.0",
+                    "react-dom": "^18.0.0"
+                },
+                "_id": "@rchat/material@0.5.9"
+            }
+        },
+        "@rchat/react": {
+            "path": "packages/react",
+            "package": {
+                "name": "@rchat/react",
+                "description": "Awesome React chat",
+                "version": "0.5.9",
+                "main": "./dist/src/index.js",
+                "types": "./dist/src/index.d.ts",
+                "bugs": "https://github.com/ArtiomTr/awesome-react-chat/issues",
+                "homepage": "https://github.com/ArtiomTr/awesome-react-chat#readme",
+                "repository": "ArtiomTr/awesome-react-chat.git",
+                "author": "Artiom Tretjakovas <artiom.tretjakovas2@gmail.com>",
+                "license": "MIT",
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "tsc",
+                    "build-storybook": "build-storybook",
+                    "dev": "aqu watch --no-cleanup",
+                    "lint": "eslint **/*.{ts,tsx}",
+                    "lint:fix": "eslint . --fix",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish",
+                    "release": "np",
+                    "size": "size-limit",
+                    "size:why": "size-limit --why",
+                    "storybook": "start-storybook -p 6006",
+                    "test": "aqu test --passWithNoTests",
+                    "test:coverage": "aqu test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
+                    "test:watch": "aqu test --passWithNoTests --watch"
+                },
+                "dependencies": {
+                    "@sirse-dev/safe-context": "^0.3.0",
+                    "use-isomorphic-layout-effect": "^1.1.2"
+                },
+                "devDependencies": {
+                    "@babel/core": "^7.18.2",
+                    "@rchat/client": "workspace:^0.5.9",
+                    "@sirse-dev/eslint-config": "^1.0.6",
+                    "@size-limit/preset-small-lib": "^7.0.8",
+                    "@storybook/addon-actions": "^6.5.9",
+                    "@storybook/addon-essentials": "^6.5.9",
+                    "@storybook/addon-interactions": "^6.5.9",
+                    "@storybook/addon-links": "^6.5.9",
+                    "@storybook/builder-webpack4": "^6.5.9",
+                    "@storybook/manager-webpack4": "^6.5.9",
+                    "@storybook/react": "^6.5.9",
+                    "@storybook/testing-library": "^0.0.13",
+                    "@types/react": "^18.0.9",
+                    "@types/react-dom": "^18.0.5",
+                    "aqu": "0.4.3",
+                    "babel-loader": "^8.2.5",
+                    "eslint": "^8.18.0",
+                    "mock-socket": "^9.1.5",
+                    "np": "^7.6.1",
+                    "prettier": "^2.6.2",
+                    "react": "^18.1.0",
+                    "react-dom": "^18.1.0",
+                    "rimraf": "^3.0.2",
+                    "size-limit": "^7.0.8",
+                    "socket.io-client": "^4.5.1",
+                    "typescript": "^4.7.2"
+                },
+                "peerDependencies": {
+                    "@rchat/client": "workspace:^",
+                    "react": ">=16"
+                },
+                "_id": "@rchat/react@0.5.9"
+            }
+        },
+        "@rchat/server": {
+            "path": "packages/server",
+            "package": {
+                "name": "@rchat/server",
+                "version": "0.5.9",
+                "main": "./dist/server.cjs.development.js",
+                "types": "./dist/server.d.ts",
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "aqu build",
+                    "dev": "aqu watch --no-cleanup",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish",
+                    "test": "jest",
+                    "test:coverage": "pnpm run test --coverage",
+                    "test:watch": "pnpm run test --watch"
+                },
+                "dependencies": {
+                    "@isaacs/ttlcache": "^1.2.1",
+                    "@rchat/shared": "workspace:^0.5.9",
+                    "lru-cache": "^7.14.0",
+                    "socket.io": "^4.5.1"
+                },
+                "devDependencies": {
+                    "@babel/core": "^7.18.2",
+                    "@types/jest": "^29.2.0",
+                    "@types/node": "^18.0.6",
+                    "aqu": "0.4.3",
+                    "jest": "^29.2.2",
+                    "jest-watch-typeahead": "^2.2.0",
+                    "rimraf": "^3.0.2"
+                },
+                "_id": "@rchat/server@0.5.9"
+            }
+        },
+        "@rchat/shared": {
+            "path": "packages/shared",
+            "package": {
+                "name": "@rchat/shared",
+                "version": "0.5.9",
+                "main": "./dist/index.js",
+                "module": "./dist/shared.esm.js",
+                "types": "./dist/shared.d.ts",
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "aqu build",
+                    "dev": "aqu watch --no-cleanup",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish"
+                },
+                "devDependencies": {
+                    "@babel/core": "^7.18.2",
+                    "aqu": "0.4.3",
+                    "rimraf": "^3.0.2",
+                    "socket.io": "^4.5.1",
+                    "socket.io-client": "^4.5.1"
+                },
+                "_id": "@rchat/shared@0.5.9"
+            }
+        },
+        "@rchat/test-utils": {
+            "path": "packages/test-utils",
+            "package": {
+                "name": "@rchat/test-utils",
+                "version": "0.5.9",
+                "sideEffects": false,
+                "publishConfig": {
+                    "access": "public",
+                    "directory": "prepared-package"
+                },
+                "scripts": {
+                    "build": "aqu build",
+                    "build-storybook": "build-storybook",
+                    "dev": "aqu watch --no-cleanup",
+                    "lint": "eslint **/*.{ts,tsx}",
+                    "lint:fix": "eslint . --fix",
+                    "postpublish": "rimraf ./prepared-package",
+                    "prepublishOnly": "rimraf ./prepared-package && clean-publish",
+                    "release": "np",
+                    "start": "nodemon ./dist/index.js",
+                    "storybook": "start-storybook -p 6006",
+                    "test": "aqu test --passWithNoTests",
+                    "test:watch": "aqu test --passWithNoTests --watch"
+                },
+                "dependencies": {
+                    "aqu": "^0.4.3",
+                    "socket.io": "^4.5.1",
+                    "socket.io-client": "^4.5.1"
+                },
+                "devDependencies": {
+                    "@rchat/server": "workspace:^0.5.9",
+                    "nodemon": "^2.0.20",
+                    "rimraf": "^3.0.2"
+                },
+                "_id": "@rchat/test-utils@0.5.9"
+            }
+        }
+    },
+    "binaries": {}
+}
