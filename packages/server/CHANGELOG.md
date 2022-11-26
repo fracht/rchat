@@ -1,5 +1,14 @@
 # @rchat/server
 
+## 0.5.10
+
+### Patch Changes
+
+-   4c44f08: Added error propagation from client to server
+-   4c44f08: Added room participant validation
+-   Updated dependencies [4c44f08]
+    -   @rchat/shared@0.5.10
+
 ## 0.5.9
 
 ### Patch Changes

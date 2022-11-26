@@ -1,5 +1,11 @@
 # @rchat/shared
 
+## 0.5.10
+
+### Patch Changes
+
+-   4c44f08: Added error propagation from client to server
+
 ## 0.5.9
 
 ## 0.5.8
