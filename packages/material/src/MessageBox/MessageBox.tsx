@@ -125,7 +125,7 @@ export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
 				<MessageBoxContent {...props} ref={reference} as={component} ownerState={{ orientation, position }}>
 					{children}
 				</MessageBoxContent>
-				{time && position === 'end' && (
+				{time && (position === 'end' || position === 'single') && (
 					<MessageBoxTime ownerState={{ orientation, position }}>{formatTime(time)}</MessageBoxTime>
 				)}
 			</MessageBoxRoot>
