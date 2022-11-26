@@ -1,7 +1,7 @@
 {
 	"name": "@rchat/react",
 	"description": "Awesome React chat",
-	"version": "0.5.9",
+	"version": "0.5.10",
 	"main": "./dist/src/index.js",
 	"types": "./dist/src/index.d.ts",
 	"bugs": "https://github.com/ArtiomTr/awesome-react-chat/issues",
@@ -35,7 +35,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
-		"@rchat/client": "workspace:^0.5.9",
+		"@rchat/client": "workspace:^0.5.10",
 		"@sirse-dev/eslint-config": "^1.0.6",
 		"@size-limit/preset-small-lib": "^7.0.8",
 		"@storybook/addon-actions": "^6.5.9",
