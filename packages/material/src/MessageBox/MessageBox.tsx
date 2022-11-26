@@ -1,11 +1,11 @@
-import { CSSObject, Typography } from '@mui/material';
+import { CSSObject } from '@mui/material';
 import { ElementType, forwardRef, ReactElement, Ref } from 'react';
 import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MuiAccountInfo } from '../helpers/MuiAccountInfo';
 import { styled } from '../styles/styled';
-
-export type MessageOrientation = 'left' | 'right';
+import { MessageOrientation } from './MessageOrientation';
+import { MessageTime } from './MessageTime';
 
 export type MessagePosition = 'start' | 'middle' | 'end' | 'single';
 
@@ -66,52 +66,11 @@ const MessageBoxAvatarWrapper = styled('div', {
 	gridArea: 'avatar',
 });
 
-const MessageBoxTime = styled<MessageBoxState, typeof Typography>(Typography, {
-	name: 'MessageBox',
-	slot: 'Time',
-})(({ theme, ownerState: { orientation } }) => ({
-	gridArea: 'time',
-	justifySelf: orientation === 'left' ? 'flex-start' : 'flex-end',
-	...theme.typography.body2,
-	color: theme.palette.grey[600],
-	padding: theme.spacing(0, 1),
-}));
-
 type InternalMessageBoxProps = {
 	author?: MuiAccountInfo;
 	time?: Date;
 	children: ReactElement;
 } & MessageBoxState;
-
-const formatTime = (time: Date) => {
-	const diff = (time.getTime() - Date.now()) / 1000;
-
-	const relativeFormat = new Intl.RelativeTimeFormat(undefined, { localeMatcher: 'best fit' });
-
-	if (-diff < 60) {
-		return 'just now';
-	}
-
-	if (-diff < 3600) {
-		return relativeFormat.format(Math.round(diff / 60), 'minute');
-	}
-
-	if (-diff < 43_200) {
-		return relativeFormat.format(Math.round(diff / 3600), 'hours');
-	}
-
-	const dateTimeFormat = new Intl.DateTimeFormat(undefined, {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: 'numeric',
-		hour12: false,
-		minute: '2-digit',
-		localeMatcher: 'best fit',
-	});
-
-	return dateTimeFormat.format(time);
-};
 
 export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
 	forwardRef(
@@ -126,7 +85,7 @@ export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
 					{children}
 				</MessageBoxContent>
 				{time && (position === 'end' || position === 'single') && (
-					<MessageBoxTime ownerState={{ orientation, position }}>{formatTime(time)}</MessageBoxTime>
+					<MessageTime orientation={orientation} time={time} />
 				)}
 			</MessageBoxRoot>
 		),
