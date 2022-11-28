@@ -92,8 +92,9 @@ export class RoomManager<TMessageType> {
 
 	public broadcast = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		const participants = await this.tryGetRoomParticipants(socket, roomIdentifier);
+		const userIdentifier = socket.data.userIdentifier!;
 
-		if (!participants.has(roomIdentifier)) {
+		if (!participants.has(userIdentifier)) {
 			throw new Error('Forbidden');
 		}
 
