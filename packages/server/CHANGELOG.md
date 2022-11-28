@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.5.11
+
+### Patch Changes
+
+-   76df767: Bug fix: checking user identifier in participants list, not the room identifier
+    -   @rchat/shared@0.5.11
+
 ## 0.5.10
 
 ### Patch Changes
