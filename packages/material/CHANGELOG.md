@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.5.11
+
+### Patch Changes
+
+-   @rchat/react@0.5.11
+
 ## 0.5.10
 
 ### Patch Changes
