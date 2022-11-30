@@ -25,7 +25,7 @@ const MessageTextRoot = styled<MessageTextState, typeof Typography>(Typography, 
 		backgroundColor,
 		color: theme.palette.getContrastText(backgroundColor),
 		maxWidth: '50%',
-		wordBreak: 'break-all',
+		wordBreak: 'break-word',
 	};
 });
 
