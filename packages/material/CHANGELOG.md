@@ -1,5 +1,15 @@
 # @rchat/material
 
+## 0.5.12
+
+### Patch Changes
+
+-   07d9d9c: MessageText: word wrapping changed to break-word
+-   4f860fe: Room: added possibilty to close room
+-   9f8b61f: Showing tooltip on AccountAvatar hover
+-   e57ba33: MessageInput: do not send empty message
+    -   @rchat/react@0.5.12
+
 ## 0.5.11
 
 ### Patch Changes
