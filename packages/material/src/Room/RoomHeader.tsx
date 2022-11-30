@@ -27,7 +27,9 @@ export const RoomHeader = createMuiComponent<InternalRoomHeaderProps, 'header'>(
 	({ component, name, thumbUrl, onClose, ...other }) => (
 		<RoomHeaderRoot as={component} {...other}>
 			<AccountAvatar username={name} profileUrl={thumbUrl} />
-			<Typography flex={1}>{name}</Typography>
+			<Typography noWrap flex={1}>
+				{name}
+			</Typography>
 			<IconButton onClick={onClose} size="small">
 				<CloseIcon />
 			</IconButton>
