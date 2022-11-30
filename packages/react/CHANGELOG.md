@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.5.12
+
+### Patch Changes
+
+-   @rchat/client@0.5.12
+
 ## 0.5.11
 
 ### Patch Changes
