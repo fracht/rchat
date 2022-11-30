@@ -19,15 +19,17 @@ export const RoomHeaderRoot = styled('header', {
 
 type InternalRoomHeaderProps = {
 	name: string;
-	thumbUrl?: string;
+	thumb?: string | boolean;
 	onClose?: () => void;
 };
 
 export const RoomHeader = createMuiComponent<InternalRoomHeaderProps, 'header'>(
-	({ component, name, thumbUrl, onClose, ...other }) => (
+	({ component, name, thumb, onClose, ...other }) => (
 		<RoomHeaderRoot as={component} {...other}>
-			<AccountAvatar username={name} profileUrl={thumbUrl} />
-			<Typography flex={1}>{name}</Typography>
+			{thumb && <AccountAvatar username={name} profileUrl={typeof thumb === 'string' ? thumb : undefined} />}
+			<Typography noWrap flex={1}>
+				{name}
+			</Typography>
 			<IconButton onClick={onClose} size="small">
 				<CloseIcon />
 			</IconButton>

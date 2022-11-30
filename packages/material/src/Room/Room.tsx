@@ -18,15 +18,15 @@ const RoomRoot = styled('div', {
 type InternalRoomProps = {
 	name: string;
 	identifier: string;
-	thumbUrl?: string;
+	thumb?: string | boolean;
 	onMessageSent: (message: string) => void;
 	onClose?: () => void;
 };
 
 export const Room = createMuiComponent<InternalRoomProps, 'div'>(
-	({ name, identifier, thumbUrl, onClose, onMessageSent, component, ...other }) => (
+	({ name, identifier, thumb = true, onClose, onMessageSent, component, ...other }) => (
 		<RoomRoot as={component} {...other}>
-			<RoomHeader onClose={onClose} name={name} thumbUrl={thumbUrl} />
+			<RoomHeader onClose={onClose} name={name} thumb={thumb} />
 			<RoomBody>
 				<RoomProvider identifier={identifier}>
 					<MessageList />
