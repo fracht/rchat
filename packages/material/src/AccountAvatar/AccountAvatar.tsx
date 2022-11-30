@@ -1,4 +1,5 @@
 import Avatar, { AvatarProps } from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 import { getContrastRatio } from '@mui/system/colorManipulator';
 import { ElementType } from 'react';
 import { styled } from '../styles/styled';
@@ -73,5 +74,7 @@ export const AccountAvatar = <TComponent extends ElementType = 'div', TAdditiona
 	profileUrl,
 	...props
 }: AccountAvatarProps<TComponent, TAdditionalProps>) => (
-	<AccountAvatarRoot {...getAvatar(username, profileUrl)} {...props} />
+	<Tooltip title={username}>
+		<AccountAvatarRoot {...getAvatar(username, profileUrl)} {...props} />
+	</Tooltip>
 );
