@@ -1,5 +1,13 @@
 # @rchat/material
 
+## 0.5.13
+
+### Patch Changes
+
+-   1c054d0: Added possiblity to remove avatar in RoomHeader
+-   f61773d: Disabled wrapping on RoomHeader
+    -   @rchat/react@0.5.13
+
 ## 0.5.12
 
 ### Patch Changes
