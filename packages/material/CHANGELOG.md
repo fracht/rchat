@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.14
+
+### Patch Changes
+
+-   dc82366: Avoid overriding sx prop in AccountAvatar component
+    -   @rchat/react@0.5.14
+
 ## 0.5.13
 
 ### Patch Changes
