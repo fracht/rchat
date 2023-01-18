@@ -77,7 +77,18 @@ By default, AccountAvatar component displays 2 first letters of author's usernam
 	</Story>
 </Canvas>
 
-However, if user has profile image, the abbreviation won't be displayed:
+If string contains non-word characters, they will be ommitted, when extracting Avatar thumbnail:
+
+<Canvas>
+	<Story args={{ username: '"With" \'Non word characters' }} name="Non word characters">
+		{Template.bind({})}
+	</Story>
+	<Story args={{ username: 'Ít Šupports Unicode!' }} name="Non word characters (unicode)">
+		{Template.bind({})}
+	</Story>
+</Canvas>
+
+If user has profile image, the abbreviation won't be displayed:
 
 <Canvas>
 	<Story
