@@ -17,7 +17,7 @@
 		"postpublish": "rimraf ./prepared-package",
 		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
 		"release": "np",
-		"storybook": "start-storybook -p 6006",
+		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
 		"test": "aqu test --passWithNoTests",
 		"test:watch": "aqu test --passWithNoTests --watch"
 	},
@@ -44,6 +44,7 @@
 		"@types/react": "^18.0.9",
 		"aqu": "^0.4.3",
 		"babel-loader": "^8.2.5",
+		"cross-env": "^7.0.3",
 		"react": "^18.1.0",
 		"react-dom": "^18.1.0",
 		"rimraf": "^3.0.2",

@@ -4,14 +4,20 @@ import { getContrastRatio } from '@mui/system/colorManipulator';
 import { ElementType } from 'react';
 import { styled } from '../styles/styled';
 
-const AccountAvatarRoot = styled(Avatar, {
+const AccountAvatarRoot = styled<InternalAccountAvatarProps, typeof Avatar>(Avatar, {
 	name: 'AccountAvatar',
 	slot: 'Root',
-})(({ theme }) => ({
-	width: 28,
-	height: 28,
-	fontSize: theme.typography.body2.fontSize,
-}));
+})(({ theme, ownerState: { username, profileUrl } }) => {
+	let color: string | undefined = undefined;
+	let backgroundColor: string | undefined = undefined;
+
+	if (profileUrl === undefined) {
+		backgroundColor = getAvatarColor(username);
+		color = getContrastRatio('#000', backgroundColor) > getContrastRatio('#fff', backgroundColor) ? '#000' : '#fff';
+	}
+
+	return { width: 28, height: 28, color, backgroundColor, fontSize: theme.typography.body2.fontSize };
+});
 
 const getInitials = (username: string) => {
 	const words = username.split(' ');
@@ -50,24 +56,22 @@ const getAvatar = (username: string, profileUrl?: string): AvatarProps => {
 	}
 
 	const initials = getInitials(username);
-	const color = getAvatarColor(username);
 
 	return {
-		sx: {
-			backgroundColor: color,
-			color: getContrastRatio('#000', color) > getContrastRatio('#fff', color) ? '#000' : '#fff',
-		},
 		children: initials,
 	};
+};
+
+type InternalAccountAvatarProps = {
+	username: string;
+	profileUrl?: string;
 };
 
 export type AccountAvatarProps<TComponent extends ElementType = 'div', TAdditionalProps = {}> = AvatarProps<
 	TComponent,
 	TAdditionalProps
-> & {
-	username: string;
-	profileUrl?: string;
-};
+> &
+	InternalAccountAvatarProps;
 
 export const AccountAvatar = <TComponent extends ElementType = 'div', TAdditionalProps = {}>({
 	username,
@@ -75,6 +79,6 @@ export const AccountAvatar = <TComponent extends ElementType = 'div', TAdditiona
 	...props
 }: AccountAvatarProps<TComponent, TAdditionalProps>) => (
 	<Tooltip title={username}>
-		<AccountAvatarRoot {...getAvatar(username, profileUrl)} {...props} />
+		<AccountAvatarRoot ownerState={{ username, profileUrl }} {...getAvatar(username, profileUrl)} {...props} />
 	</Tooltip>
 );
