@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.15
+
+### Patch Changes
+
+-   76a81ca: Improve thumbnail extracting algorithm, by omitting non-word characters (AccountAvatar)
+    -   @rchat/react@0.5.15
+
 ## 0.5.14
 
 ### Patch Changes
