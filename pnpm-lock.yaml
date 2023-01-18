@@ -61,6 +61,7 @@ importers:
       '@types/react': ^18.0.9
       aqu: ^0.4.3
       babel-loader: ^8.2.5
+      cross-env: ^7.0.3
       react: ^18.1.0
       react-dom: ^18.1.0
       rimraf: ^3.0.2
@@ -87,6 +88,7 @@ importers:
       '@types/react': 18.0.15
       aqu: 0.4.3_@babel+core@7.18.9
       babel-loader: 8.2.5_@babel+core@7.18.9
+      cross-env: 7.0.3
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       rimraf: 3.0.2
@@ -10578,6 +10580,14 @@ packages:
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
       sha.js: 2.4.11
+    dev: true
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
     dev: true
 
   /cross-spawn/5.1.0:
