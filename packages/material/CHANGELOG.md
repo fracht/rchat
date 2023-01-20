@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.16
+
+### Patch Changes
+
+-   464e0b4: MessageBox remove empty space when author is not specified
+    -   @rchat/react@0.5.16
+
 ## 0.5.15
 
 ### Patch Changes

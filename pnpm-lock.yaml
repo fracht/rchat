@@ -49,7 +49,7 @@ importers:
       '@mui/styled-engine': ^5.10.6
       '@mui/system': ^5.10.6
       '@mui/types': ^7.2.0
-      '@rchat/react': workspace:^0.5.15
+      '@rchat/react': workspace:^0.5.16
       '@storybook/addon-actions': ^6.5.13
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/addon-interactions': ^6.5.13
@@ -98,7 +98,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.18.2
-      '@rchat/client': workspace:^0.5.15
+      '@rchat/client': workspace:^0.5.16
       '@sirse-dev/eslint-config': ^1.0.6
       '@sirse-dev/safe-context': ^0.3.0
       '@size-limit/preset-small-lib': ^7.0.8
@@ -127,7 +127,7 @@ importers:
       use-isomorphic-layout-effect: ^1.1.2
     dependencies:
       '@sirse-dev/safe-context': 0.3.0_react@18.2.0
-      use-isomorphic-layout-effect: 1.1.2
+      use-isomorphic-layout-effect: 1.1.2_3hx2ussxxho4jajbwrd6gq34qe
     devDependencies:
       '@babel/core': 7.18.9
       '@rchat/client': link:../client
@@ -161,7 +161,7 @@ importers:
     specifiers:
       '@babel/core': ^7.18.2
       '@isaacs/ttlcache': ^1.2.1
-      '@rchat/shared': workspace:^0.5.15
+      '@rchat/shared': workspace:^0.5.16
       '@types/jest': ^29.2.0
       '@types/node': ^18.0.6
       aqu: 0.4.3
@@ -202,7 +202,7 @@ importers:
 
   packages/test-utils:
     specifiers:
-      '@rchat/server': workspace:^0.5.15
+      '@rchat/server': workspace:^0.5.16
       aqu: ^0.4.3
       nodemon: ^2.0.20
       rimraf: ^3.0.2
@@ -5150,7 +5150,7 @@ packages:
       eslint-plugin-lodash: 7.4.0_eslint@8.20.0
       eslint-plugin-prettier: 4.2.1_vvfpqh5kol6rhqy7beehv5uezq
       eslint-plugin-react: 7.30.1_eslint@8.20.0
-      eslint-plugin-react-hooks: 4.6.0
+      eslint-plugin-react-hooks: 4.6.0_eslint@8.20.0
       eslint-plugin-unicorn: 43.0.2_eslint@8.20.0
       eslint-plugin-workspaces: 0.7.0
       prettier: 2.7.1
@@ -11868,13 +11868,13 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-react-hooks/4.6.0:
+  /eslint-plugin-react-hooks/4.6.0_eslint@8.20.0:
     resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
     dependencies:
       eslint: 8.20.0
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /eslint-plugin-react/7.30.1_eslint@8.20.0:
@@ -19661,8 +19661,11 @@ packages:
       querystring: 0.2.0
     dev: true
 
-  /use-isomorphic-layout-effect/1.1.2:
+  /use-isomorphic-layout-effect/1.1.2_3hx2ussxxho4jajbwrd6gq34qe:
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true

@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/material",
-	"version": "0.5.15",
+	"version": "0.5.16",
 	"sideEffects": false,
 	"main": "./dist/src/index.js",
 	"types": "./dist/src/index.d.ts",
@@ -32,7 +32,7 @@
 		"@mui/material": "^5.10.6",
 		"@mui/styled-engine": "^5.10.6",
 		"@mui/types": "^7.2.0",
-		"@rchat/react": "workspace:^0.5.15",
+		"@rchat/react": "workspace:^0.5.16",
 		"@storybook/addon-actions": "^6.5.13",
 		"@storybook/addon-essentials": "^6.5.13",
 		"@storybook/addon-interactions": "^6.5.13",
