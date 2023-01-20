@@ -27,19 +27,19 @@ The MessageEmoji component is used to properly display chat message, that contai
 
 <Canvas>
 	<Story name="Overview">
-		<MessageBox position="start" orientation="left" component={MessageEmoji}>
+		<MessageBox author={{ username: 'Hello World' }} position="start" orientation="left" component={MessageEmoji}>
 			👋
 		</MessageBox>
 		<MessageBox author={{ username: 'Hello World' }} position="end" orientation="left" component={MessageEmoji}>
 			🚶❔
 		</MessageBox>
-		<MessageBox position="start" orientation="right" component={MessageEmoji}>
+		<MessageBox position="single" orientation="right" component={MessageEmoji}>
 			⌚🤔
 		</MessageBox>
-		<MessageBox author={{ username: 'Hello World' }} position="start" orientation="left" component={MessageEmoji}>
+		<MessageBox author={{ username: 'Hello World' }} position="single" orientation="left" component={MessageEmoji}>
 			🕢
 		</MessageBox>
-		<MessageBox position="start" orientation="right" component={MessageEmoji}>
+		<MessageBox position="single" orientation="right" component={MessageEmoji}>
 			👍
 		</MessageBox>
 	</Story>

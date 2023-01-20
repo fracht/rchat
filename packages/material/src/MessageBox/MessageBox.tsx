@@ -14,8 +14,8 @@ type MessageBoxState = {
 	position: MessagePosition;
 };
 
-const getGridProperties = (orientation: MessageOrientation): CSSObject => {
-	if (orientation === 'left') {
+const getGridProperties = (orientation: MessageOrientation, isAuthorPresent: boolean): CSSObject => {
+	if (orientation === 'left' && isAuthorPresent) {
 		return {
 			gridTemplateAreas: '"avatar content" ". time"',
 			gridTemplateColumns: '28px auto',
@@ -28,16 +28,16 @@ const getGridProperties = (orientation: MessageOrientation): CSSObject => {
 	};
 };
 
-const MessageBoxRoot = styled<MessageBoxState, 'div'>('div', {
+const MessageBoxRoot = styled<MessageBoxState & { isAuthorPresent: boolean }, 'div'>('div', {
 	name: 'MessageBox',
 	slot: 'Root',
 	overridesResolver: (_, styles) => styles.root,
-})(({ theme, ownerState: { orientation, position } }) => {
+})(({ theme, ownerState: { orientation, position, isAuthorPresent } }) => {
 	return {
 		marginBottom: ['end', 'single'].includes(position) ? theme.spacing(1.5) : theme.spacing(0.25),
 		display: 'grid',
 		columnGap: theme.spacing(1),
-		...getGridProperties(orientation),
+		...getGridProperties(orientation, isAuthorPresent),
 	};
 });
 
@@ -75,8 +75,8 @@ type InternalMessageBoxProps = {
 export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
 	forwardRef(
 		({ children, component, orientation, position, time, author, ...props }, reference: Ref<HTMLDivElement>) => (
-			<MessageBoxRoot ownerState={{ orientation, position }}>
-				{author && (
+			<MessageBoxRoot ownerState={{ orientation, position, isAuthorPresent: !!author }}>
+				{author && orientation === 'left' && ['single', 'end'].includes(position) && (
 					<MessageBoxAvatarWrapper>
 						<AccountAvatar {...author} />
 					</MessageBoxAvatarWrapper>
@@ -84,9 +84,7 @@ export const MessageBox = createMuiComponent<InternalMessageBoxProps, 'div'>(
 				<MessageBoxContent {...props} ref={reference} as={component} ownerState={{ orientation, position }}>
 					{children}
 				</MessageBoxContent>
-				{time && (position === 'end' || position === 'single') && (
-					<MessageTime orientation={orientation} time={time} />
-				)}
+				{time && ['single', 'end'].includes(position) && <MessageTime orientation={orientation} time={time} />}
 			</MessageBoxRoot>
 		),
 	),
