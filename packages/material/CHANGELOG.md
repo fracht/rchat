@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.5.17
+
+### Patch Changes
+
+-   3d5d2f4: Removed Tooltip from AccountAvatar
+    -   @rchat/react@0.5.17
+
 ## 0.5.16
 
 ### Patch Changes
