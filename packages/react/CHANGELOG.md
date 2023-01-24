@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.5.18
+
+### Patch Changes
+
+-   c4e79fa: Exposed useEndlessList and useVisibleFrame hooks
+    -   @rchat/client@0.5.18
+
 ## 0.5.17
 
 ### Patch Changes
