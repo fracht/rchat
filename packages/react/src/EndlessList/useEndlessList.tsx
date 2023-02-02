@@ -88,7 +88,7 @@ export const useEndlessList = <T,>({
 		const mustJump = mustMoveForward && mustMoveBack;
 
 		if (mustJump) {
-			const jumpDirection = compareItems(items[0], oldItems.current[0]) > 0 ? 'forward' : 'back';
+			const jumpDirection = compareItems(items[0], oldItems.current[0]) < 0 ? 'forward' : 'back';
 
 			const jumpKey = getKey(items[items.length / 2]);
 
