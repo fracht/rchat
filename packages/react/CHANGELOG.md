@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.6.1
+
+### Patch Changes
+
+-   56f2ab7: Fixed jump direction in EndlessList
+
 ## 0.6.0
 
 ### Minor Changes
