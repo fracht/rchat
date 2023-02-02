@@ -6,7 +6,7 @@ export type UseEndlessListConfig<T> = {
 	getKey: (item: T) => Key;
 	compareItems: (a: T, b: T) => number;
 	handleJump: () => Promise<void>;
-	focusedItemKey?: Key;
+	focusedItem?: T;
 };
 
 export type EndlessListRealItem<TValue> = {
@@ -45,13 +45,15 @@ export const useEndlessList = <T,>({
 	items,
 	compareItems,
 	handleJump,
-	focusedItemKey,
+	focusedItem,
 }: UseEndlessListConfig<T>): Array<EndlessListItem<T>> => {
 	type JumpItems = {
 		prev: T[];
 		next: T[];
 		jumpKey: Key;
 	};
+
+	const focusedItemKey = focusedItem === undefined ? undefined : getKey(focusedItem);
 
 	const oldItems = useRef(items);
 

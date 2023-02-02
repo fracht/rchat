@@ -1,7 +1,8 @@
-import { MessageFetchResult } from '@rchat/client';
+import { MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
 import { Ref, useCallback, useEffect, useRef, useState } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
+import { clamp } from './internal/clamp';
 import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
 import { useEvent } from './internal/useEvent';
 
@@ -13,6 +14,7 @@ export type UseMessagesBag<T> = {
 	noMessagesAfter: boolean;
 	onVisibleFrameChange: (frame: Frame) => void;
 	containerReference: Ref<HTMLElement>;
+	focusedItem?: T;
 };
 
 export type UseMessagesConfig<T> = {
@@ -47,6 +49,9 @@ export const useMessages = <TMessage,>({
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 	const containerReference = useRef<HTMLElement>(null);
 	const [isLoaded, setIsLoaded] = useState(false);
+	const searchResults = useRef<MessageSearchResult<TMessage>>();
+	const selectedSearchResult = useRef(0);
+	const focusedItem = useRef<TMessage>();
 
 	const [
 		messages,
@@ -89,11 +94,86 @@ export const useMessages = <TMessage,>({
 		[roomIdentifier, getAllMessages, compareItems, insertMessage],
 	);
 
+	const focusItem = useCallback(
+		async (item: TMessage | undefined) => {
+			focusedItem.current = item;
+			if (!item) {
+				return;
+			}
+
+			const [previousChunk, nextChunk] = await Promise.all([
+				chatClient.fetchMessages(roomIdentifier, additionalChunkSize, item, undefined),
+				chatClient.fetchMessages(roomIdentifier, additionalChunkSize, undefined, item),
+			]);
+
+			messagesState.current = {
+				noMessagesBefore: previousChunk.noMessagesBefore,
+				noMessagesAfter: nextChunk.noMessagesAfter,
+			};
+
+			setMessages([...previousChunk.messages, item, ...nextChunk.messages], 'beginning');
+		},
+		[additionalChunkSize, chatClient, roomIdentifier, setMessages],
+	);
+
+	const handleSearch = useCallback(
+		(event: CustomEvent<[roomIdentifier: string, searchResult: MessageSearchResult<TMessage>]>) => {
+			const [searchRoomIdentifier, searchResult] = event.detail;
+
+			if (searchRoomIdentifier === roomIdentifier) {
+				searchResults.current = searchResult;
+				selectedSearchResult.current = 0;
+				focusItem(searchResult.results[0]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
+	const handlePreviousSearchResult = useCallback(
+		(event: CustomEvent<[roomIdentifier: string]>) => {
+			const [searchRoomIdentifier] = event.detail;
+
+			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
+				selectedSearchResult.current = clamp(
+					selectedSearchResult.current - 1,
+					0,
+					searchResults.current.results.length ?? 0,
+				);
+				focusItem(searchResults.current.results[selectedSearchResult.current]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
+	const handleNextSearchResult = useCallback(
+		(event: CustomEvent<[roomIdentifier: string]>) => {
+			const [searchRoomIdentifier] = event.detail;
+
+			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
+				selectedSearchResult.current = clamp(
+					selectedSearchResult.current + 1,
+					0,
+					searchResults.current.results.length ?? 0,
+				);
+				focusItem(searchResults.current.results[selectedSearchResult.current]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
 	useEffect(() => {
 		chatClient.addEventListener('receiveMessage', handleIncomingMessage);
+		chatClient.addEventListener('receiveSearchResults', handleSearch);
+		chatClient.addEventListener('nextSearchResult', handleNextSearchResult);
+		chatClient.addEventListener('previousSearchResult', handlePreviousSearchResult);
 
-		return () => chatClient.removeEventListener('receiveMessage', handleIncomingMessage);
-	}, [chatClient, handleIncomingMessage]);
+		return () => {
+			chatClient.removeEventListener('receiveMessage', handleIncomingMessage);
+			chatClient.removeEventListener('receiveSearchResults', handleSearch);
+			chatClient.removeEventListener('nextSearchResult', handleNextSearchResult);
+			chatClient.removeEventListener('previousSearchResult', handlePreviousSearchResult);
+		};
+	}, [chatClient, handleIncomingMessage, handleNextSearchResult, handlePreviousSearchResult, handleSearch]);
 
 	useEffect(() => {
 		const load = async () => {
@@ -186,5 +266,6 @@ export const useMessages = <TMessage,>({
 		noMessagesAfter: messagesState.current.noMessagesAfter,
 		onVisibleFrameChange,
 		containerReference,
+		focusedItem: focusedItem.current,
 	};
 };
