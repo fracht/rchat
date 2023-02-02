@@ -11,7 +11,7 @@
 		"bump": "changeset version && pnpm i --lockfile-only"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.23.2",
+		"@changesets/cli": "^2.26.0",
 		"@types/jest": "^29.2.0",
 		"clean-publish": "^4.0.1",
 		"prettier": "^2.6.2",

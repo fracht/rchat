@@ -1,11 +1,17 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@2.0.1/schema.json",
-  "changelog": "@changesets/cli/changelog",
-  "commit": false,
-  "fixed": [["@rchat/*"]],
-  "linked": [],
-  "access": "restricted",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": []
+	"$schema": "https://unpkg.com/@changesets/config@2.3.0/schema.json",
+	"changelog": "@changesets/cli/changelog",
+	"commit": false,
+	"fixed": [["@rchat/*"]],
+	"linked": [],
+	"access": "restricted",
+	"baseBranch": "main",
+	"ignore": [],
+	"privatePackages": {
+		"tag": false,
+		"version": true
+	},
+	"___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+		"onlyUpdatePeerDependentsWhenOutOfRange": true
+	}
 }
