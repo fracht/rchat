@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.6.0
+
+### Minor Changes
+
+-   50d9c73: Implemented search functionality for MessageList
+
 ## 0.5.18
 
 ### Patch Changes

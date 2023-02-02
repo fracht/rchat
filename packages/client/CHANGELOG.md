@@ -1,5 +1,15 @@
 # @rchat/client
 
+## 0.6.0
+
+### Minor Changes
+
+-   2f2c5b3: Added search api in client
+
+### Patch Changes
+
+-   @rchat/shared@0.6.0
+
 ## 0.5.18
 
 ### Patch Changes
