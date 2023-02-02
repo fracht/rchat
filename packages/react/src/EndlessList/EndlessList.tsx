@@ -36,7 +36,7 @@ export type EndlessListProps<TItemType> = {
 	onTopReached?: () => void;
 	onBottomReached?: () => void;
 	compareItems: (first: TItemType, second: TItemType) => number;
-	focusedItemKey?: Key;
+	focusedItem?: TItemType;
 	jumpAnimationDuration?: number;
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
@@ -57,7 +57,7 @@ export const EndlessList = <T,>({
 	compareItems,
 	PlaceholderComponent,
 	jumpAnimationDuration = 500,
-	focusedItemKey,
+	focusedItem,
 	ContainerComponent,
 	canStickToBottom,
 	onVisibleFrameChange,
@@ -118,14 +118,14 @@ export const EndlessList = <T,>({
 		items,
 		compareItems,
 		handleJump: scrollToFocusItem,
-		focusedItemKey,
+		focusedItem,
 	});
 
 	useEffect(() => {
-		if (focusedItemKey) {
+		if (focusedItem) {
 			scrollToFocusItem();
 		}
-	}, [focusedItemKey, scrollToFocusItem]);
+	}, [focusedItem, scrollToFocusItem]);
 
 	const { observer } = useVisibleFrame({
 		containerReference,
