@@ -2,7 +2,13 @@ const easeInOutCubic = (value: number) => {
 	return value < 0.5 ? 4 * value * value * value : (value - 1) * (2 * value - 2) * (2 * value - 2) + 1;
 };
 
-export const smoothScrollToCenter = async (container: HTMLElement, element: HTMLElement, duration: number) => {
+export const smoothScrollToCenter = async (
+	container: HTMLElement,
+	element: HTMLElement,
+	/* Pixels per second */
+	speed: number,
+	controller?: AbortController,
+) => {
 	const elementRect = element.getBoundingClientRect();
 	const containerRect = container.getBoundingClientRect();
 
@@ -15,8 +21,14 @@ export const smoothScrollToCenter = async (container: HTMLElement, element: HTML
 	const scrollEndValue = Math.min(Math.max(scrollIntendedDestination, 0), maxScroll);
 	let startTime = 0;
 
-	return new Promise<void>((resolve) => {
+	const duration = (Math.abs(scrollEndValue - startPos) / speed) * 1000;
+
+	return new Promise<void>((resolve, reject) => {
 		const scroll = (timestamp: number) => {
+			if (controller?.signal.aborted) {
+				reject(controller.signal.reason);
+				return;
+			}
 			startTime = startTime || timestamp;
 			const elapsed = timestamp - startTime;
 			container.scrollTop = startPos + (scrollEndValue - startPos) * easeInOutCubic(elapsed / duration);
