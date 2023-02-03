@@ -1,5 +1,13 @@
 # @rchat/react
 
+## 0.6.2
+
+### Patch Changes
+
+-   6bf8110: Added jumpAnimationDuration prop on MessageList
+-   905a9ad: Fix search result iteration - max index set to results.length-1
+-   0b7c173: Stopping scrolling when new focus item appear. Changed jumpAnimationDuration to jumpAnimationSpeed
+
 ## 0.6.1
 
 ### Patch Changes
