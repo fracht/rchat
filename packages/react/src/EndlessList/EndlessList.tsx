@@ -37,7 +37,7 @@ export type EndlessListProps<TItemType> = {
 	onBottomReached?: () => void;
 	compareItems: (first: TItemType, second: TItemType) => number;
 	focusedItem?: TItemType;
-	jumpAnimationDuration?: number;
+	jumpAnimationSpeed?: number;
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
 	containerReference?: Ref<HTMLElement>;
@@ -56,7 +56,7 @@ export const EndlessList = <T,>({
 	onBottomReached,
 	compareItems,
 	PlaceholderComponent,
-	jumpAnimationDuration = 500,
+	jumpAnimationSpeed = 500,
 	focusedItem,
 	ContainerComponent,
 	canStickToBottom,
@@ -67,6 +67,7 @@ export const EndlessList = <T,>({
 	const focusElementReference = useRef<HTMLElement>(null);
 	const stickToBottomReached = useRef(false);
 	const isScrolling = useRef(false);
+	const scrollAbortController = useRef<AbortController>();
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 
 	const setBottomReached = useToggleEvent(onBottomReached ?? noop);
@@ -101,17 +102,31 @@ export const EndlessList = <T,>({
 	});
 
 	const scrollToFocusItem = useCallback(async () => {
-		if (isScrolling.current || !containerReference.current || !focusElementReference.current) {
+		if (!containerReference.current || !focusElementReference.current) {
 			return;
 		}
+
+		if (scrollAbortController.current) {
+			scrollAbortController.current.abort();
+		}
 		isScrolling.current = true;
+		const abortController = new AbortController();
+		scrollAbortController.current = abortController;
 
-		await smoothScrollToCenter(containerReference.current, focusElementReference.current, jumpAnimationDuration);
+		try {
+			await smoothScrollToCenter(
+				containerReference.current,
+				focusElementReference.current,
+				jumpAnimationSpeed,
+				abortController,
+			);
+			isScrolling.current = false;
 
-		isScrolling.current = false;
-
-		checkBounds();
-	}, [checkBounds, jumpAnimationDuration]);
+			checkBounds();
+		} catch {
+			/* Ignore error */
+		}
+	}, [checkBounds, jumpAnimationSpeed]);
 
 	const visibleItems = useEndlessList({
 		getKey,
