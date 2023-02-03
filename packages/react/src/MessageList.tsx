@@ -1,10 +1,14 @@
-import { SafeContext, useSafeContext } from '@sirse-dev/safe-context';
+import { useSafeContext } from '@sirse-dev/safe-context';
 import { EndlessList } from './EndlessList';
-import { RChatContext, RChatContextType } from './internal/RChatContext';
+import { RChatContext } from './internal/RChatContext';
 import { RoomContext } from './internal/RoomContext';
 import { useMessages } from './useMessages';
 
-export const MessageList = <T,>() => {
+export type MessageListProps = {
+	jumpAnimationDuration?: number;
+};
+
+export const MessageList = ({ jumpAnimationDuration }: MessageListProps) => {
 	const {
 		client,
 		MessageComponent,
@@ -13,7 +17,7 @@ export const MessageList = <T,>() => {
 		triggerDistance,
 		compareItems,
 		itemKey,
-	} = useSafeContext(RChatContext as SafeContext<RChatContextType<T>>);
+	} = useSafeContext(RChatContext);
 	const { roomIdentifier } = useSafeContext(RoomContext);
 
 	const {
@@ -48,6 +52,7 @@ export const MessageList = <T,>() => {
 			canStickToBottom={noMessagesAfter}
 			containerReference={containerReference}
 			focusedItem={focusedItem}
+			jumpAnimationDuration={jumpAnimationDuration}
 		/>
 	);
 };
