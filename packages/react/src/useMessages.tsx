@@ -137,7 +137,7 @@ export const useMessages = <TMessage,>({
 				selectedSearchResult.current = clamp(
 					selectedSearchResult.current - 1,
 					0,
-					searchResults.current.results.length ?? 0,
+					Math.max(searchResults.current.results.length - 1, 0),
 				);
 				focusItem(searchResults.current.results[selectedSearchResult.current]);
 			}
@@ -153,7 +153,7 @@ export const useMessages = <TMessage,>({
 				selectedSearchResult.current = clamp(
 					selectedSearchResult.current + 1,
 					0,
-					searchResults.current.results.length ?? 0,
+					Math.max(searchResults.current.results.length - 1, 0),
 				);
 				focusItem(searchResults.current.results[selectedSearchResult.current]);
 			}
