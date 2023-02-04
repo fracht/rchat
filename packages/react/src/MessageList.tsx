@@ -5,10 +5,10 @@ import { RoomContext } from './internal/RoomContext';
 import { useMessages } from './useMessages';
 
 export type MessageListProps = {
-	jumpAnimationSpeed?: number;
+	jumpAnimationDuration?: number;
 };
 
-export const MessageList = ({ jumpAnimationSpeed }: MessageListProps) => {
+export const MessageList = ({ jumpAnimationDuration }: MessageListProps) => {
 	const {
 		client,
 		MessageComponent,
@@ -52,7 +52,7 @@ export const MessageList = ({ jumpAnimationSpeed }: MessageListProps) => {
 			canStickToBottom={noMessagesAfter}
 			containerReference={containerReference}
 			focusedItem={focusedItem}
-			jumpAnimationSpeed={jumpAnimationSpeed}
+			jumpAnimationDuration={jumpAnimationDuration}
 		/>
 	);
 };

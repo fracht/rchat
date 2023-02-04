@@ -37,7 +37,7 @@ export type EndlessListProps<TItemType> = {
 	onBottomReached?: () => void;
 	compareItems: (first: TItemType, second: TItemType) => number;
 	focusedItem?: TItemType;
-	jumpAnimationSpeed?: number;
+	jumpAnimationDuration?: number;
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
 	containerReference?: Ref<HTMLElement>;
@@ -56,7 +56,7 @@ export const EndlessList = <T,>({
 	onBottomReached,
 	compareItems,
 	PlaceholderComponent,
-	jumpAnimationSpeed = 500,
+	jumpAnimationDuration = 500,
 	focusedItem,
 	ContainerComponent,
 	canStickToBottom,
@@ -117,7 +117,7 @@ export const EndlessList = <T,>({
 			await smoothScrollToCenter(
 				containerReference.current,
 				focusElementReference.current,
-				jumpAnimationSpeed,
+				jumpAnimationDuration,
 				abortController,
 			);
 			isScrolling.current = false;
@@ -126,7 +126,7 @@ export const EndlessList = <T,>({
 		} catch {
 			/* Ignore error */
 		}
-	}, [checkBounds, jumpAnimationSpeed]);
+	}, [checkBounds, jumpAnimationDuration]);
 
 	const visibleItems = useEndlessList({
 		getKey,
