@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.6.3
+
+### Patch Changes
+
+-   3df3b4c: Replaced animation speed with animation duration
+
 ## 0.6.2
 
 ### Patch Changes
