@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.4
+
+### Patch Changes
+
+-   473aa14: Fixed issues with scrolling during long jumps
+
 ## 0.7.3
 
 ### Patch Changes
