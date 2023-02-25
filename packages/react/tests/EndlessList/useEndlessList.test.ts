@@ -276,12 +276,19 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['3']) });
-		const fixedInput = [3]
+		const fixedInput = [2, 3]
 
 		expect(result.current).toStrictEqual([
 			{
 				array: fixedInput,
 				index: 0,
+				focused: false,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},{
+				array: fixedInput,
+				index: 1,
 				focused: false,
 				itemKey: '3',
 				type: 'real',
@@ -289,7 +296,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-2',
+				itemKey: ':rchat:-1',
 			},
 			{
 				array: thirdInput,
@@ -372,7 +379,7 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [1, 2, 3];
 		rerender({ items: thirdInput, visibleItemKeys: new Set([':rchat:-1', '7', '8']) });
-		const fixedInput = [7, 8]
+		const fixedInput = [7, 8, 9]
 
 		expect(result.current).toStrictEqual([
 			{
@@ -401,7 +408,19 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-1',
+				itemKey: ':rchat:-2'
+			},
+			{
+				array: [6],
+				index: 0,
+				focused: false,
+				itemKey: '6',
+				type: 'real',
+				value: 6,
+			},
+			{
+				type: 'placeholder',
+				itemKey: ':rchat:-1'
 			},
 			{
 				array: fixedInput,
@@ -418,6 +437,14 @@ describe('useEndlessList', () => {
 				itemKey: '8',
 				type: 'real',
 				value: 8,
+			},
+			{
+				array: fixedInput,
+				index: 2,
+				focused: false,
+				itemKey: '9',
+				type: 'real',
+				value: 9,
 			},
 		] satisfies Array<EndlessListItem<number>>);
 
@@ -476,7 +503,7 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [1, 2, 3];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['7', '8']) });
-		const fixedInput = [7, 8]
+		const fixedInput = [7, 8, 9]
 
 		expect(result.current).toStrictEqual([
 			{
@@ -505,7 +532,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-2',
+				itemKey: ':rchat:-1',
 			},
 			{
 				array: fixedInput,
@@ -522,6 +549,14 @@ describe('useEndlessList', () => {
 				itemKey: '8',
 				type: 'real',
 				value: 8,
+			},
+			{
+				array: fixedInput,
+				index: 2,
+				focused: false,
+				itemKey: '9',
+				type: 'real',
+				value: 9,
 			},
 		] satisfies Array<EndlessListItem<number>>);
 
@@ -580,12 +615,19 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['3', ':rchat:-1']) });
-		const fixedInput = [3];
+		const fixedInput = [2, 3];
 
 		expect(result.current).toStrictEqual([
 			{
 				array: fixedInput,
 				index: 0,
+				focused: false,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},{
+				array: fixedInput,
+				index: 1,
 				focused: false,
 				itemKey: '3',
 				type: 'real',
@@ -680,6 +722,14 @@ describe('useEndlessList', () => {
 		const mergedInput = [4, 5, 6, 7, 8];
 
 		expect(result.current).toStrictEqual([
+			{
+				array: [3],
+				focused: false,
+				index: 0,
+				itemKey: '3',
+				type: 'real',
+				value: 3
+			},
 			{
 				itemKey: ':rchat:-1',
 				type: 'placeholder'
@@ -782,13 +832,20 @@ describe('useEndlessList', () => {
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['2', '3', ':rchat:-1', '6', '7']) });
 
-		const mergedInput = [2, 3];
-		const mergedInput2 = [4, 5, 6, 7];
+		const mergedInput = [1, 2, 3];
+		const mergedInput2 = [4, 5, 6, 7, 8];
 
 		expect(result.current).toStrictEqual([
 			{
 				array: mergedInput,
 				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},{
+				array: mergedInput,
+				index: 1,
 				focused: false,
 				itemKey: '2',
 				type: 'real',
@@ -796,7 +853,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				array: mergedInput,
-				index: 1,
+				index: 2,
 				focused: false,
 				itemKey: '3',
 				type: 'real',
@@ -837,6 +894,14 @@ describe('useEndlessList', () => {
 				itemKey: '7',
 				type: 'real',
 				value: 7,
+			},
+			{
+				array: mergedInput2,
+				index: 4,
+				focused: false,
+				itemKey: '8',
+				type: 'real',
+				value: 8,
 			},
 		] satisfies Array<EndlessListItem<number>>);
 
@@ -896,13 +961,21 @@ describe('useEndlessList', () => {
 		const thirdInput = [3, 4, 5];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['2', '3', ':rchat:-1', '6', '7']) });
 
-		const mergedInput = [2, 3, 4, 5];
-		const mergedInput2 = [6, 7];
+		const mergedInput = [1, 2, 3, 4, 5];
+		const mergedInput2 = [6, 7, 8];
 
 		expect(result.current).toStrictEqual([
 			{
 				array: mergedInput,
 				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},
+			{
+				array: mergedInput,
+				index: 1,
 				focused: false,
 				itemKey: '2',
 				type: 'real',
@@ -910,7 +983,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				array: mergedInput,
-				index: 1,
+				index: 2,
 				focused: false,
 				itemKey: '3',
 				type: 'real',
@@ -918,7 +991,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				array: mergedInput,
-				index: 2,
+				index: 3,
 				focused: true,
 				itemKey: '4',
 				type: 'real',
@@ -926,7 +999,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				array: mergedInput,
-				index: 3,
+				index: 4,
 				focused: false,
 				itemKey: '5',
 				type: 'real',
@@ -951,6 +1024,14 @@ describe('useEndlessList', () => {
 				itemKey: '7',
 				type: 'real',
 				value: 7,
+			},
+			{
+				array: mergedInput2,
+				index: 2,
+				focused: false,
+				itemKey: '8',
+				type: 'real',
+				value: 8,
 			},
 		] satisfies Array<EndlessListItem<number>>);
 

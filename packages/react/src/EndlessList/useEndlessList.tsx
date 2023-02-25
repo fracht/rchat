@@ -67,7 +67,23 @@ export const useEndlessList = <T,>({
 		 */
 
 		const visibleItems = renderedItems
-			.filter(({ itemKey }) => visibleItemKeys.current.has(itemKey))
+			.filter(({ itemKey }, index, array) => {
+				if (visibleItemKeys.current.has(itemKey)) {
+					return true;
+				}
+
+				const previousItem = array[index - 1];
+				if (previousItem && visibleItemKeys.current.has(previousItem.itemKey)) {
+					return true;
+				}
+
+				const nextItem = array[index + 1];
+				if (nextItem && visibleItemKeys.current.has(nextItem.itemKey)) {
+					return true;
+				}
+
+				return false;
+			})
 			.map((item) => {
 				if (item.type === 'real' && item.focused) {
 					item.focused = false;
