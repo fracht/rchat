@@ -296,7 +296,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-1',
+				itemKey: ':rchat:-2',
 			},
 			{
 				array: thirdInput,
@@ -405,18 +405,6 @@ describe('useEndlessList', () => {
 				itemKey: '3',
 				type: 'real',
 				value: 3,
-			},
-			{
-				type: 'placeholder',
-				itemKey: ':rchat:-2'
-			},
-			{
-				array: [6],
-				index: 0,
-				focused: false,
-				itemKey: '6',
-				type: 'real',
-				value: 6,
 			},
 			{
 				type: 'placeholder',
@@ -532,7 +520,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-1',
+				itemKey: ':rchat:-2',
 			},
 			{
 				array: fixedInput,
@@ -722,14 +710,6 @@ describe('useEndlessList', () => {
 		const mergedInput = [4, 5, 6, 7, 8];
 
 		expect(result.current).toStrictEqual([
-			{
-				array: [3],
-				focused: false,
-				index: 0,
-				itemKey: '3',
-				type: 'real',
-				value: 3
-			},
 			{
 				itemKey: ':rchat:-1',
 				type: 'placeholder'

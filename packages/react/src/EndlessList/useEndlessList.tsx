@@ -67,18 +67,26 @@ export const useEndlessList = <T,>({
 		 */
 
 		const visibleItems = renderedItems
-			.filter(({ itemKey }, index, array) => {
+			.filter(({ itemKey, type }, index, array) => {
 				if (visibleItemKeys.current.has(itemKey)) {
 					return true;
 				}
 
+				if (type === 'placeholder') {
+					return false;
+				}
+
 				const previousItem = array[index - 1];
-				if (previousItem && visibleItemKeys.current.has(previousItem.itemKey)) {
+				if (
+					previousItem &&
+					previousItem.type !== 'placeholder' &&
+					visibleItemKeys.current.has(previousItem.itemKey)
+				) {
 					return true;
 				}
 
 				const nextItem = array[index + 1];
-				if (nextItem && visibleItemKeys.current.has(nextItem.itemKey)) {
+				if (nextItem && nextItem.type !== 'placeholder' && visibleItemKeys.current.has(nextItem.itemKey)) {
 					return true;
 				}
 
