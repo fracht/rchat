@@ -101,12 +101,18 @@ export const EndlessList = <T,>({
 		stickToBottomReached.current = frame.end === 0;
 	});
 
+	const abortControllerReference = useRef<AbortController>();
 	const scrollToFocusItem = useCallback(
 		async (abortController = new AbortController()) => {
+			if (abortControllerReference.current) {
+				abortControllerReference.current.abort();
+			}
+
 			if (!containerReference.current || !focusElementReference.current) {
 				return;
 			}
 
+			abortControllerReference.current = abortController;
 			isScrolling.current = true;
 
 			await smoothScrollToCenter(
@@ -129,7 +135,16 @@ export const EndlessList = <T,>({
 		onVisibleFrameUpdated: checkBounds,
 		visibleItemKeys,
 	});
-	const scheduleScroll = useScheduleOnNextRender(scrollToFocusItem);
+	const [scheduleScroll, isScheduled] = useScheduleOnNextRender(scrollToFocusItem);
+
+	useEffect(() => {
+		if (focusedItem && !isScheduled()) {
+			scrollToFocusItem().catch(() => {
+				/* Ignore error */
+			});
+		}
+	}, [focusedItem, isScheduled, scrollToFocusItem]);
+
 	const itemsToRender = useEndlessList({
 		getKey,
 		items,

@@ -5,7 +5,7 @@ type AnyAsyncFunction = (...arguments_: any[]) => Promise<any>;
 
 export const useScheduleOnNextRender = <T extends AnyAsyncFunction>(
 	handler: T,
-): ((...parameters: Parameters<T>) => ReturnType<T>) => {
+): [schedule: (...parameters: Parameters<T>) => ReturnType<T>, isScheduled: () => boolean] => {
 	type PromiseHandle = {
 		parameters: Parameters<T>;
 		resolve: (value: ReturnType<Awaited<T>>) => void;
@@ -15,6 +15,7 @@ export const useScheduleOnNextRender = <T extends AnyAsyncFunction>(
 
 	useEffect(() => {
 		const currentHandle = unresolvedHandle.current;
+		unresolvedHandle.current = undefined;
 		if (currentHandle) {
 			handler(...currentHandle.parameters)
 				.then(currentHandle.resolve)
@@ -32,5 +33,9 @@ export const useScheduleOnNextRender = <T extends AnyAsyncFunction>(
 		}) as ReturnType<T>;
 	}, []);
 
-	return wrappedFunction;
+	const isScheduled = useCallback(() => {
+		return unresolvedHandle.current !== undefined;
+	}, []);
+
+	return [wrappedFunction, isScheduled];
 };
