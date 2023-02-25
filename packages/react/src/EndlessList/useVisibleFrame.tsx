@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { useEvent } from '../internal/useEvent';
 
 export type UseVisibleFrameConfig<TValue> = {
 	items: TValue[];
 	getKey: (item: TValue) => string;
 	onVisibleFrameUpdated: (frame: Frame) => void;
-	visibleItemKeys: Set<string>;
 };
 
 export type Frame = {
@@ -14,11 +12,10 @@ export type Frame = {
 };
 
 export const useVisibleFrame = <TValue,>({
-	visibleItemKeys,
 	items,
 	getKey,
 	onVisibleFrameUpdated,
-}: UseVisibleFrameConfig<TValue>): void => {
+}: UseVisibleFrameConfig<TValue>): ((keys: Set<string>) => void) => {
 	const updateVisibleFrame = useEvent((visibleItemKeys: Set<string>) => {
 		let begin = -1;
 		for (const [index, item] of items.entries()) {
@@ -40,7 +37,5 @@ export const useVisibleFrame = <TValue,>({
 		onVisibleFrameUpdated({ begin, end });
 	});
 
-	useEffect(() => {
-		updateVisibleFrame(visibleItemKeys);
-	}, [visibleItemKeys, updateVisibleFrame]);
+	return updateVisibleFrame;
 };

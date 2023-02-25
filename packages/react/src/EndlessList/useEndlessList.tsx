@@ -1,4 +1,4 @@
-import { Key, useMemo, useRef, useState } from 'react';
+import { Key, useMemo, useRef, useState, MutableRefObject } from 'react';
 import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import { binarySearch } from '../internal/binarySearch';
 import { useEvent } from '../internal/useEvent';
@@ -10,7 +10,7 @@ export type UseEndlessListConfig<T> = {
 	compareItems: (a: T, b: T) => number;
 	handleJump: (abortController: AbortController) => Promise<void>;
 	focusedItem?: T;
-	visibleItemKeys: Set<string>;
+	visibleItemKeys: MutableRefObject<Set<string>>;
 };
 
 export type EndlessListRealItem<TValue> = {
@@ -67,7 +67,7 @@ export const useEndlessList = <T,>({
 		 */
 
 		const visibleItems = renderedItems
-			.filter(({ itemKey }) => visibleItemKeys.has(itemKey))
+			.filter(({ itemKey }) => visibleItemKeys.current.has(itemKey))
 			.map((item) => {
 				if (item.type === 'real' && item.focused) {
 					return { ...item, focused: false };
@@ -139,7 +139,7 @@ export const useEndlessList = <T,>({
 		 */
 		const isAbortedPreviousJump = renderedItems.some((item) => item.type === 'placeholder');
 
-		let oldItems = renderedItems;
+		let oldItems: Array<EndlessListItem<T>>;
 		let constructItems = true;
 		if (isAbortedPreviousJump) {
 			/**
@@ -149,7 +149,7 @@ export const useEndlessList = <T,>({
 			[oldItems, constructItems] = performFixup();
 		} else {
 			const keys = items.map(getKey);
-			const oldKeys = oldItems.map((item) => item.itemKey);
+			const oldKeys = renderedItems.map((item) => item.itemKey);
 
 			const mustMoveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys.at(-1)!);
 			const mustMoveBack = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys.at(-1)!);
@@ -160,6 +160,13 @@ export const useEndlessList = <T,>({
 				setRenderedItems(items.map(defaultConvertItem));
 				return;
 			}
+			oldItems = renderedItems.map((item) => {
+				if (item.type === 'real' && item.focused) {
+					item.focused = false;
+				}
+
+				return item;
+			});
 		}
 
 		let constructedItems: Array<EndlessListItem<T>>;
@@ -184,7 +191,8 @@ export const useEndlessList = <T,>({
 				previousItems = items.map(convertItem);
 			}
 
-			const alreadyHasPlaceholder = oldItems.some((item) => item.type === 'placeholder');
+			const alreadyHasPlaceholder =
+				nextItems.at(-1)?.type === 'placeholder' || previousItems.at(0)?.type === 'placeholder';
 
 			constructedItems = [
 				...nextItems,

@@ -1,14 +1,17 @@
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useEffect, useState, MutableRefObject, useRef } from 'react';
 import { useEvent } from '../internal/useEvent';
 
 export type VisibleItemsBag = {
 	observer: IntersectionObserver | undefined;
-	visibleItemKeys: Set<string>;
+	visibleItemKeys: MutableRefObject<Set<string>>;
 };
 
-export const useVisibleItems = (containerReference: RefObject<HTMLElement>): VisibleItemsBag => {
+export const useVisibleItems = (
+	containerReference: RefObject<HTMLElement>,
+	onVisibleItemsChange?: (items: Set<string>) => void,
+): VisibleItemsBag => {
 	const [observer, setObserver] = useState<IntersectionObserver>();
-	const [visibleItemKeys, setVisibleItemKeys] = useState<Set<string>>(new Set());
+	const visibleItemKeysReference = useRef(new Set<string>());
 
 	const updateVisibleFrame = useEvent((entries: IntersectionObserverEntry[]) => {
 		const items = new Set<string>();
@@ -23,7 +26,8 @@ export const useVisibleItems = (containerReference: RefObject<HTMLElement>): Vis
 			}
 		}
 
-		setVisibleItemKeys(items);
+		visibleItemKeysReference.current = items;
+		onVisibleItemsChange?.(items);
 	});
 
 	useEffect(() => {
@@ -35,5 +39,5 @@ export const useVisibleItems = (containerReference: RefObject<HTMLElement>): Vis
 		}
 	}, [containerReference, updateVisibleFrame]);
 
-	return { observer, visibleItemKeys };
+	return { observer, visibleItemKeys: visibleItemKeysReference };
 };
