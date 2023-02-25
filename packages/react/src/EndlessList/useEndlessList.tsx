@@ -1,4 +1,4 @@
-import { Key, useMemo, useRef, useState } from 'react';
+import { Key, useMemo, useRef, useState, MutableRefObject } from 'react';
 import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import { binarySearch } from '../internal/binarySearch';
 import { useEvent } from '../internal/useEvent';
@@ -10,7 +10,7 @@ export type UseEndlessListConfig<T> = {
 	compareItems: (a: T, b: T) => number;
 	handleJump: (abortController: AbortController) => Promise<void>;
 	focusedItem?: T;
-	visibleItemKeys: Set<string>;
+	visibleItemKeys: MutableRefObject<Set<string>>;
 };
 
 export type EndlessListRealItem<TValue> = {
@@ -67,7 +67,7 @@ export const useEndlessList = <T,>({
 		 */
 
 		const visibleItems = renderedItems
-			.filter(({ itemKey }) => visibleItemKeys.has(itemKey))
+			.filter(({ itemKey }) => visibleItemKeys.current.has(itemKey))
 			.map((item) => {
 				if (item.type === 'real' && item.focused) {
 					return { ...item, focused: false };

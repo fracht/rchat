@@ -128,13 +128,12 @@ export const EndlessList = <T,>({
 		[checkBounds, jumpAnimationDuration],
 	);
 
-	const { observer, visibleItemKeys } = useVisibleItems(containerReference);
-	useVisibleFrame({
+	const onVisibleItemsChange = useVisibleFrame({
 		getKey,
 		items,
 		onVisibleFrameUpdated: checkBounds,
-		visibleItemKeys,
 	});
+	const { observer, visibleItemKeys } = useVisibleItems(containerReference, onVisibleItemsChange);
 	const [scheduleScroll, isScheduled] = useScheduleOnNextRender(scrollToFocusItem);
 
 	useEffect(() => {
