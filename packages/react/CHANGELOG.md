@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.2
+
+### Patch Changes
+
+-   538ef32: Schedule scrolling on next render in EndlessList
+
 ## 0.7.1
 
 ### Patch Changes
