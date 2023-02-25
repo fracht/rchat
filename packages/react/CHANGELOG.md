@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.7.3
+
+### Patch Changes
+
+-   bbaf921: Fixed issue with multiple focus references
+-   25e44e7: Fixed performance issues related to visible items handling algorithm
+
 ## 0.7.2
 
 ### Patch Changes
