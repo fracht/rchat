@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.7.7
+
+### Patch Changes
+
+-   97403cc: Resolved conflict between stickToBottom scrolling and jump scroll animation
+-   1aa4e18: Pass reference into placeholder component
+
 ## 0.7.6
 
 ### Patch Changes
