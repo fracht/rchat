@@ -67,7 +67,6 @@ export const EndlessList = <T,>({
 	const focusElementReference = useRef<HTMLElement>(null);
 	const stickToBottomReached = useRef(false);
 	const isScrolling = useRef(false);
-	const scrollAbortController = useRef<AbortController>();
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 
 	const setBottomReached = useToggleEvent(onBottomReached ?? noop);
@@ -101,19 +100,14 @@ export const EndlessList = <T,>({
 		stickToBottomReached.current = frame.end === 0;
 	});
 
-	const scrollToFocusItem = useCallback(async () => {
-		if (!containerReference.current || !focusElementReference.current) {
-			return;
-		}
+	const scrollToFocusItem = useCallback(
+		async (abortController = new AbortController()) => {
+			if (!containerReference.current || !focusElementReference.current) {
+				return;
+			}
 
-		if (scrollAbortController.current) {
-			scrollAbortController.current.abort();
-		}
-		isScrolling.current = true;
-		const abortController = new AbortController();
-		scrollAbortController.current = abortController;
+			isScrolling.current = true;
 
-		try {
 			await smoothScrollToCenter(
 				containerReference.current,
 				focusElementReference.current,
@@ -123,10 +117,9 @@ export const EndlessList = <T,>({
 			isScrolling.current = false;
 
 			checkBounds();
-		} catch {
-			/* Ignore error */
-		}
-	}, [checkBounds, jumpAnimationDuration]);
+		},
+		[checkBounds, jumpAnimationDuration],
+	);
 
 	const { observer, visibleItemKeys } = useVisibleItems(containerReference);
 	useVisibleFrame({
@@ -146,7 +139,9 @@ export const EndlessList = <T,>({
 
 	useEffect(() => {
 		if (focusedItem) {
-			scrollToFocusItem();
+			scrollToFocusItem().catch(() => {
+				/* Ignore error */
+			});
 		}
 	}, [focusedItem, scrollToFocusItem]);
 
