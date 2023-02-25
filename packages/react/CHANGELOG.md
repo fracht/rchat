@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.1
+
+### Patch Changes
+
+-   925d2bc: Fixed scrolling algorithm in EndlessList
+
 ## 0.7.0
 
 ### Minor Changes
