@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.5
+
+### Patch Changes
+
+-   60f0208: Fixed useVisibleItems hook for EndlessList component
+
 ## 0.7.4
 
 ### Patch Changes
