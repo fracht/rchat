@@ -82,12 +82,18 @@ export const EndlessList = <T,>({
 		setTopReached(false);
 	}, [items, setBottomReached, setTopReached]);
 
-	useLayoutEffect(() => {
+	const handleStickToBottom = useEvent(() => {
 		const container = containerReference.current;
-		if (container && stickToBottomReached.current && canStickToBottom) {
+		if (container && stickToBottomReached.current && !focusedItem) {
 			container.scrollTo({ top: container.scrollHeight });
 		}
-	}, [items, canStickToBottom]);
+	});
+
+	useLayoutEffect(() => {
+		if (canStickToBottom) {
+			handleStickToBottom();
+		}
+	}, [items, canStickToBottom, handleStickToBottom]);
 
 	const checkBounds = useEvent((frame: Frame = visibleFrame.current) => {
 		onVisibleFrameChange?.(frame);
