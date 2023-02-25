@@ -13,7 +13,7 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 
 	const hookBag = renderHook(
 		({ items, visibleItemKeys }) =>
-			useEndlessList({ ...defaultHookConfig, items, visibleItemKeys: visibleItemKeys ?? emptySet }),
+			useEndlessList({ ...defaultHookConfig, items, visibleItemKeys: { current: visibleItemKeys ?? emptySet } }),
 		{
 			initialProps: {
 				items: initialItems,
@@ -276,11 +276,12 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['3']) });
+		const fixedInput = [3]
 
 		expect(result.current).toStrictEqual([
 			{
-				array: secondInput,
-				index: 2,
+				array: fixedInput,
+				index: 0,
 				focused: false,
 				itemKey: '3',
 				type: 'real',
@@ -350,6 +351,214 @@ describe('useEndlessList', () => {
 		] satisfies Array<EndlessListItem<number>>);
 	});
 
+	it('must abort one jump, and continue performing another (ensure correct item order)', async () => {
+		const input = [7, 8, 9];
+		let resolveJump!: () => void;
+		let rejectJump!: () => void;
+		const handleJump = jest.fn().mockImplementation((abortController: AbortController) => {
+			if (rejectJump) {
+				rejectJump();
+			}
+
+			return new Promise<void>((resolve, reject) => {
+				resolveJump = resolve;
+				rejectJump = reject;
+				abortController.signal.addEventListener('abort', reject);
+			});
+		});
+		const { result, rerender } = renderEndlessListHook(input, handleJump);
+
+		const secondInput = [4, 5, 6];
+		rerender({ items: secondInput, visibleItemKeys: undefined });
+		const thirdInput = [1, 2, 3];
+		rerender({ items: thirdInput, visibleItemKeys: new Set([':rchat:-1', '7', '8']) });
+		const fixedInput = [7, 8]
+
+		expect(result.current).toStrictEqual([
+			{
+				array: thirdInput,
+				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},
+			{
+				array: thirdInput,
+				index: 1,
+				focused: true,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},
+			{
+				array: thirdInput,
+				index: 2,
+				focused: false,
+				itemKey: '3',
+				type: 'real',
+				value: 3,
+			},
+			{
+				type: 'placeholder',
+				itemKey: ':rchat:-1',
+			},
+			{
+				array: fixedInput,
+				index: 0,
+				focused: false,
+				itemKey: '7',
+				type: 'real',
+				value: 7,
+			},
+			{
+				array: fixedInput,
+				index: 1,
+				focused: false,
+				itemKey: '8',
+				type: 'real',
+				value: 8,
+			},
+		] satisfies Array<EndlessListItem<number>>);
+
+		await act(async () => {
+			resolveJump();
+
+			await Promise.resolve();
+		});
+
+		expect(result.current).toStrictEqual([
+			{
+				array: thirdInput,
+				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},
+			{
+				array: thirdInput,
+				index: 1,
+				focused: false,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},
+			{
+				array: thirdInput,
+				index: 2,
+				focused: false,
+				itemKey: '3',
+				type: 'real',
+				value: 3,
+			},
+		] satisfies Array<EndlessListItem<number>>);
+	});
+
+	it('must repeat jump algorithm, if the same array came twice', async () => {
+		const input = [7, 8, 9];
+		let resolveJump!: () => void;
+		let rejectJump!: () => void;
+		const handleJump = jest.fn().mockImplementation((abortController: AbortController) => {
+			if (rejectJump) {
+				rejectJump();
+			}
+
+			return new Promise<void>((resolve, reject) => {
+				resolveJump = resolve;
+				rejectJump = reject;
+				abortController.signal.addEventListener('abort', reject);
+			});
+		});
+		const { result, rerender } = renderEndlessListHook(input, handleJump);
+
+		const secondInput = [1, 2, 3, 4, 5, 6];
+		rerender({ items: secondInput, visibleItemKeys: undefined });
+		const thirdInput = [1, 2, 3];
+		rerender({ items: thirdInput, visibleItemKeys: new Set(['7', '8']) });
+		const fixedInput = [7, 8]
+
+		expect(result.current).toStrictEqual([
+			{
+				array: thirdInput,
+				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},
+			{
+				array: thirdInput,
+				index: 1,
+				focused: true,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},
+			{
+				array: thirdInput,
+				index: 2,
+				focused: false,
+				itemKey: '3',
+				type: 'real',
+				value: 3,
+			},
+			{
+				type: 'placeholder',
+				itemKey: ':rchat:-2',
+			},
+			{
+				array: fixedInput,
+				index: 0,
+				focused: false,
+				itemKey: '7',
+				type: 'real',
+				value: 7,
+			},
+			{
+				array: fixedInput,
+				index: 1,
+				focused: false,
+				itemKey: '8',
+				type: 'real',
+				value: 8,
+			},
+		] satisfies Array<EndlessListItem<number>>);
+
+		await act(async () => {
+			resolveJump();
+
+			await Promise.resolve();
+		});
+
+		expect(result.current).toStrictEqual([
+			{
+				array: thirdInput,
+				index: 0,
+				focused: false,
+				itemKey: '1',
+				type: 'real',
+				value: 1,
+			},
+			{
+				array: thirdInput,
+				index: 1,
+				focused: false,
+				itemKey: '2',
+				type: 'real',
+				value: 2,
+			},
+			{
+				array: thirdInput,
+				index: 2,
+				focused: false,
+				itemKey: '3',
+				type: 'real',
+				value: 3,
+			},
+		] satisfies Array<EndlessListItem<number>>);
+	});
+
 	it('must not duplicate placeholders, when jump aborted', async () => {
 		const input = [6, 7, 8];
 		let resolveJump!: () => void;
@@ -371,11 +580,12 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['3', ':rchat:-1']) });
+		const fixedInput = [3];
 
 		expect(result.current).toStrictEqual([
 			{
-				array: secondInput,
-				index: 2,
+				array: fixedInput,
+				index: 0,
 				focused: false,
 				itemKey: '3',
 				type: 'real',

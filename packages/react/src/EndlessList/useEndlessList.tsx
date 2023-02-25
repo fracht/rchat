@@ -70,7 +70,7 @@ export const useEndlessList = <T,>({
 			.filter(({ itemKey }) => visibleItemKeys.current.has(itemKey))
 			.map((item) => {
 				if (item.type === 'real' && item.focused) {
-					return { ...item, focused: false };
+					item.focused = false;
 				}
 
 				return item;
@@ -147,6 +147,20 @@ export const useEndlessList = <T,>({
 			 * Must perform one-time fixup.
 			 */
 			[oldItems, constructItems] = performFixup();
+
+			let array = [];
+			let index = 0;
+			for (const item of oldItems) {
+				if (item.type === 'placeholder') {
+					index = 0;
+					array = [];
+				} else {
+					item.index = index;
+					item.array = array;
+					array.push(item.value);
+					++index;
+				}
+			}
 		} else {
 			const keys = items.map(getKey);
 			const oldKeys = renderedItems.map((item) => item.itemKey);
@@ -203,20 +217,6 @@ export const useEndlessList = <T,>({
 			];
 		} else {
 			constructedItems = oldItems;
-
-			let array = [];
-			let index = 0;
-			for (const item of constructedItems) {
-				if (item.type === 'placeholder') {
-					index = 0;
-					array = [];
-				} else {
-					item.index = index;
-					item.array = array;
-					array.push(item.value);
-					++index;
-				}
-			}
 		}
 
 		setRenderedItems(constructedItems);
