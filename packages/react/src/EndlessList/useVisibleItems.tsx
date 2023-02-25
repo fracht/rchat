@@ -33,7 +33,7 @@ export const useVisibleItems = (
 	useEffect(() => {
 		const containerElement = containerReference.current;
 		if (containerElement) {
-			const observer = new IntersectionObserver(updateVisibleFrame, { root: containerElement, threshold: 1 });
+			const observer = new IntersectionObserver(updateVisibleFrame, { root: containerElement, threshold: 0 });
 
 			setObserver(observer);
 		}
