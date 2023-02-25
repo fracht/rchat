@@ -13,6 +13,7 @@ import {
 import { mergeReferences } from '../internal/mergeReferences';
 import { smoothScrollToCenter } from '../internal/smoothScrollToCenter';
 import { useEvent } from '../internal/useEvent';
+import { useScheduleOnNextRender } from '../internal/useScheduleOnNextRender';
 import { useToggleEvent } from '../internal/useToggleEvent';
 
 import { EndlessListItemView } from './EndlessListItemView';
@@ -128,22 +129,15 @@ export const EndlessList = <T,>({
 		onVisibleFrameUpdated: checkBounds,
 		visibleItemKeys,
 	});
+	const scheduleScroll = useScheduleOnNextRender(scrollToFocusItem);
 	const itemsToRender = useEndlessList({
 		getKey,
 		items,
 		compareItems,
-		handleJump: scrollToFocusItem,
+		handleJump: scheduleScroll,
 		focusedItem,
 		visibleItemKeys,
 	});
-
-	useEffect(() => {
-		if (focusedItem) {
-			scrollToFocusItem().catch(() => {
-				/* Ignore error */
-			});
-		}
-	}, [focusedItem, scrollToFocusItem]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
