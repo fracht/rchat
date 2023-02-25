@@ -4,17 +4,17 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
+		"bump": "changeset version && pnpm i --lockfile-only",
 		"ci": "turbo run lint test build",
 		"dev": "turbo run dev --parallel",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
-		"release": "pnpm build && changeset tag && pnpm publish -r",
-		"bump": "changeset version && pnpm i --lockfile-only"
+		"release": "pnpm build && changeset tag && pnpm publish -r"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.0",
 		"@types/jest": "^29.2.0",
 		"clean-publish": "^4.0.1",
-		"prettier": "^2.6.2",
+		"prettier": "^2.8.4",
 		"syncpack": "^8.2.4",
 		"turbo": "^1.4.3"
 	},

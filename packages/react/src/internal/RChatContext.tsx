@@ -6,7 +6,7 @@ import type { ComponentType } from 'react';
 export type RChatContextType<TMessageType> = {
 	client: ChatClient<TMessageType>;
 	MessageComponent: ItemComponentType<TMessageType>;
-	PlaceholderComponent: ComponentType;
+	PlaceholderComponent: ComponentType<{ itemKey: string }>;
 	ContainerComponent: ComponentType<ContainerComponentProps>;
 	triggerDistance: number;
 	itemKey: ItemKey<TMessageType>;
