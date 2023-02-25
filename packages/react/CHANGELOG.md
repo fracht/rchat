@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.8
+
+### Patch Changes
+
+-   f23ac07: Include more context for items during jump
+
 ## 0.7.7
 
 ### Patch Changes
