@@ -138,11 +138,11 @@ export const EndlessList = <T,>({
 
 	useEffect(() => {
 		if (focusedItem && !isScheduled()) {
-			scrollToFocusItem().catch(() => {
+			scheduleScroll().catch(() => {
 				/* Ignore error */
 			});
 		}
-	}, [focusedItem, isScheduled, scrollToFocusItem]);
+	}, [focusedItem, isScheduled, scheduleScroll]);
 
 	const itemsToRender = useEndlessList({
 		getKey,

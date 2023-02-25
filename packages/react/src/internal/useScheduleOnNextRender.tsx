@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyAsyncFunction = (...arguments_: any[]) => Promise<any>;
@@ -13,7 +13,7 @@ export const useScheduleOnNextRender = <T extends AnyAsyncFunction>(
 	};
 	const unresolvedHandle = useRef<PromiseHandle>();
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const currentHandle = unresolvedHandle.current;
 		unresolvedHandle.current = undefined;
 		if (currentHandle) {
