@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.6
+
+### Patch Changes
+
+-   9216bf1: Changed IntersectionObserver threshold to 0, in order to prevent issues with jumps
+
 ## 0.7.5
 
 ### Patch Changes
