@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/server",
-	"version": "0.7.6",
+	"version": "0.7.7",
 	"main": "./dist/server.cjs.development.js",
 	"types": "./dist/server.d.ts",
 	"publishConfig": {
@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"@isaacs/ttlcache": "^1.2.1",
-		"@rchat/shared": "workspace:^0.7.6",
+		"@rchat/shared": "workspace:^0.7.7",
 		"lru-cache": "^7.14.0",
 		"socket.io": "^4.5.1"
 	},
