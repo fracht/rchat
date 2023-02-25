@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.7.0
+
+### Minor Changes
+
+-   2858ace: Reimplemented EndlessList jumps - proper handling of concurrent jumps
+
 ## 0.6.3
 
 ### Patch Changes
