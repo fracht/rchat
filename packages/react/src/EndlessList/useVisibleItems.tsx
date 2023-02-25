@@ -14,7 +14,6 @@ export const useVisibleItems = (
 	const visibleItemKeysReference = useRef(new Set<string>());
 
 	const updateVisibleFrame = useEvent((entries: IntersectionObserverEntry[]) => {
-		const items = new Set<string>();
 		for (const { target, isIntersecting } of entries) {
 			const key = (target as HTMLElement).dataset.key;
 
@@ -22,12 +21,13 @@ export const useVisibleItems = (
 				// eslint-disable-next-line no-console
 				console.warn('Item component doesn\'t have "data-key" attribute.');
 			} else if (isIntersecting) {
-				items.add(key);
+				visibleItemKeysReference.current.add(key);
+			} else {
+				visibleItemKeysReference.current.delete(key);
 			}
 		}
 
-		visibleItemKeysReference.current = items;
-		onVisibleItemsChange?.(items);
+		onVisibleItemsChange?.(visibleItemKeysReference.current);
 	});
 
 	useEffect(() => {
