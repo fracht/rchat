@@ -1,12 +1,12 @@
 import { ChatClient } from '@rchat/client';
 import { createSafeContext } from '@sirse-dev/safe-context';
-import type { ContainerComponentProps, ItemComponentType, ItemKey } from '../EndlessList';
+import type { ContainerComponentProps, ItemComponentType, ItemKey, PlaceholderComponentType } from '../EndlessList';
 import type { ComponentType } from 'react';
 
 export type RChatContextType<TMessageType> = {
 	client: ChatClient<TMessageType>;
 	MessageComponent: ItemComponentType<TMessageType>;
-	PlaceholderComponent: ComponentType<{ itemKey: string }>;
+	PlaceholderComponent: PlaceholderComponentType;
 	ContainerComponent: ComponentType<ContainerComponentProps>;
 	triggerDistance: number;
 	itemKey: ItemKey<TMessageType>;

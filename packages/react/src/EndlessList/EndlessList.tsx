@@ -18,6 +18,7 @@ import { useToggleEvent } from '../internal/useToggleEvent';
 
 import { EndlessListItemView } from './EndlessListItemView';
 import { ItemComponentType } from './ItemComponentType';
+import { PlaceholderComponentType } from './PlaceholderComponentType';
 import { useEndlessList } from './useEndlessList';
 import { Frame, useVisibleFrame } from './useVisibleFrame';
 import { useVisibleItems } from './useVisibleItems';
@@ -29,7 +30,7 @@ export type ItemKey<T> = KeysOfType<T, string> | ((value: T) => string);
 
 export type EndlessListProps<TItemType> = {
 	ItemComponent: ItemComponentType<TItemType>;
-	PlaceholderComponent: ComponentType<{ itemKey: string }>;
+	PlaceholderComponent: PlaceholderComponentType;
 	ContainerComponent: ComponentType<ContainerComponentProps>;
 	items: TItemType[];
 	itemKey: ItemKey<TItemType>;
