@@ -1,11 +1,11 @@
-import { Key, RefObject, useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { useEvent } from '../internal/useEvent';
 
 export type UseVisibleFrameConfig<TValue> = {
-	containerReference: RefObject<HTMLElement>;
 	items: TValue[];
-	getKey: (item: TValue) => Key;
+	getKey: (item: TValue) => string;
 	onVisibleFrameUpdated: (frame: Frame) => void;
+	visibleItemKeys: Set<string>;
 };
 
 export type Frame = {
@@ -14,28 +14,15 @@ export type Frame = {
 };
 
 export const useVisibleFrame = <TValue,>({
-	containerReference,
+	visibleItemKeys,
 	items,
 	getKey,
 	onVisibleFrameUpdated,
-}: UseVisibleFrameConfig<TValue>) => {
-	const [observer, setObserver] = useState<IntersectionObserver>();
-	const visibilityRecord = useRef<Record<string, boolean>>({});
-
-	const updateVisibleFrame = useEvent((entries: IntersectionObserverEntry[]) => {
-		for (const { target, isIntersecting } of entries) {
-			const key = (target as HTMLElement).dataset.key;
-
-			if (!key) {
-				throw new Error('Item component doesn\'t have "data-key" attribute.');
-			}
-
-			visibilityRecord.current[key] = isIntersecting;
-		}
-
+}: UseVisibleFrameConfig<TValue>): void => {
+	const updateVisibleFrame = useEvent((visibleItemKeys: Set<string>) => {
 		let begin = -1;
 		for (const [index, item] of items.entries()) {
-			if (visibilityRecord.current[getKey(item)]) {
+			if (visibleItemKeys.has(getKey(item))) {
 				begin = index;
 				break;
 			}
@@ -43,7 +30,8 @@ export const useVisibleFrame = <TValue,>({
 
 		let end = -1;
 		for (let index = 0; index <= items.length; ++index) {
-			if (visibilityRecord.current[getKey(items.at(-index - 1)!)]) {
+			const item = items.at(-index - 1);
+			if (item && visibleItemKeys.has(getKey(item))) {
 				end = index;
 				break;
 			}
@@ -53,13 +41,6 @@ export const useVisibleFrame = <TValue,>({
 	});
 
 	useEffect(() => {
-		const containerElement = containerReference.current;
-		if (containerElement) {
-			const observer = new IntersectionObserver(updateVisibleFrame, { root: containerElement, threshold: 1 });
-
-			setObserver(observer);
-		}
-	}, [containerReference, updateVisibleFrame]);
-
-	return { observer };
+		updateVisibleFrame(visibleItemKeys);
+	}, [visibleItemKeys, updateVisibleFrame]);
 };

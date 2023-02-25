@@ -1,12 +1,16 @@
-import { Key, useCallback, useMemo, useRef, useState } from 'react';
+import { Key, useMemo, useRef, useState } from 'react';
 import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
+import { binarySearch } from '../internal/binarySearch';
+import { useEvent } from '../internal/useEvent';
+import { useIdGenerator } from '../internal/useIdGenerator';
 
 export type UseEndlessListConfig<T> = {
 	items: T[];
-	getKey: (item: T) => Key;
+	getKey: (item: T) => string;
 	compareItems: (a: T, b: T) => number;
-	handleJump: () => Promise<void>;
+	handleJump: (abortController: AbortController) => Promise<void>;
 	focusedItem?: T;
+	visibleItemKeys: Set<string>;
 };
 
 export type EndlessListRealItem<TValue> = {
@@ -14,19 +18,19 @@ export type EndlessListRealItem<TValue> = {
 	value: TValue;
 	index: number;
 	array: TValue[];
-	itemKey: Key;
+	itemKey: string;
 	focused: boolean;
 };
 
 export type EndlessListPlaceholderItem = {
 	type: 'placeholder';
-	itemKey: Key;
+	itemKey: string;
 };
 
 export type EndlessListItem<TValue> = EndlessListRealItem<TValue> | EndlessListPlaceholderItem;
 
-const valueToEndlessListItem = <T,>(getKey: (value: T) => Key, focusItemKey?: Key) => {
-	return (value: T, index: number, array: T[]): EndlessListItem<T> => {
+const valueToEndlessListItem = <T,>(getKey: (value: T) => string, focusItemKey: string | undefined) => {
+	return (value: T, index: number, array: T[]): EndlessListRealItem<T> => {
 		const key = getKey(value);
 
 		return {
@@ -41,84 +45,189 @@ const valueToEndlessListItem = <T,>(getKey: (value: T) => Key, focusItemKey?: Ke
 };
 
 export const useEndlessList = <T,>({
-	getKey,
 	items,
+	getKey,
+	focusedItem,
 	compareItems,
 	handleJump,
-	focusedItem,
+	visibleItemKeys,
 }: UseEndlessListConfig<T>): Array<EndlessListItem<T>> => {
-	type JumpItems = {
-		prev: T[];
-		next: T[];
-		jumpKey: Key;
-	};
-
 	const focusedItemKey = focusedItem === undefined ? undefined : getKey(focusedItem);
+	const defaultConvertItem = useMemo(() => valueToEndlessListItem(getKey, focusedItemKey), [getKey, focusedItemKey]);
+	const [renderedItems, setRenderedItems] = useState<Array<EndlessListItem<T>>>(() => items.map(defaultConvertItem));
+	const jumpAbortController = useRef<AbortController>();
 
-	const oldItems = useRef(items);
+	const getUniquePlaceholderKey = useIdGenerator();
 
-	const [isPerformingJump, setIsPerformingJump] = useState(false);
+	const performFixup = useEvent((): [items: Array<EndlessListItem<T>>, constructItems: boolean] => {
+		/**
+		 * Visible items fixup algorithm.
+		 *
+		 * Firstly, take all items, which are displayed on the screen.
+		 */
 
-	const jump = useCallback(async () => {
-		if (!isPerformingJump) {
+		const visibleItems = renderedItems
+			.filter(({ itemKey }) => visibleItemKeys.has(itemKey))
+			.map((item) => {
+				if (item.type === 'real' && item.focused) {
+					return { ...item, focused: false };
+				}
+
+				return item;
+			});
+
+		const keys = new Set(items.map(getKey));
+		if (visibleItems.every((item) => !keys.has(item.itemKey))) {
+			return [visibleItems, true];
+		}
+
+		const comparator = (a: EndlessListRealItem<T>, b: { value: EndlessListItem<T>; index: number }): number => {
+			if (b.value.type === 'placeholder') {
+				const nextValue = visibleItems[b.index + 1];
+
+				if (nextValue !== undefined && nextValue.type !== 'placeholder') {
+					return compareItems(nextValue.value, a.value);
+				}
+
+				return 1;
+			}
+
+			return compareItems(a.value, b.value.value);
+		};
+
+		const jumpKey = focusedItemKey ?? getKey(items[Math.floor(items.length / 2)]);
+		const convertedItems = [...items.map(valueToEndlessListItem(getKey, jumpKey))];
+
+		let pivotIndex = visibleItems.findIndex((item) => keys.has(item.itemKey));
+
+		if (pivotIndex === -1) {
+			pivotIndex = binarySearch(visibleItems, convertedItems.at(0)!, comparator);
+		}
+		visibleItems.splice(pivotIndex, 1, ...convertedItems);
+
+		const dedupedKeys = new Set<Key>();
+		const filteredItems = visibleItems.filter((item) => {
+			if (dedupedKeys.has(item.itemKey)) {
+				return false;
+			}
+
+			dedupedKeys.add(item.itemKey);
+			return true;
+		});
+
+		return [filteredItems, false];
+	});
+
+	const update = useEvent(async () => {
+		if (jumpAbortController.current) {
+			jumpAbortController.current.abort();
+			jumpAbortController.current = undefined;
+		}
+
+		if (renderedItems.length === 0 || items.length === 0) {
+			/**
+			 * There is nothing to do:
+			 *   1. If renderedItems array is empty, it means that there is nothing on the screen - render all items.
+			 *   2. If items array is empty, it means that all items must disappear from the screen.
+			 */
+			setRenderedItems(items.map(defaultConvertItem));
 			return;
 		}
-		await handleJump();
 
-		oldItems.current = items;
-		setIsPerformingJump(false);
-	}, [handleJump, isPerformingJump, items]);
+		/**
+		 * Determine, if current update call has aborted previous jump.
+		 */
+		const isAbortedPreviousJump = renderedItems.some((item) => item.type === 'placeholder');
+
+		let oldItems = renderedItems;
+		let constructItems = true;
+		if (isAbortedPreviousJump) {
+			/**
+			 * Previous jump was terminated by current state update.
+			 * Must perform one-time fixup.
+			 */
+			[oldItems, constructItems] = performFixup();
+		} else {
+			const keys = items.map(getKey);
+			const oldKeys = oldItems.map((item) => item.itemKey);
+
+			const mustMoveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys.at(-1)!);
+			const mustMoveBack = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys.at(-1)!);
+
+			const mustJump = mustMoveForward && mustMoveBack;
+
+			if (!mustJump) {
+				setRenderedItems(items.map(defaultConvertItem));
+				return;
+			}
+		}
+
+		let constructedItems: Array<EndlessListItem<T>>;
+		if (constructItems) {
+			const firstItem = oldItems.find((item): item is EndlessListRealItem<T> => item.type === 'real');
+			let jumpDirection = 'forward';
+			if (firstItem) {
+				jumpDirection = compareItems(items[0], firstItem.value) < 0 ? 'forward' : 'back';
+			}
+
+			const jumpKey = focusedItemKey ?? getKey(items[Math.floor(items.length / 2)]);
+
+			let nextItems: Array<EndlessListItem<T>> | undefined;
+			let previousItems: Array<EndlessListItem<T>> | undefined;
+
+			const convertItem = valueToEndlessListItem(getKey, jumpKey);
+			if (jumpDirection === 'forward') {
+				nextItems = items.map(convertItem);
+				previousItems = oldItems;
+			} else {
+				nextItems = oldItems;
+				previousItems = items.map(convertItem);
+			}
+
+			const alreadyHasPlaceholder = oldItems.some((item) => item.type === 'placeholder');
+
+			constructedItems = [
+				...nextItems,
+				...(alreadyHasPlaceholder
+					? []
+					: [{ type: 'placeholder' as const, itemKey: getUniquePlaceholderKey() }]),
+				...previousItems,
+			];
+		} else {
+			constructedItems = oldItems;
+
+			let array = [];
+			let index = 0;
+			for (const item of constructedItems) {
+				if (item.type === 'placeholder') {
+					index = 0;
+					array = [];
+				} else {
+					item.index = index;
+					item.array = array;
+					array.push(item.value);
+					++index;
+				}
+			}
+		}
+
+		setRenderedItems(constructedItems);
+		const newController = new AbortController();
+		jumpAbortController.current = newController;
+
+		try {
+			await handleJump(newController);
+			setRenderedItems(items.map(defaultConvertItem));
+		} catch {
+			/* Noop */
+		} finally {
+			jumpAbortController.current = undefined;
+		}
+	});
 
 	useIsomorphicLayoutEffect(() => {
-		jump();
-	}, [jump]);
+		update();
+	}, [update, items]);
 
-	const jumpItems = useMemo(() => {
-		if (items.length === 0 || oldItems.current.length === 0) {
-			oldItems.current = items;
-			return undefined;
-		}
-
-		const keys = items.map(getKey);
-		const oldKeys = oldItems.current.map(getKey);
-
-		const mustMoveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys.at(-1)!);
-		const mustMoveBack = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys.at(-1)!);
-
-		const mustJump = mustMoveForward && mustMoveBack;
-
-		if (mustJump) {
-			const jumpDirection = compareItems(items[0], oldItems.current[0]) < 0 ? 'forward' : 'back';
-
-			const jumpKey = getKey(items[items.length / 2]);
-
-			let newJumpItems: JumpItems | undefined;
-
-			if (jumpDirection === 'forward') {
-				newJumpItems = { next: items, prev: oldItems.current, jumpKey };
-			} else {
-				newJumpItems = { next: oldItems.current, prev: items, jumpKey };
-			}
-			setIsPerformingJump(true);
-
-			return newJumpItems;
-		} else {
-			oldItems.current = items;
-		}
-		return undefined;
-	}, [compareItems, getKey, items]);
-
-	const visibleItems = useMemo<Array<EndlessListItem<T>>>(() => {
-		if (!isPerformingJump || !jumpItems) {
-			return items.map(valueToEndlessListItem(getKey, focusedItemKey));
-		}
-
-		return [
-			...jumpItems.next.map(valueToEndlessListItem(getKey, focusedItemKey ?? jumpItems.jumpKey)),
-			{ type: 'placeholder', itemKey: -1 },
-			...jumpItems.prev.map(valueToEndlessListItem(getKey, focusedItemKey ?? jumpItems.jumpKey)),
-		];
-	}, [focusedItemKey, getKey, isPerformingJump, items, jumpItems]);
-
-	return visibleItems;
+	return renderedItems;
 };

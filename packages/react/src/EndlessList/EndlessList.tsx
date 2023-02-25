@@ -8,7 +8,6 @@ import {
 	useLayoutEffect,
 	useMemo,
 	useRef,
-	type Key,
 } from 'react';
 
 import { mergeReferences } from '../internal/mergeReferences';
@@ -20,15 +19,16 @@ import { EndlessListItemView } from './EndlessListItemView';
 import { ItemComponentType } from './ItemComponentType';
 import { useEndlessList } from './useEndlessList';
 import { Frame, useVisibleFrame } from './useVisibleFrame';
+import { useVisibleItems } from './useVisibleItems';
 import type { KeysOfType } from '../internal/KeysOfType';
 
 export type ContainerComponentProps = PropsWithChildren<RefAttributes<HTMLElement>>;
 
-export type ItemKey<T> = KeysOfType<T, Key> | ((value: T) => Key);
+export type ItemKey<T> = KeysOfType<T, string> | ((value: T) => string);
 
 export type EndlessListProps<TItemType> = {
 	ItemComponent: ItemComponentType<TItemType>;
-	PlaceholderComponent: ComponentType;
+	PlaceholderComponent: ComponentType<{ itemKey: string }>;
 	ContainerComponent: ComponentType<ContainerComponentProps>;
 	items: TItemType[];
 	itemKey: ItemKey<TItemType>;
@@ -74,7 +74,7 @@ export const EndlessList = <T,>({
 	const setTopReached = useToggleEvent(onTopReached ?? noop);
 
 	const getKey = useMemo(() => {
-		return typeof itemKey === 'function' ? itemKey : (value: T) => value[itemKey] as unknown as Key;
+		return typeof itemKey === 'function' ? itemKey : (value: T) => value[itemKey] as unknown as string;
 	}, [itemKey]);
 
 	useEffect(() => {
@@ -128,12 +128,20 @@ export const EndlessList = <T,>({
 		}
 	}, [checkBounds, jumpAnimationDuration]);
 
-	const visibleItems = useEndlessList({
+	const { observer, visibleItemKeys } = useVisibleItems(containerReference);
+	useVisibleFrame({
+		getKey,
+		items,
+		onVisibleFrameUpdated: checkBounds,
+		visibleItemKeys,
+	});
+	const itemsToRender = useEndlessList({
 		getKey,
 		items,
 		compareItems,
 		handleJump: scrollToFocusItem,
 		focusedItem,
+		visibleItemKeys,
 	});
 
 	useEffect(() => {
@@ -142,16 +150,9 @@ export const EndlessList = <T,>({
 		}
 	}, [focusedItem, scrollToFocusItem]);
 
-	const { observer } = useVisibleFrame({
-		containerReference,
-		items,
-		getKey,
-		onVisibleFrameUpdated: checkBounds,
-	});
-
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
-			{visibleItems.map((item) => (
+			{itemsToRender.map((item) => (
 				<EndlessListItemView
 					key={item.itemKey}
 					focusElementReference={focusElementReference}

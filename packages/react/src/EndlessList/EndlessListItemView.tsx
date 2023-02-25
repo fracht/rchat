@@ -5,7 +5,7 @@ import type { EndlessListItem } from './useEndlessList';
 
 export type EndlessListItemViewProps<TMessageType> = EndlessListItem<TMessageType> & {
 	ItemComponent: ItemComponentType<TMessageType>;
-	PlaceholderComponent: ComponentType;
+	PlaceholderComponent: ComponentType<{ itemKey: string }>;
 	itemObserver: IntersectionObserver | undefined;
 	focusElementReference: RefObject<HTMLElement>;
 };
@@ -29,7 +29,7 @@ export const EndlessListItemView = <TMessageType,>({
 	}, [itemObserver]);
 
 	if (item.type === 'placeholder') {
-		return <PlaceholderComponent />;
+		return <PlaceholderComponent itemKey={item.itemKey} />;
 	}
 
 	return <ItemComponent ref={mergeReferences(itemReference, item.focused && focusElementReference)} {...item} />;
