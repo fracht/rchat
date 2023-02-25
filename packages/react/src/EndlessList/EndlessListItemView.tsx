@@ -1,11 +1,12 @@
-import { ComponentType, RefObject, useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import { mergeReferences } from '../internal/mergeReferences';
 import { ItemComponentType } from './ItemComponentType';
+import { PlaceholderComponentType } from './PlaceholderComponentType';
 import type { EndlessListItem } from './useEndlessList';
 
 export type EndlessListItemViewProps<TMessageType> = EndlessListItem<TMessageType> & {
 	ItemComponent: ItemComponentType<TMessageType>;
-	PlaceholderComponent: ComponentType<{ itemKey: string }>;
+	PlaceholderComponent: PlaceholderComponentType;
 	itemObserver: IntersectionObserver | undefined;
 	focusElementReference: RefObject<HTMLElement>;
 };
@@ -29,7 +30,7 @@ export const EndlessListItemView = <TMessageType,>({
 	}, [itemObserver]);
 
 	if (item.type === 'placeholder') {
-		return <PlaceholderComponent itemKey={item.itemKey} />;
+		return <PlaceholderComponent ref={itemReference} itemKey={item.itemKey} />;
 	}
 
 	return <ItemComponent ref={mergeReferences(itemReference, item.focused && focusElementReference)} {...item} />;
