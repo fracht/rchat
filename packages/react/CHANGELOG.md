@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.8.2
+
+### Patch Changes
+
+-   2facfb7: Fixed scroll to bottom
+
 ## 0.8.1
 
 ### Patch Changes
