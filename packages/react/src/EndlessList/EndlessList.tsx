@@ -97,12 +97,6 @@ export const EndlessList = <T,>({
 		}
 	});
 
-	useLayoutEffect(() => {
-		if (canStickToBottom) {
-			handleStickToBottom();
-		}
-	}, [items, canStickToBottom, handleStickToBottom]);
-
 	const checkBounds = useEvent((frame: Frame = visibleFrame.current) => {
 		onVisibleFrameChange?.(frame);
 		visibleFrame.current = frame;
@@ -165,6 +159,25 @@ export const EndlessList = <T,>({
 		focusedItem,
 		visibleItemKeys,
 	});
+
+	useLayoutEffect(() => {
+		if (canStickToBottom) {
+			handleStickToBottom();
+		}
+	}, [itemsToRender, canStickToBottom, handleStickToBottom]);
+
+	const [scrollToBottom] = useScheduleOnNextRender(async () => {
+		const container = containerReference.current;
+		if (container) {
+			container.scrollTo({ top: container.scrollHeight });
+		}
+	});
+
+	useLayoutEffect(() => {
+		scrollToBottom().catch(() => {
+			/* Do nothing */
+		});
+	}, [scrollToBottom]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
