@@ -28,7 +28,7 @@ const getGridProperties = (orientation: MessageOrientation, isAuthorPresent: boo
 	};
 };
 
-const MessageBoxRoot = styled<MessageBoxState & { isAuthorPresent: boolean }, 'div'>('div', {
+export const MessageBoxRoot = styled<MessageBoxState & { isAuthorPresent: boolean }, 'div'>('div', {
 	name: 'MessageBox',
 	slot: 'Root',
 	overridesResolver: (_, styles) => styles.root,
@@ -41,7 +41,7 @@ const MessageBoxRoot = styled<MessageBoxState & { isAuthorPresent: boolean }, 'd
 	};
 });
 
-const MessageBoxContent = styled<MessageBoxState, 'div'>('div', {
+export const MessageBoxContent = styled<MessageBoxState, 'div'>('div', {
 	name: 'MessageBox',
 	slot: 'Content',
 })(({ theme, ownerState: { orientation, position } }) => {
