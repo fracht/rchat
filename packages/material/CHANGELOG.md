@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.8.0
+
+### Patch Changes
+
+-   403b1e6: Exported MessageBox primitives
+
 ## 0.7.9
 
 ## 0.7.8

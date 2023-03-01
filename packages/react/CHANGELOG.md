@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.8.0
+
+### Minor Changes
+
+-   44c9457: Added more customization for jump animation
+
 ## 0.7.9
 
 ### Patch Changes
