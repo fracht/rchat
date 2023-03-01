@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.8.1
+
+### Patch Changes
+
+-   d2aff00: Fixed scrolling to bottom algorithm
+
 ## 0.8.0
 
 ### Minor Changes
