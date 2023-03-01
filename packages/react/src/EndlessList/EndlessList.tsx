@@ -11,7 +11,7 @@ import {
 } from 'react';
 
 import { mergeReferences } from '../internal/mergeReferences';
-import { smoothScrollToCenter } from '../internal/smoothScrollToCenter';
+import { AnimationParameters, smoothScrollToCenter } from '../internal/smoothScrollToCenter';
 import { useEvent } from '../internal/useEvent';
 import { useScheduleOnNextRender } from '../internal/useScheduleOnNextRender';
 import { useToggleEvent } from '../internal/useToggleEvent';
@@ -39,7 +39,7 @@ export type EndlessListProps<TItemType> = {
 	onBottomReached?: () => void;
 	compareItems: (first: TItemType, second: TItemType) => number;
 	focusedItem?: TItemType;
-	jumpAnimationDuration?: number;
+	jumpAnimation?: AnimationParameters;
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
 	containerReference?: Ref<HTMLElement>;
@@ -47,6 +47,13 @@ export type EndlessListProps<TItemType> = {
 
 const noop = () => {
 	/** No operation */
+};
+
+const defaultAnimationParameters: AnimationParameters = {
+	// Constant duration
+	duration: () => 500,
+	// Linear easing
+	easing: (t) => t,
 };
 
 export const EndlessList = <T,>({
@@ -58,7 +65,7 @@ export const EndlessList = <T,>({
 	onBottomReached,
 	compareItems,
 	PlaceholderComponent,
-	jumpAnimationDuration = 500,
+	jumpAnimation = defaultAnimationParameters,
 	focusedItem,
 	ContainerComponent,
 	canStickToBottom,
@@ -108,6 +115,10 @@ export const EndlessList = <T,>({
 		stickToBottomReached.current = frame.end === 0;
 	});
 
+	const smoothScrolling = useEvent((container: HTMLElement, item: HTMLElement, abortController?: AbortController) => {
+		return smoothScrollToCenter(container, item, jumpAnimation, abortController);
+	});
+
 	const abortControllerReference = useRef<AbortController>();
 	const scrollToFocusItem = useCallback(
 		async (abortController = new AbortController()) => {
@@ -122,17 +133,12 @@ export const EndlessList = <T,>({
 			abortControllerReference.current = abortController;
 			isScrolling.current = true;
 
-			await smoothScrollToCenter(
-				containerReference.current,
-				focusElementReference.current,
-				jumpAnimationDuration,
-				abortController,
-			);
+			await smoothScrolling(containerReference.current, focusElementReference.current, abortController);
 			isScrolling.current = false;
 
 			checkBounds();
 		},
-		[checkBounds, jumpAnimationDuration],
+		[checkBounds, smoothScrolling],
 	);
 
 	const onVisibleItemsChange = useVisibleFrame({

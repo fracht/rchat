@@ -2,13 +2,14 @@ import { useSafeContext } from '@sirse-dev/safe-context';
 import { EndlessList } from './EndlessList';
 import { RChatContext } from './internal/RChatContext';
 import { RoomContext } from './internal/RoomContext';
+import { AnimationParameters } from './internal/smoothScrollToCenter';
 import { useMessages } from './useMessages';
 
 export type MessageListProps = {
-	jumpAnimationDuration?: number;
+	jumpAnimation?: AnimationParameters;
 };
 
-export const MessageList = ({ jumpAnimationDuration }: MessageListProps) => {
+export const MessageList = ({ jumpAnimation }: MessageListProps) => {
 	const {
 		client,
 		MessageComponent,
@@ -52,7 +53,7 @@ export const MessageList = ({ jumpAnimationDuration }: MessageListProps) => {
 			canStickToBottom={noMessagesAfter}
 			containerReference={containerReference}
 			focusedItem={focusedItem}
-			jumpAnimationDuration={jumpAnimationDuration}
+			jumpAnimation={jumpAnimation}
 		/>
 	);
 };
