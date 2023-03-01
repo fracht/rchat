@@ -166,18 +166,28 @@ export const EndlessList = <T,>({
 		}
 	}, [itemsToRender, canStickToBottom, handleStickToBottom]);
 
-	const [scrollToBottom] = useScheduleOnNextRender(async () => {
+	const isScrolledToBottom = useRef(false);
+	useLayoutEffect(() => {
+		if (isScrolledToBottom.current) {
+			return;
+		}
+
+		if (items.length === 0) {
+			isScrolledToBottom.current = true;
+			return;
+		}
+
+		if (itemsToRender.length === 0) {
+			return;
+		}
+
 		const container = containerReference.current;
 		if (container) {
 			container.scrollTo({ top: container.scrollHeight });
 		}
-	});
 
-	useLayoutEffect(() => {
-		scrollToBottom().catch(() => {
-			/* Do nothing */
-		});
-	}, [scrollToBottom]);
+		isScrolledToBottom.current = true;
+	}, [items.length, itemsToRender.length]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
