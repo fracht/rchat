@@ -1,11 +1,21 @@
-const easeInOutCubic = (value: number) => {
-	return value < 0.5 ? 4 * value * value * value : (value - 1) * (2 * value - 2) * (2 * value - 2) + 1;
+export type AnimationParameters = {
+	/**
+	 * Easing function.
+	 * Takes an argument in range [0, 1] and returns value in range [0, 1].
+	 */
+	easing: (t: number) => number;
+
+	/**
+	 * Animation duration function.
+	 * Takes distance in pixels and returns duration in milliseconds.
+	 */
+	duration: (distance: number) => number;
 };
 
 export const smoothScrollToCenter = async (
 	container: HTMLElement,
 	element: HTMLElement,
-	duration: number,
+	parameters: AnimationParameters,
 	controller?: AbortController,
 ) => {
 	const elementRect = element.getBoundingClientRect();
@@ -20,6 +30,8 @@ export const smoothScrollToCenter = async (
 	const scrollEndValue = Math.min(Math.max(scrollIntendedDestination, 0), maxScroll);
 	let startTime = 0;
 
+	const duration = parameters.duration(scrollEndValue - startPos);
+
 	return new Promise<void>((resolve, reject) => {
 		const scroll = (timestamp: number) => {
 			if (controller?.signal.aborted) {
@@ -28,7 +40,7 @@ export const smoothScrollToCenter = async (
 			}
 			startTime = startTime || timestamp;
 			const elapsed = timestamp - startTime;
-			container.scrollTop = startPos + (scrollEndValue - startPos) * easeInOutCubic(elapsed / duration);
+			container.scrollTop = startPos + (scrollEndValue - startPos) * parameters.easing(elapsed / duration);
 			if (elapsed <= duration) {
 				window.requestAnimationFrame(scroll);
 			} else {
