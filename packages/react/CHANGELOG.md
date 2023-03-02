@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.8.3
+
+### Patch Changes
+
+-   6e00866: Fix issues with scroll to focus item
+
 ## 0.8.2
 
 ### Patch Changes
