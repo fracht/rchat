@@ -181,11 +181,6 @@ export const EndlessList = <T,>({
 			return;
 		}
 
-		if (items.length === 0) {
-			isScrolledToBottom.current = true;
-			return;
-		}
-
 		if (itemsToRender.length === 0) {
 			return;
 		}
@@ -196,7 +191,7 @@ export const EndlessList = <T,>({
 		}
 
 		isScrolledToBottom.current = true;
-	}, [items.length, itemsToRender.length]);
+	}, [itemsToRender.length]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
