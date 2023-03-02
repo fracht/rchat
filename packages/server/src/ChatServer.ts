@@ -4,9 +4,9 @@ import { ChatServerType, ChatSocketType, ConnectionInfo } from '@rchat/shared';
 import { RoomManager } from './RoomManager';
 
 export class ChatServer<TMessageType> {
-	private readonly roomManager;
-	private readonly service;
-	private readonly server;
+	protected readonly roomManager;
+	protected readonly service;
+	protected readonly server;
 
 	public constructor(service: ChatService<TMessageType>, server: ChatServerType<TMessageType>) {
 		this.server = server;
