@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.8.4
+
+### Patch Changes
+
+-   e2c1ae2: Fixed scrolling to bottom
+
 ## 0.8.3
 
 ### Patch Changes
