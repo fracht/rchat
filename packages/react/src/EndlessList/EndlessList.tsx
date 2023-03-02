@@ -90,13 +90,6 @@ export const EndlessList = <T,>({
 		setTopReached(false);
 	}, [items, setBottomReached, setTopReached]);
 
-	const handleStickToBottom = useEvent(() => {
-		const container = containerReference.current;
-		if (container && stickToBottomReached.current && !focusedItem) {
-			container.scrollTo({ top: container.scrollHeight });
-		}
-	});
-
 	const checkBounds = useEvent((frame: Frame = visibleFrame.current) => {
 		onVisibleFrameChange?.(frame);
 		visibleFrame.current = frame;
@@ -114,7 +107,7 @@ export const EndlessList = <T,>({
 	});
 
 	const abortControllerReference = useRef<AbortController>();
-	const scrollToFocusItem = useCallback(
+	const handleJumpScroll = useCallback(
 		async (abortController = new AbortController()) => {
 			if (abortControllerReference.current) {
 				abortControllerReference.current.abort();
@@ -141,23 +134,39 @@ export const EndlessList = <T,>({
 		onVisibleFrameUpdated: checkBounds,
 	});
 	const { observer, visibleItemKeys } = useVisibleItems(containerReference, onVisibleItemsChange);
-	const [scheduleScroll, isScheduled] = useScheduleOnNextRender(scrollToFocusItem);
+	const [scheduleJumpScroll, isJumpScheduled] = useScheduleOnNextRender(handleJumpScroll);
 
-	useEffect(() => {
-		if (focusedItem && !isScheduled()) {
-			scheduleScroll().catch(() => {
-				/* Ignore error */
+	const lastScrolledItem = useRef<T | undefined>();
+	const handleScrollToFocusItem = useEvent(() => {
+		if (focusedItem === lastScrolledItem.current) {
+			return;
+		}
+
+		lastScrolledItem.current = focusedItem;
+		if (focusedItem && !isJumpScheduled()) {
+			handleJumpScroll().catch(() => {
+				/* Ignore aborted jump error */
 			});
 		}
-	}, [focusedItem, isScheduled, scheduleScroll]);
+	});
 
 	const itemsToRender = useEndlessList({
 		getKey,
 		items,
 		compareItems,
-		handleJump: scheduleScroll,
+		handleJump: scheduleJumpScroll,
 		focusedItem,
 		visibleItemKeys,
+	});
+
+	useEffect(() => {
+		handleScrollToFocusItem();
+	}, [handleScrollToFocusItem, itemsToRender]);
+	const handleStickToBottom = useEvent(() => {
+		const container = containerReference.current;
+		if (container && stickToBottomReached.current && !focusedItem) {
+			container.scrollTo({ top: container.scrollHeight });
+		}
 	});
 
 	useLayoutEffect(() => {
