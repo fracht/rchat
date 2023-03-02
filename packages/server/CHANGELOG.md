@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.8.5
+
+### Patch Changes
+
+-   05f2d9c: Fixed ChatServer variable visibility
+    -   @rchat/shared@0.8.5
+
 ## 0.8.4
 
 ### Patch Changes
