@@ -1,5 +1,11 @@
 # @rchat/server
 
+## 0.9.0
+
+### Patch Changes
+
+-   @rchat/shared@0.9.0
+
 ## 0.8.5
 
 ### Patch Changes

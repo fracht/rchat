@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.9.0
+
+### Minor Changes
+
+-   b8e8aad: Refactored CustomEventMap
+
 ## 0.8.5
 
 ## 0.8.4
