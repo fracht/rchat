@@ -1,15 +1,19 @@
 import { ChatClientSocket, ChatSocketListenMap } from '@rchat/shared';
 import { io } from 'socket.io-client';
 import { ChatAPI, MessageFetcher, MessageSearchResult } from './ChatAPI';
-import { CustomEventTarget } from './CustomEventTarget';
+import { CustomEventMap, CustomEventTarget } from './CustomEventTarget';
 
-export class ChatClient<TMessage> extends CustomEventTarget<
+type Self<T> = T;
+
+export type ChatClientEventMap<TMessage> = Self<
 	ChatSocketListenMap<TMessage> & {
 		receiveSearchResults: (roomIdentifier: string, result: MessageSearchResult<TMessage>) => void;
 		nextSearchResult: (roomIdentifier: string) => void;
 		previousSearchResult: (roomIdentifier: string) => void;
 	}
-> {
+>;
+
+export class ChatClient<TMessage> extends CustomEventTarget<ChatClientEventMap<TMessage>> {
 	private readonly socket: ChatClientSocket<TMessage>;
 
 	public constructor(url: string, api: ChatAPI<TMessage>);
@@ -23,10 +27,10 @@ export class ChatClient<TMessage> extends CustomEventTarget<
 		}
 		this.fetchMessages = api.fetchMessages;
 		this.socket.on('receiveMessage', (message: TMessage, roomIdentifier: string) => {
-			this.dispatchEvent(new CustomEvent('receiveMessage', { detail: [message, roomIdentifier] }));
+			this.dispatchEvent('receiveMessage', message, roomIdentifier);
 		});
 		this.socket.on('receiveError', (roomIdentifier) => {
-			this.dispatchEvent(new CustomEvent('receiveError', { detail: [roomIdentifier] }));
+			this.dispatchEvent('receiveError', roomIdentifier);
 		});
 	}
 
@@ -35,7 +39,7 @@ export class ChatClient<TMessage> extends CustomEventTarget<
 	public searchMessages = async (roomIdentifier: string, criteria: unknown) => {
 		const result = await this.api.searchMessages(roomIdentifier, criteria);
 
-		this.dispatchEvent(new CustomEvent('receiveSearchResults', { detail: [roomIdentifier, result] }));
+		this.dispatchEvent('receiveSearchResults', roomIdentifier, result);
 
 		return {
 			result,
@@ -45,11 +49,11 @@ export class ChatClient<TMessage> extends CustomEventTarget<
 	};
 
 	public nextSearchResult = (roomIdentifier: string) => {
-		this.dispatchEvent(new CustomEvent('nextSearchResult', { detail: [roomIdentifier] }));
+		this.dispatchEvent('nextSearchResult', roomIdentifier);
 	};
 
 	public previousSearchResult = (roomIdentifier: string) => {
-		this.dispatchEvent(new CustomEvent('previousSearchResult', { detail: [roomIdentifier] }));
+		this.dispatchEvent('previousSearchResult', roomIdentifier);
 	};
 
 	public sendMessage = (message: TMessage, roomIdentifier: string) => {

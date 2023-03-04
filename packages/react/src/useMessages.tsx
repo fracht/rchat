@@ -71,9 +71,7 @@ export const useMessages = <TMessage,>({
 	});
 
 	const handleIncomingMessage = useCallback(
-		(event: CustomEvent<[message: TMessage, roomIdentifier: string]>) => {
-			const [message, messageRoomIdentifier] = event.detail;
-
+		(message: TMessage, messageRoomIdentifier: string) => {
 			if (messageRoomIdentifier === roomIdentifier && messagesState.current.noMessagesAfter) {
 				const incomingMessageIndex = findNewElementIndex(getAllMessages(), message, compareItems);
 
@@ -117,9 +115,7 @@ export const useMessages = <TMessage,>({
 	);
 
 	const handleSearch = useCallback(
-		(event: CustomEvent<[roomIdentifier: string, searchResult: MessageSearchResult<TMessage>]>) => {
-			const [searchRoomIdentifier, searchResult] = event.detail;
-
+		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>) => {
 			if (searchRoomIdentifier === roomIdentifier) {
 				searchResults.current = searchResult;
 				selectedSearchResult.current = 0;
@@ -130,9 +126,7 @@ export const useMessages = <TMessage,>({
 	);
 
 	const handlePreviousSearchResult = useCallback(
-		(event: CustomEvent<[roomIdentifier: string]>) => {
-			const [searchRoomIdentifier] = event.detail;
-
+		(searchRoomIdentifier: string) => {
 			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
 				selectedSearchResult.current = clamp(
 					selectedSearchResult.current - 1,
@@ -146,9 +140,7 @@ export const useMessages = <TMessage,>({
 	);
 
 	const handleNextSearchResult = useCallback(
-		(event: CustomEvent<[roomIdentifier: string]>) => {
-			const [searchRoomIdentifier] = event.detail;
-
+		(searchRoomIdentifier: string) => {
 			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
 				selectedSearchResult.current = clamp(
 					selectedSearchResult.current + 1,
