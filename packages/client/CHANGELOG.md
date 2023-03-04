@@ -1,5 +1,15 @@
 # @rchat/client
 
+## 0.9.0
+
+### Minor Changes
+
+-   b8e8aad: Refactored CustomEventMap
+
+### Patch Changes
+
+-   @rchat/shared@0.9.0
+
 ## 0.8.5
 
 ### Patch Changes
