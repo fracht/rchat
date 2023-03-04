@@ -4,33 +4,51 @@ type AnyFunction = (...parameters: any[]) => void;
 export type CustomEventMap = Record<string, AnyFunction>;
 
 export interface CustomEventListener<T extends AnyFunction> {
-	(event: CustomEvent<Parameters<T>>): void;
+	(...parameters: Parameters<T>): void;
 }
 
 export class CustomEventTarget<TEventMap extends CustomEventMap> {
-	private readonly eventTarget: EventTarget;
+	private readonly listenerMap: Map<keyof TEventMap, Array<CustomEventListener<AnyFunction>>>;
 
 	public constructor() {
-		this.eventTarget = new EventTarget();
+		this.listenerMap = new Map();
 	}
 
-	public dispatchEvent(event: CustomEvent<Parameters<TEventMap[keyof TEventMap]>>): boolean {
-		return this.eventTarget.dispatchEvent(event);
+	public dispatchEvent<TEventName extends keyof TEventMap>(
+		type: TEventName,
+		...parameters: Parameters<TEventMap[TEventName]>
+	): void {
+		const listeners = this.listenerMap.get(type);
+
+		if (!listeners) {
+			return;
+		}
+
+		for (const listener of listeners) {
+			listener(...parameters);
+		}
 	}
 
 	public addEventListener<TEventName extends keyof TEventMap>(
 		type: TEventName,
-		callback: CustomEventListener<TEventMap[TEventName]> | null,
-		options?: AddEventListenerOptions | boolean,
+		callback: CustomEventListener<TEventMap[TEventName]>,
 	): void {
-		this.eventTarget.addEventListener(type as string, callback as EventListener, options);
+		const listeners = this.listenerMap.get(type) ?? [];
+
+		listeners.push(callback);
+
+		this.listenerMap.set(type, listeners);
 	}
 
 	public removeEventListener<TEventName extends keyof TEventMap>(
 		type: TEventName,
-		callback: CustomEventListener<TEventMap[TEventName]> | null,
-		options?: EventListenerOptions | boolean,
+		callback: CustomEventListener<TEventMap[TEventName]>,
 	): void {
-		this.eventTarget.removeEventListener(type as string, callback as EventListener, options);
+		const listeners = this.listenerMap.get(type);
+		if (!listeners) {
+			return;
+		}
+
+		listeners.splice(listeners.indexOf(callback), 1);
 	}
 }
