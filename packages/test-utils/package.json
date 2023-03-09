@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/test-utils",
-	"version": "0.9.0",
+	"version": "0.10.0",
 	"sideEffects": false,
 	"publishConfig": {
 		"access": "public",
@@ -26,7 +26,7 @@
 		"socket.io-client": "^4.5.1"
 	},
 	"devDependencies": {
-		"@rchat/server": "workspace:^0.9.0",
+		"@rchat/server": "workspace:^0.10.0",
 		"nodemon": "^2.0.20",
 		"rimraf": "^3.0.2"
 	}
