@@ -40,6 +40,7 @@ export const MessageList = ({ jumpAnimation }: MessageListProps) => {
 
 	return (
 		<EndlessList
+			initialItems={messages}
 			items={messages}
 			onTopReached={onTopReached}
 			onBottomReached={onBottomReached}
@@ -54,6 +55,7 @@ export const MessageList = ({ jumpAnimation }: MessageListProps) => {
 			containerReference={containerReference}
 			focusedItem={focusedItem}
 			jumpAnimation={jumpAnimation}
+			initiallyScrollToBottom
 		/>
 	);
 };
