@@ -5,6 +5,7 @@ import { useEvent } from '../internal/useEvent';
 import { useIdGenerator } from '../internal/useIdGenerator';
 
 export type UseEndlessListConfig<T> = {
+	initialItems: T[];
 	items: T[];
 	getKey: (item: T) => string;
 	compareItems: (a: T, b: T) => number;
@@ -45,6 +46,7 @@ const valueToEndlessListItem = <T,>(getKey: (value: T) => string, focusItemKey: 
 };
 
 export const useEndlessList = <T,>({
+	initialItems,
 	items,
 	getKey,
 	focusedItem,
@@ -56,6 +58,7 @@ export const useEndlessList = <T,>({
 	const defaultConvertItem = useMemo(() => valueToEndlessListItem(getKey, focusedItemKey), [getKey, focusedItemKey]);
 	const [renderedItems, setRenderedItems] = useState<Array<EndlessListItem<T>>>(() => items.map(defaultConvertItem));
 	const jumpAbortController = useRef<AbortController>();
+	const initialItemsReference = useRef(initialItems);
 
 	const getUniquePlaceholderKey = useIdGenerator();
 
@@ -148,13 +151,15 @@ export const useEndlessList = <T,>({
 			jumpAbortController.current = undefined;
 		}
 
-		if (renderedItems.length === 0 || items.length === 0) {
+		if (renderedItems.length === 0 || items.length === 0 || initialItemsReference.current !== initialItems) {
 			/**
 			 * There is nothing to do:
 			 *   1. If renderedItems array is empty, it means that there is nothing on the screen - render all items.
 			 *   2. If items array is empty, it means that all items must disappear from the screen.
+			 * 	 3. If initial items has been changed
 			 */
 			setRenderedItems(items.map(defaultConvertItem));
+			initialItemsReference.current = initialItems;
 			return;
 		}
 

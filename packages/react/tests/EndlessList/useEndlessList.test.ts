@@ -3,7 +3,7 @@ import { renderHook, act } from '@testing-library/react';
 import { EndlessListItem, useEndlessList, UseEndlessListConfig } from '../../src/EndlessList/useEndlessList';
 
 const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promise<void>, itemKeys?: Set<string>) => {
-	const defaultHookConfig: Omit<UseEndlessListConfig<number>, 'items' | 'visibleItemKeys'> = {
+	const defaultHookConfig: Omit<UseEndlessListConfig<number>, 'initialItems' | 'items' | 'visibleItemKeys'> = {
 		getKey: (value) => value.toString(),
 		compareItems: (a, b) => a - b,
 		handleJump: handleJump ?? jest.fn(),
@@ -11,9 +11,15 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 
 	const emptySet = new Set<string>();
 
-	const hookBag = renderHook(
-		({ items, visibleItemKeys }) =>
-			useEndlessList({ ...defaultHookConfig, items, visibleItemKeys: { current: visibleItemKeys ?? emptySet } }),
+	type InitialProps = {
+		items: number[];
+		initialItems?: number[];
+		visibleItemKeys?: Set<string>;
+	}
+
+	const hookBag = renderHook<EndlessListItem<number>[], InitialProps>(
+		({ items, visibleItemKeys, initialItems: propsInitialItems }) =>
+			useEndlessList({ ...defaultHookConfig, items, initialItems: propsInitialItems ?? initialItems, visibleItemKeys: { current: visibleItemKeys ?? emptySet } }),
 		{
 			initialProps: {
 				items: initialItems,
@@ -26,6 +32,35 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 };
 
 describe('useEndlessList', () => {
+	it('should set new items when initial items has been changed', () => {
+		const initialValues = [1, 2, 3];
+		const jump = jest.fn();
+		const {result, rerender} = renderEndlessListHook(initialValues, jump);
+
+		const updatedInitialValues = [5, 6];
+		rerender({ items: updatedInitialValues, initialItems: updatedInitialValues });
+
+		expect(result.current).toStrictEqual([
+			{
+				array: updatedInitialValues,
+				index: 0,
+				focused: false,
+				itemKey: '5',
+				type: 'real',
+				value: 5
+			},
+			{
+				array: updatedInitialValues,
+				index: 1,
+				focused: false,
+				itemKey: '6',
+				type: 'real',
+				value: 6
+			}
+		]);
+		expect(jump).toBeCalledTimes(0);
+	})
+
 	it('must convert items into EndlessListItem', () => {
 		const input = [1, 2, 3];
 		const { result } = renderEndlessListHook(input);

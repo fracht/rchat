@@ -32,6 +32,7 @@ export type EndlessListProps<TItemType> = {
 	ItemComponent: ItemComponentType<TItemType>;
 	PlaceholderComponent: PlaceholderComponentType;
 	ContainerComponent: ComponentType<ContainerComponentProps>;
+	initialItems: TItemType[];
 	items: TItemType[];
 	itemKey: ItemKey<TItemType>;
 	triggerDistance: number;
@@ -43,6 +44,7 @@ export type EndlessListProps<TItemType> = {
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
 	containerReference?: Ref<HTMLElement>;
+	initiallyScrollToBottom?: boolean;
 };
 
 const noop = () => {
@@ -58,6 +60,7 @@ const defaultAnimationParameters: AnimationParameters = {
 
 export const EndlessList = <T,>({
 	ItemComponent,
+	initialItems,
 	items,
 	itemKey,
 	triggerDistance,
@@ -71,6 +74,7 @@ export const EndlessList = <T,>({
 	canStickToBottom,
 	onVisibleFrameChange,
 	containerReference: propsContainerReference,
+	initiallyScrollToBottom,
 }: EndlessListProps<T>) => {
 	const containerReference = useRef<HTMLElement>(null);
 	const focusElementReference = useRef<HTMLElement>(null);
@@ -152,6 +156,7 @@ export const EndlessList = <T,>({
 
 	const itemsToRender = useEndlessList({
 		getKey,
+		initialItems,
 		items,
 		compareItems,
 		handleJump: scheduleJumpScroll,
@@ -177,11 +182,7 @@ export const EndlessList = <T,>({
 
 	const isScrolledToBottom = useRef(false);
 	useLayoutEffect(() => {
-		if (isScrolledToBottom.current) {
-			return;
-		}
-
-		if (itemsToRender.length === 0) {
+		if (!initiallyScrollToBottom || isScrolledToBottom.current || itemsToRender.length === 0) {
 			return;
 		}
 
@@ -191,7 +192,7 @@ export const EndlessList = <T,>({
 		}
 
 		isScrolledToBottom.current = true;
-	}, [itemsToRender.length]);
+	}, [itemsToRender.length, initiallyScrollToBottom]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
