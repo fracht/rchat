@@ -1,5 +1,12 @@
 # @rchat/react
 
+## 0.10.0
+
+### Minor Changes
+
+-   09ae2fa: Added initiallyScrollToBottom prop to EndlessList
+-   7894d3c: Added initial items in EndlessList
+
 ## 0.9.0
 
 ### Minor Changes
