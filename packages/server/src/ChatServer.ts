@@ -24,7 +24,7 @@ export class ChatServer<TMessageType> {
 		socket.on('sendMessage', (message, roomIdentifier) => this.handleMessage(socket, message, roomIdentifier));
 	};
 
-	private handleMessage = async (
+	protected handleMessage = async (
 		socket: ChatSocketType<TMessageType>,
 		message: TMessageType,
 		roomIdentifier: string,
