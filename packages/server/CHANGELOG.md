@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.10.1
+
+### Patch Changes
+
+-   ee2b0eb: Changed visibility of handleMessage function
+    -   @rchat/shared@0.10.1
+
 ## 0.10.0
 
 ### Patch Changes
