@@ -1,5 +1,13 @@
 # @rchat/react
 
+## 0.11.0
+
+### Minor Changes
+
+-   d3d5c88: Removed `initiallyScrollToBottom` prop in EndlessList.
+-   d3d5c88: Added initial messages state and initial search in MessageList component.
+-   d3d5c88: Removed jump on initial render in useEndlessList.
+
 ## 0.10.1
 
 ## 0.10.0

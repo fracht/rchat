@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/shared",
-	"version": "0.10.1",
+	"version": "0.11.0",
 	"main": "./dist/index.js",
 	"module": "./dist/shared.esm.js",
 	"types": "./dist/shared.d.ts",
