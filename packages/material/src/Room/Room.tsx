@@ -15,22 +15,36 @@ const RoomRoot = styled('div', {
 	height: '100%',
 });
 
-type InternalRoomProps = {
+type InternalRoomProps<TMessage> = {
 	name: string;
 	identifier: string;
 	thumb?: string | boolean;
 	onMessageSent: (message: string) => void;
 	onClose?: () => void;
-	initialMessagesState: MessageListProps<unknown>['initialMessagesState'];
-};
+} & MessageListProps<TMessage>;
 
-export const Room = createMuiComponent<InternalRoomProps, 'div'>(
-	({ name, identifier, thumb = true, onClose, onMessageSent, component, initialMessagesState, ...other }) => (
+export const Room = createMuiComponent(
+	<TMessage,>({
+		name,
+		identifier,
+		thumb = true,
+		onClose,
+		onMessageSent,
+		component,
+		initialMessagesState,
+		initialSearchResult,
+		jumpAnimation,
+		...other
+	}: InternalRoomProps<TMessage> & { component: ElementType }) => (
 		<RoomRoot as={component} {...other}>
 			<RoomHeader onClose={onClose} name={name} thumb={thumb} />
 			<RoomBody>
 				<RoomProvider identifier={identifier}>
-					<MessageList initialMessagesState={initialMessagesState} />
+					<MessageList
+						initialMessagesState={initialMessagesState}
+						initialSearchResult={initialSearchResult}
+						jumpAnimation={jumpAnimation}
+					/>
 					<MessageInput onMessageSent={onMessageSent} />
 				</RoomProvider>
 			</RoomBody>
@@ -38,8 +52,8 @@ export const Room = createMuiComponent<InternalRoomProps, 'div'>(
 	),
 );
 
-export type RoomProps<TComponent extends ElementType = 'div', TAdditionalProps = {}> = MuiComponentProps<
-	InternalRoomProps,
+export type RoomProps<TMessage, TComponent extends ElementType = 'div', TAdditionalProps = {}> = MuiComponentProps<
+	InternalRoomProps<TMessage>,
 	TComponent,
 	TAdditionalProps
 >;
