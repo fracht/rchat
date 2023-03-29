@@ -44,7 +44,6 @@ export type EndlessListProps<TItemType> = {
 	canStickToBottom?: boolean;
 	onVisibleFrameChange?: (frame: Frame) => void;
 	containerReference?: Ref<HTMLElement>;
-	initiallyScrollToBottom?: boolean;
 };
 
 const noop = () => {
@@ -74,13 +73,13 @@ export const EndlessList = <T,>({
 	canStickToBottom,
 	onVisibleFrameChange,
 	containerReference: propsContainerReference,
-	initiallyScrollToBottom,
 }: EndlessListProps<T>) => {
 	const containerReference = useRef<HTMLElement>(null);
 	const focusElementReference = useRef<HTMLElement>(null);
 	const stickToBottomReached = useRef(false);
 	const isScrolling = useRef(false);
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
+	const hasMounted = useRef(false);
 
 	const setBottomReached = useToggleEvent(onBottomReached ?? noop);
 	const setTopReached = useToggleEvent(onTopReached ?? noop);
@@ -124,7 +123,12 @@ export const EndlessList = <T,>({
 			abortControllerReference.current = abortController;
 			isScrolling.current = true;
 
-			await smoothScrolling(containerReference.current, focusElementReference.current, abortController);
+			if (hasMounted.current) {
+				await smoothScrolling(containerReference.current, focusElementReference.current, abortController);
+			} else {
+				focusElementReference.current.scrollIntoView({ behavior: 'auto', block: 'center' });
+			}
+
 			isScrolling.current = false;
 
 			checkBounds();
@@ -166,7 +170,15 @@ export const EndlessList = <T,>({
 
 	useEffect(() => {
 		handleScrollToFocusItem();
+		hasMounted.current = true;
 	}, [handleScrollToFocusItem, itemsToRender]);
+
+	useEffect(() => {
+		return () => {
+			hasMounted.current = false;
+		};
+	}, []);
+
 	const handleStickToBottom = useEvent(() => {
 		const container = containerReference.current;
 		if (container && stickToBottomReached.current && !focusedItem) {
@@ -179,20 +191,6 @@ export const EndlessList = <T,>({
 			handleStickToBottom();
 		}
 	}, [itemsToRender, canStickToBottom, handleStickToBottom]);
-
-	const isScrolledToBottom = useRef(false);
-	useLayoutEffect(() => {
-		if (!initiallyScrollToBottom || isScrolledToBottom.current || itemsToRender.length === 0) {
-			return;
-		}
-
-		const container = containerReference.current;
-		if (container) {
-			container.scrollTo({ top: container.scrollHeight });
-		}
-
-		isScrolledToBottom.current = true;
-	}, [itemsToRender.length, initiallyScrollToBottom]);
 
 	return (
 		<ContainerComponent ref={mergeReferences(containerReference, propsContainerReference)}>
