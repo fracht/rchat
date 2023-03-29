@@ -32,6 +32,13 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 };
 
 describe('useEndlessList', () => {
+	it('should not perform jump on first render', () => {
+		const initialValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		const jump = jest.fn();
+		renderEndlessListHook(initialValues, jump);
+		expect(jump).toBeCalledTimes(0);
+	})
+
 	it('should set new items when initial items has been changed', () => {
 		const initialValues = [1, 2, 3];
 		const jump = jest.fn();
