@@ -1,4 +1,4 @@
-import { MessageList, Room as RoomProvider } from '@rchat/react';
+import { MessageList, MessageListProps, Room as RoomProvider } from '@rchat/react';
 import { ElementType } from 'react';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MessageInput } from '../MessageInput';
@@ -21,15 +21,16 @@ type InternalRoomProps = {
 	thumb?: string | boolean;
 	onMessageSent: (message: string) => void;
 	onClose?: () => void;
+	initialMessagesState: MessageListProps<unknown>['initialMessagesState'];
 };
 
 export const Room = createMuiComponent<InternalRoomProps, 'div'>(
-	({ name, identifier, thumb = true, onClose, onMessageSent, component, ...other }) => (
+	({ name, identifier, thumb = true, onClose, onMessageSent, component, initialMessagesState, ...other }) => (
 		<RoomRoot as={component} {...other}>
 			<RoomHeader onClose={onClose} name={name} thumb={thumb} />
 			<RoomBody>
 				<RoomProvider identifier={identifier}>
-					<MessageList />
+					<MessageList initialMessagesState={initialMessagesState} />
 					<MessageInput onMessageSent={onMessageSent} />
 				</RoomProvider>
 			</RoomBody>
