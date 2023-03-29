@@ -1,4 +1,4 @@
-import { Key, useMemo, useRef, useState, MutableRefObject } from 'react';
+import { Key, useMemo, useRef, useState, MutableRefObject, useEffect } from 'react';
 import useIsomorphicLayoutEffect from 'use-isomorphic-layout-effect';
 import { binarySearch } from '../internal/binarySearch';
 import { useEvent } from '../internal/useEvent';
@@ -59,6 +59,7 @@ export const useEndlessList = <T,>({
 	const [renderedItems, setRenderedItems] = useState<Array<EndlessListItem<T>>>(() => items.map(defaultConvertItem));
 	const jumpAbortController = useRef<AbortController>();
 	const initialItemsReference = useRef(initialItems);
+	const hasMounted = useRef(false);
 
 	const getUniquePlaceholderKey = useIdGenerator();
 
@@ -253,7 +254,9 @@ export const useEndlessList = <T,>({
 		jumpAbortController.current = newController;
 
 		try {
-			await handleJump(newController);
+			if (hasMounted.current) {
+				await handleJump(newController);
+			}
 			setRenderedItems(items.map(defaultConvertItem));
 		} catch {
 			/* Noop */
@@ -264,7 +267,14 @@ export const useEndlessList = <T,>({
 
 	useIsomorphicLayoutEffect(() => {
 		update();
+		hasMounted.current = true;
 	}, [update, items]);
+
+	useEffect(() => {
+		return () => {
+			hasMounted.current = false;
+		};
+	}, []);
 
 	return renderedItems;
 };

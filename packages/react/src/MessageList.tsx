@@ -1,3 +1,4 @@
+import { MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { useSafeContext } from '@sirse-dev/safe-context';
 import { EndlessList } from './EndlessList';
 import { RChatContext } from './internal/RChatContext';
@@ -5,11 +6,17 @@ import { RoomContext } from './internal/RoomContext';
 import { AnimationParameters } from './internal/smoothScrollToCenter';
 import { useMessages } from './useMessages';
 
-export type MessageListProps = {
+export type MessageListProps<TMessage> = {
+	initialMessagesState: MessageFetchResult<TMessage>;
+	initialSearchResult?: MessageSearchResult<TMessage>;
 	jumpAnimation?: AnimationParameters;
 };
 
-export const MessageList = ({ jumpAnimation }: MessageListProps) => {
+export const MessageList = <TMessage,>({
+	jumpAnimation,
+	initialMessagesState,
+	initialSearchResult,
+}: MessageListProps<TMessage>) => {
 	const {
 		client,
 		MessageComponent,
@@ -31,16 +38,17 @@ export const MessageList = ({ jumpAnimation }: MessageListProps) => {
 		focusedItem,
 	} = useMessages({
 		chatClient: client,
-		initialChunkSize: 20,
 		additionalChunkSize: 20,
 		maxChunkSize: 100,
 		roomIdentifier,
 		compareItems,
+		initialMessagesState,
+		initialSearchResult,
 	});
 
 	return (
 		<EndlessList
-			initialItems={messages}
+			initialItems={initialMessagesState.messages}
 			items={messages}
 			onTopReached={onTopReached}
 			onBottomReached={onBottomReached}
@@ -55,7 +63,6 @@ export const MessageList = ({ jumpAnimation }: MessageListProps) => {
 			containerReference={containerReference}
 			focusedItem={focusedItem}
 			jumpAnimation={jumpAnimation}
-			initiallyScrollToBottom
 		/>
 	);
 };

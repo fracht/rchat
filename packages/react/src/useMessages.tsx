@@ -1,6 +1,6 @@
 import { MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
-import { Ref, useCallback, useEffect, useRef, useState } from 'react';
+import { Ref, useCallback, useEffect, useRef } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
 import { clamp } from './internal/clamp';
 import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
@@ -18,8 +18,9 @@ export type UseMessagesBag<T> = {
 };
 
 export type UseMessagesConfig<T> = {
+	initialMessagesState: MessageFetchResult<T>;
+	initialSearchResult?: MessageSearchResult<T>;
 	compareItems: (a: T, b: T) => number;
-	initialChunkSize: number;
 	maxChunkSize: number;
 	additionalChunkSize: number;
 	chatClient: ChatClient<T>;
@@ -38,20 +39,20 @@ const findNewElementIndex = <T,>(elements: readonly T[], element: T, compare: (a
 };
 
 export const useMessages = <TMessage,>({
-	initialChunkSize,
 	maxChunkSize,
 	additionalChunkSize,
 	chatClient,
 	roomIdentifier,
 	compareItems,
+	initialMessagesState,
+	initialSearchResult,
 }: UseMessagesConfig<TMessage>): UseMessagesBag<TMessage> => {
 	const isFetching = useRef(false);
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 	const containerReference = useRef<HTMLElement>(null);
-	const [isLoaded, setIsLoaded] = useState(false);
-	const searchResults = useRef<MessageSearchResult<TMessage>>();
+	const searchResults = useRef<MessageSearchResult<TMessage> | undefined>(initialSearchResult);
 	const selectedSearchResult = useRef(0);
-	const focusedItem = useRef<TMessage>();
+	const focusedItem = useRef<TMessage | undefined>(initialSearchResult?.results[0]);
 
 	const [
 		messages,
@@ -63,12 +64,9 @@ export const useMessages = <TMessage,>({
 			at: getMessage,
 			getAll: getAllMessages,
 		},
-	] = useBoundedArray<TMessage>([], maxChunkSize);
+	] = useBoundedArray<TMessage>(initialMessagesState.messages, maxChunkSize);
 
-	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>({
-		noMessagesAfter: true,
-		noMessagesBefore: false,
-	});
+	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
 
 	const handleIncomingMessage = useCallback(
 		(message: TMessage, messageRoomIdentifier: string) => {
@@ -167,25 +165,9 @@ export const useMessages = <TMessage,>({
 		};
 	}, [chatClient, handleIncomingMessage, handleNextSearchResult, handlePreviousSearchResult, handleSearch]);
 
+	// Scroll to bottom if there was no initial search
 	useEffect(() => {
-		const load = async () => {
-			const fetchedMessagesState = await chatClient.fetchMessages(
-				roomIdentifier,
-				initialChunkSize,
-				undefined,
-				undefined,
-			);
-
-			setMessages(fetchedMessagesState.messages, 'ending');
-			setIsLoaded(true);
-			messagesState.current = fetchedMessagesState;
-		};
-
-		load();
-	}, [roomIdentifier, chatClient, initialChunkSize, setMessages]);
-
-	useEffect(() => {
-		if (isLoaded) {
+		if (!initialSearchResult) {
 			const container = containerReference.current;
 			if (container) {
 				container.scrollTo({ top: container.scrollHeight });
@@ -198,7 +180,17 @@ export const useMessages = <TMessage,>({
 				);
 			}
 		}
-	}, [isLoaded]);
+	}, [initialSearchResult, initialMessagesState.messages]);
+
+	useEffect(() => {
+		setMessages(initialMessagesState.messages, 'beginning');
+		messagesState.current = initialMessagesState;
+	}, [initialMessagesState, setMessages]);
+
+	useEffect(() => {
+		searchResults.current = initialSearchResult;
+		focusedItem.current = initialSearchResult?.results[0];
+	}, [initialSearchResult]);
 
 	const handleTopReached = useEvent(async () => {
 		if (messagesState.current.noMessagesBefore || isFetching.current) {
