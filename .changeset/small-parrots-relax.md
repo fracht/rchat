@@ -1,5 +1,4 @@
 ---
-'@rchat/material': minor
 '@rchat/react': minor
 ---
 
