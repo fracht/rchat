@@ -180,7 +180,7 @@ export const useMessages = <TMessage,>({
 				);
 			}
 		}
-	}, [initialSearchResult, initialMessagesState.messages]);
+	}, [initialSearchResult]);
 
 	useEffect(() => {
 		setMessages(initialMessagesState.messages, 'beginning');

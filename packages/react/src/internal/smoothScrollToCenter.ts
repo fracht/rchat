@@ -1,5 +1,3 @@
-import { getScrollEndValue } from './getScrollEndValue';
-
 export type AnimationParameters = {
 	/**
 	 * Easing function.
@@ -20,8 +18,16 @@ export const smoothScrollToCenter = async (
 	parameters: AnimationParameters,
 	controller?: AbortController,
 ) => {
+	const elementRect = element.getBoundingClientRect();
+	const containerRect = container.getBoundingClientRect();
+
+	const top = elementRect.top - containerRect.top - containerRect.height / 2 + elementRect.height / 2;
+
 	const startPos = container.scrollTop;
-	const scrollEndValue = getScrollEndValue(container, element);
+	const clientHeight = container.clientHeight;
+	const maxScroll = container.scrollHeight - clientHeight;
+	const scrollIntendedDestination = startPos + top;
+	const scrollEndValue = Math.min(Math.max(scrollIntendedDestination, 0), maxScroll);
 	let startTime = 0;
 
 	const duration = parameters.duration(scrollEndValue - startPos);

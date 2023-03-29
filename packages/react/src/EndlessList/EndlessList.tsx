@@ -11,7 +11,6 @@ import {
 } from 'react';
 
 import { mergeReferences } from '../internal/mergeReferences';
-import { scrollToCenter } from '../internal/scrollToCenter';
 import { AnimationParameters, smoothScrollToCenter } from '../internal/smoothScrollToCenter';
 import { useEvent } from '../internal/useEvent';
 import { useScheduleOnNextRender } from '../internal/useScheduleOnNextRender';
@@ -127,7 +126,7 @@ export const EndlessList = <T,>({
 			if (hasMounted.current) {
 				await smoothScrolling(containerReference.current, focusElementReference.current, abortController);
 			} else {
-				scrollToCenter(containerReference.current, focusElementReference.current);
+				focusElementReference.current.scrollIntoView({ behavior: 'auto', block: 'center' });
 			}
 
 			isScrolling.current = false;
@@ -172,10 +171,6 @@ export const EndlessList = <T,>({
 	useEffect(() => {
 		handleScrollToFocusItem();
 		hasMounted.current = true;
-
-		return () => {
-			hasMounted.current = false;
-		};
 	}, [handleScrollToFocusItem, itemsToRender]);
 
 	useEffect(() => {
