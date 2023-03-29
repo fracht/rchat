@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.11.0
+
+### Minor Changes
+
+-   d3d5c88: Added initial messages state and initial search in MessageList component.
+
 ## 0.10.1
 
 ## 0.10.0
