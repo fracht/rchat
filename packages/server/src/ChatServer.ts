@@ -22,6 +22,16 @@ export class ChatServer<TMessageType> {
 
 	private handleConnection = async (socket: ChatSocketType<TMessageType>) => {
 		socket.on('sendMessage', (message, roomIdentifier) => this.handleMessage(socket, message, roomIdentifier));
+		socket.on('observeUser', (userIdentifier) => this.handleObserveUser(socket, userIdentifier));
+		socket.on('unobserveUser', (userIdentifier) => this.handleUnobserveUser(socket, userIdentifier));
+	};
+
+	protected handleObserveUser = async (socket: ChatSocketType<TMessageType>, userIdentifier: string) => {
+		this.roomManager.observeUser(socket, userIdentifier);
+	};
+
+	protected handleUnobserveUser = async (socket: ChatSocketType<TMessageType>, userIdentifier: string) => {
+		this.roomManager.unobserveUser(socket, userIdentifier);
 	};
 
 	protected handleMessage = async (
