@@ -1,5 +1,11 @@
 # @rchat/shared
 
+## 0.11.1
+
+### Patch Changes
+
+-   059fb06: Added user connection status check / synchronization functions
+
 ## 0.11.0
 
 ## 0.10.1
