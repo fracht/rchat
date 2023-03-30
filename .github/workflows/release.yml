@@ -25,8 +25,8 @@ jobs:
               with:
                   version: 7.x.x
 
-            - name: Install Dependencies
-              run: pnpm install
+            - name: Install pnpm dependencies (with cache)
+              uses: covbot/pnpm-install-with-cache@v1
 
             - name: Creating .npmrc
               run: |
