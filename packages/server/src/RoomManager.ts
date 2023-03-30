@@ -6,6 +6,8 @@ import TTLCache from '@isaacs/ttlcache';
 const TTL_LONG = 60 * 60 * 1000; // persist active channels for one hour in memory.
 const TTL_SHORT = 2 * 60 * 1000; // persist preheated channels for 2 minutes.
 
+const getUserConnectivityObserveRoom = (userId: string) => `rchat-userconn-${userId}`;
+
 export class RoomManager<TMessageType> {
 	private readonly roomParticipants;
 	private readonly server;
@@ -34,6 +36,12 @@ export class RoomManager<TMessageType> {
 
 		this.server.on('connect', this.handleSocketConnect);
 	}
+
+	private isUserConnected = (userIdentifier: string) => {
+		const sockets = this.userSockets.get(userIdentifier);
+
+		return sockets && sockets.size > 0;
+	};
 
 	private tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		try {
@@ -66,6 +74,7 @@ export class RoomManager<TMessageType> {
 		const identifier = socket.data.userIdentifier!;
 		if (!this.userSockets.has(identifier)) {
 			this.userSockets.set(identifier, new Set());
+			this.server.to(getUserConnectivityObserveRoom(identifier)).emit('userConnected', identifier);
 		}
 
 		const sockets = this.userSockets.get(identifier)!;
@@ -87,6 +96,7 @@ export class RoomManager<TMessageType> {
 		sockets.delete(socket);
 		if (sockets.size === 0) {
 			this.userSockets.delete(identifier);
+			this.server.to(getUserConnectivityObserveRoom(identifier)).emit('userDisconnected', identifier);
 		}
 	};
 
@@ -130,5 +140,18 @@ export class RoomManager<TMessageType> {
 		}
 
 		this.activeRooms.set(roomIdentifier, true, { ttl: TTL_SHORT });
+	};
+
+	public observeUser = (socket: ChatSocketType<TMessageType>, userIdentifier: string) => {
+		socket.join(getUserConnectivityObserveRoom(userIdentifier));
+		if (this.isUserConnected(userIdentifier)) {
+			socket.emit('userConnected', userIdentifier);
+		} else {
+			socket.emit('userDisconnected', userIdentifier);
+		}
+	};
+
+	public unobserveUser = (socket: ChatSocketType<TMessageType>, userIdentifier: string) => {
+		socket.leave(getUserConnectivityObserveRoom(userIdentifier));
 	};
 }
