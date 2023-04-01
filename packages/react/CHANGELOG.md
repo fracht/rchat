@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.11.2
+
+### Patch Changes
+
+-   12f10f4: Fixed update function in useEndlessList
+
 ## 0.11.1
 
 ## 0.11.0
