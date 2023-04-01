@@ -195,8 +195,8 @@ export const useEndlessList = <T,>({
 			const keys = items.map(getKey);
 			const oldKeys = renderedItems.map((item) => item.itemKey);
 
-			const mustMoveForward = !oldKeys.includes(keys[0]) || !keys.includes(oldKeys.at(-1)!);
-			const mustMoveBack = !keys.includes(oldKeys[0]) || !oldKeys.includes(keys.at(-1)!);
+			const mustMoveForward = !oldKeys.includes(keys[0]) && !keys.includes(oldKeys.at(-1)!);
+			const mustMoveBack = !keys.includes(oldKeys[0]) && !oldKeys.includes(keys.at(-1)!);
 
 			const mustJump = mustMoveForward && mustMoveBack;
 

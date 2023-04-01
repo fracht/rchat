@@ -32,6 +32,106 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 };
 
 describe('useEndlessList', () => {
+	it('should return new array if it is a bigger set of previous', async () => {
+		const initialValues = [1, 2, 3];
+		const handleJump = jest.fn();
+		const {rerender, result} = renderEndlessListHook(initialValues, handleJump);
+
+		const nextInput = [-1, 0, 1, 2, 3, 4];
+		rerender({ items: nextInput });
+
+		expect(result.current).toStrictEqual([
+			{
+				type: 'real',
+				value: -1,
+				index: 0,
+				array: nextInput,
+				focused: false,
+				itemKey: '-1'
+			},
+			{
+				type: 'real',
+				value: 0,
+				index: 1,
+				array: nextInput,
+				focused: false,
+				itemKey: '0'
+			},
+			{
+				type: 'real',
+				value: 1,
+				index: 2,
+				array: nextInput,
+				focused: false,
+				itemKey: '1'
+			},
+			{
+				type: 'real',
+				value: 2,
+				index: 3,
+				array: nextInput,
+				focused: false,
+				itemKey: '2'
+			},
+			{
+				type: 'real',
+				value: 3,
+				index: 4,
+				array: nextInput,
+				focused: false,
+				itemKey: '3'
+			},
+			{
+				type: 'real',
+				value: 4,
+				index: 5,
+				array: nextInput,
+				focused: false,
+				itemKey: '4'
+			},
+		] satisfies Array<EndlessListItem<number>>);
+
+		expect(handleJump).not.toBeCalled();
+	})
+
+	it('should return new array if it is a smaller set of previous', async () => {
+		const initialValues = [1, 2, 3, 4, 5, 6];
+		const handleJump = jest.fn();
+		const {result, rerender} = renderEndlessListHook(initialValues, handleJump);
+
+		const nextInput = [3, 4, 5];
+		rerender({ items: nextInput });
+
+		expect(result.current).toStrictEqual([
+			{
+				type: 'real',
+				value: 3,
+				index: 0,
+				array: nextInput,
+				focused: false,
+				itemKey: '3'
+			},
+			{
+				type: 'real',
+				value: 4,
+				index: 1,
+				array: nextInput,
+				focused: false,
+				itemKey: '4'
+			},
+			{
+				type: 'real',
+				value: 5,
+				index: 2,
+				array: nextInput,
+				focused: false,
+				itemKey: '5'
+			},
+		] satisfies Array<EndlessListItem<number>>);
+
+		expect(handleJump).not.toBeCalled();
+	})
+
 	it('should not perform jump on first render', () => {
 		const initialValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		const jump = jest.fn();
