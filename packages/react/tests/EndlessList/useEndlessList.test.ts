@@ -32,7 +32,7 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 };
 
 describe('useEndlessList', () => {
-	it('should return new array if it is a bigger set of previous', async () => {
+	it('Should return new array if previous array is a subset of it. A new array has been expanded from both sides.', async () => {
 		const initialValues = [1, 2, 3];
 		const handleJump = jest.fn();
 		const {rerender, result} = renderEndlessListHook(initialValues, handleJump);
@@ -94,7 +94,7 @@ describe('useEndlessList', () => {
 		expect(handleJump).not.toBeCalled();
 	})
 
-	it('should return new array if it is a smaller set of previous', async () => {
+	it('Should return new array if it is a subset of previous array. A new array has been truncated from both sides.', async () => {
 		const initialValues = [1, 2, 3, 4, 5, 6];
 		const handleJump = jest.fn();
 		const {result, rerender} = renderEndlessListHook(initialValues, handleJump);
