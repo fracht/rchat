@@ -64,7 +64,7 @@ export const useMessages = <TMessage,>({
 			at: getMessage,
 			getAll: getAllMessages,
 		},
-	] = useBoundedArray<TMessage>(initialMessagesState.messages, maxChunkSize);
+	] = useBoundedArray<TMessage>([...initialMessagesState.messages], maxChunkSize);
 
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
 
@@ -183,7 +183,7 @@ export const useMessages = <TMessage,>({
 	}, [initialSearchResult]);
 
 	useEffect(() => {
-		setMessages(initialMessagesState.messages, 'beginning');
+		setMessages([...initialMessagesState.messages], 'beginning');
 		messagesState.current = initialMessagesState;
 	}, [initialMessagesState, setMessages]);
 
