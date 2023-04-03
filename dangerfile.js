@@ -3,8 +3,7 @@ const path = require('path');
 
 const changesetsDir = path.resolve('./.changeset');
 const isChangeset = (file) => {
-	const relative = path.relative(changesetsDir, file);
-	return relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+	return path.dirname(path.resolve(file)) === changesetsDir && path.extname(file) === '.md';
 };
 
 const createdPaths = danger.git.created_files;
