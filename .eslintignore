@@ -6,3 +6,4 @@ dist
 stories
 test
 packages/server
+dangerfile.js
