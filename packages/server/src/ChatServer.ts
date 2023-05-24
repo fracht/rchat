@@ -13,6 +13,8 @@ export class ChatServer<TMessageType> {
 		this.service = service;
 		this.roomManager = new RoomManager<TMessageType>(server, service.getChatParticipants);
 		this.initializeServer();
+		this.handleMessage = this.handleMessage.bind(this);
+		this.authentication = this.authentication.bind(this);
 	}
 
 	private initializeServer = () => {
@@ -34,24 +36,24 @@ export class ChatServer<TMessageType> {
 		this.roomManager.unobserveUser(socket, userIdentifier);
 	};
 
-	protected handleMessage = async (
-		socket: ChatSocketType<TMessageType>,
-		message: TMessageType,
-		roomIdentifier: string,
-	) => {
+	protected async handleMessage(socket: ChatSocketType<TMessageType>, message: TMessageType, roomIdentifier: string) {
 		try {
 			const broadcastChannel = await this.roomManager.broadcast(socket, roomIdentifier);
 
 			const savedMessage = await this.service.saveMessage(socket.data as ConnectionInfo, message, roomIdentifier);
 
 			broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
+
+			return true;
 		} catch (error) {
 			console.error('Failed to send message');
 			socket.emit('receiveError', roomIdentifier);
-		}
-	};
 
-	private authentication = async (socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) => {
+			return false;
+		}
+	}
+
+	private async authentication(socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) {
 		try {
 			const connectionInfo = await this.service.fetchConnectionInfo(socket.request);
 
@@ -62,5 +64,5 @@ export class ChatServer<TMessageType> {
 			console.error('Unexpected error occurred while trying to get user identifier', error);
 			next(new Error('Forbidden'));
 		}
-	};
+	}
 }
