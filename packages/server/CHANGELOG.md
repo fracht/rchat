@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.11.6
+
+### Patch Changes
+
+-   f67cab0: Exposed RoomManager functions
+    -   @rchat/shared@0.11.6
+
 ## 0.11.5
 
 ### Patch Changes
