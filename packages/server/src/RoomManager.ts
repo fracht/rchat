@@ -43,14 +43,14 @@ export class RoomManager<TMessageType> {
 		return sockets && sockets.size > 0;
 	};
 
-	private tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
+	protected tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		try {
 			return await this.getRoomParticipants(socket, roomIdentifier);
 		} catch (error) {
 			console.error('Failed to fetch participants.', error);
 		}
 
-		return new Set();
+		return new Set<string>();
 	};
 
 	private getRoomParticipants = async (
