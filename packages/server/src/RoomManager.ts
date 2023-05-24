@@ -43,7 +43,7 @@ export class RoomManager<TMessageType> {
 		return sockets && sockets.size > 0;
 	};
 
-	protected tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
+	public tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		try {
 			return await this.getRoomParticipants(socket, roomIdentifier);
 		} catch (error) {
