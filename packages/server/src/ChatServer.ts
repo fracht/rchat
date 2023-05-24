@@ -12,9 +12,10 @@ export class ChatServer<TMessageType> {
 		this.server = server;
 		this.service = service;
 		this.roomManager = new RoomManager<TMessageType>(server, service.getChatParticipants);
-		this.initializeServer();
 		this.handleMessage = this.handleMessage.bind(this);
 		this.authentication = this.authentication.bind(this);
+
+		this.initializeServer();
 	}
 
 	private initializeServer = () => {
