@@ -37,7 +37,7 @@ export class RoomManager<TMessageType> {
 		this.server.on('connect', this.handleSocketConnect);
 	}
 
-	private isUserConnected = (userIdentifier: string) => {
+	public isUserConnected = (userIdentifier: string) => {
 		const sockets = this.userSockets.get(userIdentifier);
 
 		return sockets && sockets.size > 0;

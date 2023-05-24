@@ -2,6 +2,7 @@
 	"name": "rchat",
 	"version": "0.0.0",
 	"private": true,
+	"packageManager": "pnpm@7.17.0",
 	"scripts": {
 		"build": "turbo run build",
 		"bump": "changeset version && pnpm i --lockfile-only",
@@ -17,7 +18,8 @@
 		"danger": "^11.2.4",
 		"prettier": "^2.8.4",
 		"syncpack": "^8.2.4",
-		"turbo": "^1.4.3"
+		"turbo": "^1.4.3",
+		"typescript": "^5.0.4"
 	},
 	"pnpm": {
 		"patchedDependencies": {
