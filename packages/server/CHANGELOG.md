@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.11.7
+
+### Patch Changes
+
+-   1539268: Fixed bug with authentication
+    -   @rchat/shared@0.11.7
+
 ## 0.11.6
 
 ### Patch Changes
