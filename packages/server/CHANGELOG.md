@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.11.4
+
+### Patch Changes
+
+-   a423f4e: Better handling of server class inheritance
+    -   @rchat/shared@0.11.4
+
 ## 0.11.3
 
 ### Patch Changes
