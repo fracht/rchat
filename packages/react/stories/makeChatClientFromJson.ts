@@ -52,49 +52,52 @@ export const makeChatClientFromJson = <TMessage>(
 	};
 
 	return [
-		new ChatClient(realSocket as unknown as Socket, async (_, count, before, after) => {
-			if (after !== undefined) {
-				const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
+		new ChatClient<TMessage>(realSocket as unknown as Socket, {
+			fetchMessages: async (_, count, before, after) => {
+				if (after !== undefined) {
+					const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
 
-				if (beginIndex === -1) {
+					if (beginIndex === -1) {
+						return {
+							messages: [],
+							noMessagesAfter: true,
+							noMessagesBefore: false,
+						};
+					}
+
 					return {
-						messages: [],
-						noMessagesAfter: true,
+						messages: allMessages.slice(beginIndex, beginIndex + count),
+						noMessagesAfter: beginIndex + count >= allMessages.length,
 						noMessagesBefore: false,
 					};
 				}
 
-				return {
-					messages: allMessages.slice(beginIndex, beginIndex + count),
-					noMessagesAfter: beginIndex + count >= allMessages.length,
-					noMessagesBefore: false,
-				};
-			}
+				if (before !== undefined) {
+					const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
+					const beginIndex = allMessages.length - beginIndexReversed - 1;
 
-			if (before !== undefined) {
-				const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
-				const beginIndex = allMessages.length - beginIndexReversed - 1;
+					if (beginIndexReversed === -1) {
+						return {
+							messages: [],
+							noMessagesBefore: true,
+							noMessagesAfter: false,
+						};
+					}
 
-				if (beginIndexReversed === -1) {
 					return {
-						messages: [],
-						noMessagesBefore: true,
+						messages: allMessages.slice(Math.max(0, beginIndex - count), beginIndex),
+						noMessagesBefore: beginIndex - count <= 0,
 						noMessagesAfter: false,
 					};
 				}
 
 				return {
-					messages: allMessages.slice(Math.max(0, beginIndex - count), beginIndex),
-					noMessagesBefore: beginIndex - count <= 0,
-					noMessagesAfter: false,
+					messages: allMessages.slice(-count),
+					noMessagesAfter: true,
+					noMessagesBefore: count >= allMessages.length,
 				};
-			}
-
-			return {
-				messages: allMessages.slice(-count),
-				noMessagesAfter: true,
-				noMessagesBefore: count >= allMessages.length,
-			};
+			},
+			searchMessages: () => Promise.resolve({ results: [], totalCount: 0 }),
 		}),
 		() => {
 			mockServer.stop();
