@@ -74,7 +74,7 @@ export const makeChatClientFromJson = <TMessage>(
 
 				if (before !== undefined) {
 					const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
-					const beginIndex = allMessages.length - beginIndexReversed - 1;
+					const beginIndex = allMessages.length - beginIndexReversed;
 
 					if (beginIndexReversed === -1) {
 						return {
