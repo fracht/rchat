@@ -24,7 +24,7 @@
 		"release": "np",
 		"size": "size-limit",
 		"size:why": "size-limit --why",
-		"storybook": "start-storybook -p 6006",
+		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
 		"test": "jest",
 		"test:coverage": "pnpm run test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
 		"test:watch": "pnpm run test --passWithNoTests --watch"
@@ -36,6 +36,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
 		"@rchat/client": "workspace:^0.11.7",
+		"@rchat/shared": "workspace:^0.11.7",
 		"@sirse-dev/eslint-config": "^1.0.6",
 		"@size-limit/preset-small-lib": "^7.0.8",
 		"@storybook/addon-actions": "^6.5.9",
@@ -52,6 +53,7 @@
 		"@types/react-dom": "^18.0.5",
 		"aqu": "0.4.3",
 		"babel-loader": "^8.2.5",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.18.0",
 		"jest": "^29.2.2",
 		"jest-environment-jsdom": "^29.4.3",
