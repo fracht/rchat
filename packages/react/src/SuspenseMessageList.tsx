@@ -43,7 +43,7 @@ export const SuspenseMessageList = <TMessage,>({
 		roomIdentifier,
 		compareItems,
 		initialMessagesState,
-		// initialSearchResult,
+		initialSearchResult,
 	});
 
 	return (

@@ -159,7 +159,6 @@ export const useSuspenseMessages = <TMessage,>({
 				const allMessages = messagesCacheEntry.state.data as TMessage[];
 				const incomingMessageIndex = findNewElementIndex(allMessages, message, compareItems);
 
-				console.log(visibleFrame.current);
 				const keepDirection: KeepDirection =
 					visibleFrame.current.begin < visibleFrame.current.end ? 'beginning' : 'ending';
 
@@ -177,8 +176,6 @@ export const useSuspenseMessages = <TMessage,>({
 						messagesState.current.noMessagesBefore = false;
 					}
 				}
-			} else {
-				// TODO check if cache can be null
 			}
 		}
 	};

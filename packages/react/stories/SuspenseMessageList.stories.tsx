@@ -1,16 +1,6 @@
 import { ChatClient } from '@rchat/client';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import {
-	ComponentType,
-	CSSProperties,
-	forwardRef,
-	useEffect,
-	useState,
-	Suspense,
-	RefObject,
-	useMemo,
-	useRef,
-} from 'react';
+import { ComponentType, CSSProperties, forwardRef, useEffect, useState, Suspense, RefObject, useMemo } from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Chat } from '../src/Chat';
 
@@ -162,7 +152,11 @@ const TestComponent = ({ client }: { client: ChatClient<ExampleMessage> }) => {
 	);
 };
 
-const App = (props: EndlessListProps<ExampleMessage>) => {
+type AppProps = {
+	initialMessages: ExampleMessage[];
+};
+
+const App = ({ initialMessages }: AppProps) => {
 	const [queryClient] = useState(
 		new QueryClient({
 			defaultOptions: {
@@ -186,7 +180,7 @@ const App = (props: EndlessListProps<ExampleMessage>) => {
 	useEffect(() => {
 		const [testClient, cleanup] = makeChatClientFromJson(
 			roomIdentifier,
-			generateMessageArray(200),
+			initialMessages,
 			(a, b) => a.date.getTime() - b.date.getTime(),
 			() => generateMessageArray(1)[0],
 		);
@@ -210,6 +204,6 @@ const App = (props: EndlessListProps<ExampleMessage>) => {
 	);
 };
 
-const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <App {...args} />;
+export const Default: ComponentStory<typeof App> = () => <App initialMessages={generateMessageArray(20)} />;
 
-export const Default = Template.bind({});
+export const Empty: ComponentStory<typeof App> = () => <App initialMessages={[]} />;
