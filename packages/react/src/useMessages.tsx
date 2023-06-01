@@ -28,7 +28,11 @@ export type UseMessagesConfig<T> = {
 };
 
 // TODO: replace with binary search
-const findNewElementIndex = <T,>(elements: readonly T[], element: T, compare: (a: T, b: T) => number): number => {
+export const findNewElementIndex = <T,>(
+	elements: readonly T[],
+	element: T,
+	compare: (a: T, b: T) => number,
+): number => {
 	return (
 		elements.length -
 		1 -

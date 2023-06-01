@@ -1,8 +1,9 @@
 import { Ref, useRef, useState, startTransition as startDefaultTransition, TransitionFunction, useEffect } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
+import { QueryFunctionContext, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEvent } from './internal/useEvent';
 import { ChatClient, MessageFetchResult, MessageSearchResult } from '@rchat/client';
+import { findNewElementIndex } from './useMessages';
 
 const FETCH_DURATION = 500;
 
@@ -10,9 +11,9 @@ export type UseMessagesBag<TMessage> = {
 	messages: TMessage[];
 	onTopReached: () => void;
 	onBottomReached: () => void;
-	// noMessagesBefore: boolean;
-	// noMessagesAfter: boolean;
-	// onVisibleFrameChange: (frame: Frame) => void;
+	noMessagesBefore: boolean;
+	noMessagesAfter: boolean;
+	onVisibleFrameChange: (frame: Frame) => void;
 	containerReference: Ref<HTMLElement>;
 	// focusedItem?: T;
 };
@@ -51,6 +52,10 @@ const getClippedArray = <T,>(items: T[], maxSize: number, keep: KeepDirection) =
 	throw new Error(`Unrecognized "keep" option value: "${keep}"`);
 };
 
+const insertInArray = <T,>(array: T[], item: T, index: number) => {
+	return [...array.slice(0, index), item, ...array.slice(index)];
+};
+
 export const useSuspenseMessages = <TMessage,>({
 	roomIdentifier,
 	chatClient,
@@ -61,12 +66,15 @@ export const useSuspenseMessages = <TMessage,>({
 	initialSearchResult,
 	compareItems,
 }: UseMessagesConfig<TMessage>): UseMessagesBag<TMessage> => {
+	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 	const containerReference = useRef<HTMLElement>(null);
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
 	const [anchors, setAnchors] = useState<Anchors<TMessage>>({
 		before: undefined,
 		after: undefined,
 	});
+
+	const queryClient = useQueryClient();
 
 	const oldMessagesRef = useRef(initialMessagesState.messages);
 
@@ -143,8 +151,36 @@ export const useSuspenseMessages = <TMessage,>({
 	);
 	const messages = data!;
 
-	const handleIncomingMessage = (message: TMessage, roomIdentifier: string) => {
-		console.log(message, roomIdentifier);
+	const handleIncomingMessage = (message: TMessage, messageRoomIdentifier: string) => {
+		if (roomIdentifier === messageRoomIdentifier && messagesState.current.noMessagesAfter) {
+			const messagesCacheEntry = queryClient.getQueryCache().find([{ roomIdentifier, anchors }]);
+
+			if (messagesCacheEntry) {
+				const allMessages = messagesCacheEntry.state.data as TMessage[];
+				const incomingMessageIndex = findNewElementIndex(allMessages, message, compareItems);
+
+				console.log(visibleFrame.current);
+				const keepDirection: KeepDirection =
+					visibleFrame.current.begin < visibleFrame.current.end ? 'beginning' : 'ending';
+
+				const newMessages = insertInArray(allMessages, message, incomingMessageIndex + 1);
+				const clippedMessages = getClippedArray(newMessages, maxChunkSize, keepDirection);
+
+				queryClient.setQueryData([{ roomIdentifier, anchors }], clippedMessages);
+
+				const clipped = clippedMessages.length < newMessages.length;
+
+				if (clipped) {
+					if (keepDirection === 'beginning') {
+						messagesState.current.noMessagesAfter = false;
+					} else {
+						messagesState.current.noMessagesBefore = false;
+					}
+				}
+			} else {
+				// TODO check if cache can be null
+			}
+		}
 	};
 
 	const onTopReached = useEvent(() => {
@@ -172,6 +208,10 @@ export const useSuspenseMessages = <TMessage,>({
 			});
 		});
 	});
+
+	const onVisibleFrameChange = (frame: Frame) => {
+		visibleFrame.current = frame;
+	};
 
 	// Scroll to bottom if there was no initial search
 	useEffect(() => {
@@ -203,5 +243,8 @@ export const useSuspenseMessages = <TMessage,>({
 		onTopReached,
 		onBottomReached,
 		containerReference,
+		onVisibleFrameChange,
+		noMessagesBefore: messagesState.current.noMessagesBefore,
+		noMessagesAfter: messagesState.current.noMessagesAfter,
 	};
 };

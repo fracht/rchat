@@ -32,8 +32,8 @@ export const SuspenseMessageList = <TMessage,>({
 		messages,
 		onBottomReached,
 		onTopReached,
-		// noMessagesAfter,
-		// onVisibleFrameChange,
+		noMessagesAfter,
+		onVisibleFrameChange,
 		containerReference,
 		// focusedItem,
 	} = useSuspenseMessages({
@@ -58,8 +58,8 @@ export const SuspenseMessageList = <TMessage,>({
 			PlaceholderComponent={PlaceholderComponent}
 			compareItems={compareItems}
 			itemKey={itemKey}
-			// onVisibleFrameChange={onVisibleFrameChange}
-			// canStickToBottom={noMessagesAfter}
+			onVisibleFrameChange={onVisibleFrameChange}
+			canStickToBottom={noMessagesAfter}
 			containerReference={containerReference}
 			// focusedItem={focusedItem}
 			jumpAnimation={jumpAnimation}
