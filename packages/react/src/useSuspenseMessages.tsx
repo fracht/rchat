@@ -4,6 +4,8 @@ import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { useEvent } from './internal/useEvent';
 import { ChatClient, MessageFetchResult, MessageSearchResult } from '@rchat/client';
 
+const FETCH_DURATION = 500;
+
 export type UseMessagesBag<TMessage> = {
 	messages: TMessage[];
 	onTopReached: () => void;
@@ -69,6 +71,7 @@ export const useSuspenseMessages = <TMessage,>({
 	const oldMessagesRef = useRef(initialMessagesState.messages);
 
 	const fetchMessages = async (roomIdentifier: string, { before, after }: Anchors<TMessage>) => {
+		await new Promise((res) => setTimeout(res, FETCH_DURATION));
 		let clippedItems;
 
 		if (before && after) {
@@ -140,6 +143,10 @@ export const useSuspenseMessages = <TMessage,>({
 	);
 	const messages = data!;
 
+	const handleIncomingMessage = (message: TMessage, roomIdentifier: string) => {
+		console.log(message, roomIdentifier);
+	};
+
 	const onTopReached = useEvent(() => {
 		if (messagesState.current.noMessagesBefore) {
 			return;
@@ -182,6 +189,14 @@ export const useSuspenseMessages = <TMessage,>({
 			}
 		}
 	}, [initialSearchResult]);
+
+	useEffect(() => {
+		chatClient.addEventListener('receiveMessage', handleIncomingMessage);
+
+		return () => {
+			chatClient.removeEventListener('receiveMessage', handleIncomingMessage);
+		};
+	}, [chatClient, handleIncomingMessage]);
 
 	return {
 		messages,

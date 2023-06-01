@@ -133,9 +133,10 @@ const Container = forwardRef(({ children }: ContainerComponentProps, ref) => (
 
 const PlaceholderComponent = () => <div style={{ height: 400 }}>Placeholder!</div>;
 
+const roomIdentifier = '123';
 const TestComponent = ({ client }: { client: ChatClient<ExampleMessage> }) => {
 	const { data } = useQuery([{ scope: 'initial' }], async () => {
-		return client.fetchMessages('123', 20, undefined, undefined);
+		return client.fetchMessages(roomIdentifier, 20, undefined, undefined);
 	});
 
 	const initialMessages = useMemo(() => data!, [data]);
@@ -152,7 +153,7 @@ const TestComponent = ({ client }: { client: ChatClient<ExampleMessage> }) => {
 			triggerDistance={3}
 			ContainerComponent={Container as ComponentType<ContainerComponentProps>}
 		>
-			<Room identifier="123">
+			<Room identifier={roomIdentifier}>
 				<Suspense>
 					<SuspenseMessageList initialMessagesState={initialMessages} />
 				</Suspense>
@@ -184,7 +185,7 @@ const App = (props: EndlessListProps<ExampleMessage>) => {
 
 	useEffect(() => {
 		const [testClient, cleanup] = makeChatClientFromJson(
-			'123',
+			roomIdentifier,
 			generateMessageArray(200),
 			(a, b) => a.date.getTime() - b.date.getTime(),
 			() => generateMessageArray(1)[0],

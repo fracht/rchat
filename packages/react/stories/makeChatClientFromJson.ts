@@ -26,13 +26,7 @@ export const makeChatClientFromJson = <TMessage>(
 
 			const newMessage = generateMessage();
 			pause(Number(Math.random() > 0.5) * 10000).then(() => {
-				socketIO.emit(
-					'chatMessage',
-					JSON.stringify({
-						roomIdentifier,
-						message: newMessage,
-					}),
-				);
+				socketIO.emit('receiveMessage', newMessage, roomIdentifier);
 				allMessages.push(newMessage);
 				allMessages.sort(compare);
 				reversedAllMessages = [...allMessages].reverse();
@@ -42,17 +36,17 @@ export const makeChatClientFromJson = <TMessage>(
 
 	const socket = SocketIO('ws://localhost:1234');
 
-	const realSocket: SocketIOClient = { ...socket } as SocketIOClient;
-	realSocket.on = (type, callback) => {
-		return socket.on(type, (msg) => {
-			const parsedMessage = JSON.parse(msg as unknown as string);
-			parsedMessage.message.date = new Date(parsedMessage.message.date);
-			callback(parsedMessage);
-		});
-	};
+	// const realSocket: SocketIOClient = { ...socket } as SocketIOClient;
+	// realSocket.on = (type, callback) => {
+	// 	return socket.on(type, (msg) => {
+	// 		const parsedMessage = JSON.parse(msg as unknown as string);
+	// 		parsedMessage.message.date = new Date(parsedMessage.message.date);
+	// 		callback(parsedMessage);
+	// 	});
+	// };
 
 	return [
-		new ChatClient<TMessage>(realSocket as unknown as Socket, {
+		new ChatClient<TMessage>(socket as unknown as Socket, {
 			fetchMessages: async (_, count, before, after) => {
 				if (after !== undefined) {
 					const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
