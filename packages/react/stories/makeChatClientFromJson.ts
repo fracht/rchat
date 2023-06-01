@@ -1,6 +1,7 @@
 import { ChatClient } from '@rchat/client';
+import { ChatSocketType } from '@rchat/shared';
 import { Socket } from 'socket.io-client';
-import { SocketIO, Server, SocketIOClient } from 'mock-socket';
+import { SocketIO, Server } from 'mock-socket';
 
 const pause = (ms: number) => {
 	return new Promise<void>((resolve) => {
@@ -20,11 +21,12 @@ export const makeChatClientFromJson = <TMessage>(
 	let reversedAllMessages = [...allMessages].reverse();
 
 	mockServer.on('connection', async (socket) => {
-		const socketIO = socket as unknown as SocketIOClient;
+		const socketIO = socket as unknown as ChatSocketType<TMessage>;
 		while (true) {
 			await pause(1000 + Math.random() * 5000);
 
 			const newMessage = generateMessage();
+			// Imitate different network speed of sending messages in chat
 			pause(Number(Math.random() > 0.5) * 10000).then(() => {
 				socketIO.emit('receiveMessage', newMessage, roomIdentifier);
 				allMessages.push(newMessage);
@@ -35,15 +37,6 @@ export const makeChatClientFromJson = <TMessage>(
 	});
 
 	const socket = SocketIO('ws://localhost:1234');
-
-	// const realSocket: SocketIOClient = { ...socket } as SocketIOClient;
-	// realSocket.on = (type, callback) => {
-	// 	return socket.on(type, (msg) => {
-	// 		const parsedMessage = JSON.parse(msg as unknown as string);
-	// 		parsedMessage.message.date = new Date(parsedMessage.message.date);
-	// 		callback(parsedMessage);
-	// 	});
-	// };
 
 	return [
 		new ChatClient<TMessage>(socket as unknown as Socket, {
