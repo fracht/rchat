@@ -47,7 +47,7 @@ export const useMockChatClient = ({ roomIdentifier, initialMessages, compare }: 
 
 				message.id = ++lastIdRef.current[roomIdentifier];
 
-				pause(Number(Math.random() > 0.5) * 3000).then(() => {
+				pause(Number(Math.random() > 0.5) * 2000).then(() => {
 					data.current[roomIdentifier].push(message);
 					data.current[roomIdentifier].sort(compare);
 					socketIO.emit('receiveMessage', message, roomIdentifier);

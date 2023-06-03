@@ -1,6 +1,6 @@
 import { Ref, useRef, useState, startTransition as startDefaultTransition, TransitionFunction, useEffect } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
-import { QueryFunctionContext, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEvent } from './internal/useEvent';
 import { ChatClient, MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { findNewElementIndex } from './useMessages';
