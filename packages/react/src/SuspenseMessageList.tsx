@@ -35,7 +35,7 @@ export const SuspenseMessageList = <TMessage,>({
 		noMessagesAfter,
 		onVisibleFrameChange,
 		containerReference,
-		// focusedItem,
+		focusedItem,
 	} = useSuspenseMessages({
 		chatClient: client,
 		additionalChunkSize: 20,
@@ -61,7 +61,7 @@ export const SuspenseMessageList = <TMessage,>({
 			onVisibleFrameChange={onVisibleFrameChange}
 			canStickToBottom={noMessagesAfter}
 			containerReference={containerReference}
-			// focusedItem={focusedItem}
+			focusedItem={focusedItem}
 			jumpAnimation={jumpAnimation}
 		/>
 	);

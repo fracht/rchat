@@ -1,9 +1,18 @@
-import { Ref, useRef, useState, startTransition as startDefaultTransition, TransitionFunction, useEffect } from 'react';
+import {
+	Ref,
+	useRef,
+	useState,
+	startTransition as startDefaultTransition,
+	TransitionFunction,
+	useEffect,
+	useCallback,
+} from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEvent } from './internal/useEvent';
 import { ChatClient, MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { findNewElementIndex } from './useMessages';
+import { clamp } from './internal/clamp';
 
 const FETCH_DURATION = 500;
 
@@ -15,7 +24,7 @@ export type UseMessagesBag<TMessage> = {
 	noMessagesAfter: boolean;
 	onVisibleFrameChange: (frame: Frame) => void;
 	containerReference: Ref<HTMLElement>;
-	// focusedItem?: T;
+	focusedItem?: TMessage;
 };
 
 export type UseMessagesConfig<TMessage> = {
@@ -69,7 +78,10 @@ export const useSuspenseMessages = <TMessage,>({
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 	const containerReference = useRef<HTMLElement>(null);
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
+
 	const searchResults = useRef<MessageSearchResult<TMessage> | undefined>(initialSearchResult);
+	const selectedSearchResult = useRef(0);
+
 	const focusedItem = useRef<TMessage | undefined>(initialSearchResult?.results[0]);
 	const oldMessagesRef = useRef([...initialMessagesState.messages]);
 
@@ -184,6 +196,63 @@ export const useSuspenseMessages = <TMessage,>({
 		}
 	};
 
+	const focusItem = useCallback(
+		async (item: TMessage | undefined) => {
+			focusedItem.current = item;
+			if (!item) {
+				return;
+			}
+
+			startTransition(() => {
+				setAnchors({
+					before: item,
+					after: item,
+				});
+			});
+		},
+		[additionalChunkSize, chatClient, roomIdentifier],
+	);
+
+	const handleSearch = useCallback(
+		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>) => {
+			console.log('handle search', searchResult);
+			if (searchRoomIdentifier === roomIdentifier) {
+				searchResults.current = searchResult;
+				selectedSearchResult.current = 0;
+				focusItem(searchResult.results[0]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
+	const handlePreviousSearchResult = useCallback(
+		(searchRoomIdentifier: string) => {
+			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
+				selectedSearchResult.current = clamp(
+					selectedSearchResult.current - 1,
+					0,
+					Math.max(searchResults.current.results.length - 1, 0),
+				);
+				focusItem(searchResults.current.results[selectedSearchResult.current]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
+	const handleNextSearchResult = useCallback(
+		(searchRoomIdentifier: string) => {
+			if (searchResults.current && searchRoomIdentifier === roomIdentifier) {
+				selectedSearchResult.current = clamp(
+					selectedSearchResult.current + 1,
+					0,
+					Math.max(searchResults.current.results.length - 1, 0),
+				);
+				focusItem(searchResults.current.results[selectedSearchResult.current]);
+			}
+		},
+		[focusItem, roomIdentifier],
+	);
+
 	const onTopReached = useEvent(() => {
 		if (messagesState.current.noMessagesBefore) {
 			return;
@@ -245,9 +314,15 @@ export const useSuspenseMessages = <TMessage,>({
 
 	useEffect(() => {
 		chatClient.addEventListener('receiveMessage', handleIncomingMessage);
+		chatClient.addEventListener('receiveSearchResults', handleSearch);
+		chatClient.addEventListener('nextSearchResult', handleNextSearchResult);
+		chatClient.addEventListener('previousSearchResult', handlePreviousSearchResult);
 
 		return () => {
 			chatClient.removeEventListener('receiveMessage', handleIncomingMessage);
+			chatClient.removeEventListener('receiveSearchResults', handleSearch);
+			chatClient.removeEventListener('nextSearchResult', handleNextSearchResult);
+			chatClient.removeEventListener('previousSearchResult', handlePreviousSearchResult);
 		};
 	}, [chatClient, handleIncomingMessage]);
 
@@ -259,5 +334,6 @@ export const useSuspenseMessages = <TMessage,>({
 		onVisibleFrameChange,
 		noMessagesBefore: messagesState.current.noMessagesBefore,
 		noMessagesAfter: messagesState.current.noMessagesAfter,
+		focusedItem: focusedItem.current,
 	};
 };

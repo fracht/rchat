@@ -55,7 +55,7 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 };
 
 const ChatItemComponent = forwardRef(
-	({ value, index, array, itemKey }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
+	({ value, index, array, itemKey, focused }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
 		<div style={value.isLeft ? styles.leftContainer : styles.rightContainer}>
 			<div
 				ref={ref as React.Ref<HTMLDivElement>}
@@ -65,7 +65,7 @@ const ChatItemComponent = forwardRef(
 					...getBorders(value, index, array),
 				}}
 			>
-				{value.id} {value.message}
+				{value.message}
 			</div>
 		</div>
 	),

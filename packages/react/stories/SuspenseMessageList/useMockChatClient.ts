@@ -120,7 +120,19 @@ export const useMockChatClient = ({ roomIdentifier, initialMessages, compare }: 
 						noMessagesBefore: count >= allMessages.length,
 					};
 				},
-				searchMessages: () => Promise.resolve({ results: [], totalCount: 0 }),
+				searchMessages: async (currentRoomIdentifier: string, criteria: unknown) => {
+					if (typeof criteria !== 'string') {
+						throw Error('Search criteria must be a string!');
+					}
+
+					const allMessages = data.current[currentRoomIdentifier];
+					const filteredMessages = allMessages.filter(({ message }) => message.includes(criteria)).reverse();
+
+					return {
+						results: filteredMessages,
+						totalCount: filteredMessages.length,
+					};
+				},
 			}),
 	);
 
