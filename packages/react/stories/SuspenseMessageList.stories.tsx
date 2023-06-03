@@ -1,21 +1,23 @@
 import { ChatClient } from '@rchat/client';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { ComponentType, CSSProperties, forwardRef, useEffect, useState, Suspense, RefObject, useMemo } from 'react';
+import {
+	ComponentType,
+	CSSProperties,
+	forwardRef,
+	useState,
+	Suspense,
+	RefObject,
+	useMemo,
+	startTransition,
+} from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Chat } from '../src/Chat';
 
-import { ContainerComponentProps, EndlessListProps, ItemComponentProps, ItemKey } from '../src/EndlessList';
+import { ContainerComponentProps, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
 import { SuspenseMessageList } from '../src/SuspenseMessageList';
 import { Room } from '../src/Room';
-import { makeChatClientFromJson } from './makeChatClientFromJson';
-import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
-
-type ExampleMessage = {
-	message: string;
-	isLeft: boolean;
-	id: number;
-	date: Date;
-};
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { ExampleMessage, useMockChatClient } from './useMockChatClient';
 
 const styles: Record<string, CSSProperties> = {
 	rightItem: {
@@ -84,9 +86,6 @@ export default {
 	title: 'SuspenseMessageList',
 } as ComponentMeta<ComponentType<EndlessListProps<ExampleMessage>>>;
 
-let current = 0;
-const uuid = () => ++current;
-
 const generateMessageArray = (length: number) => {
 	const possibilities = [
 		'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -103,7 +102,7 @@ const generateMessageArray = (length: number) => {
 
 	return new Array(length).fill(0).map((_, index) => ({
 		message: possibilities[Math.floor(Math.random() * possibilities.length)],
-		id: uuid(),
+		id: index + 1,
 		date: new Date(beginTimestamp + 10 * index),
 		isLeft: Math.random() > 0.5,
 	}));
@@ -123,40 +122,32 @@ const Container = forwardRef(({ children }: ContainerComponentProps, ref) => (
 
 const PlaceholderComponent = () => <div style={{ height: 400 }}>Placeholder!</div>;
 
-const roomIdentifier = '123';
-const TestComponent = ({ client }: { client: ChatClient<ExampleMessage> }) => {
-	const { data } = useQuery([{ scope: 'initial' }], async () => {
+type ChatMessagesProps = {
+	client: ChatClient<ExampleMessage>;
+	roomIdentifier: string;
+};
+
+const ChatMessages = ({ client, roomIdentifier }: ChatMessagesProps) => {
+	const { data } = useQuery([{ scope: 'initial', roomIdentifier }], async () => {
 		return client.fetchMessages(roomIdentifier, 20, undefined, undefined);
 	});
 
 	const initialMessages = useMemo(() => data!, [data]);
 
 	return (
-		<Chat<ExampleMessage>
-			client={client}
-			MessageComponent={ChatItemComponent}
-			itemKey={(item) => String(item.id)}
-			PlaceholderComponent={PlaceholderComponent}
-			compareItems={(a, b) => {
-				return a.date.getTime() - b.date.getTime();
-			}}
-			triggerDistance={3}
-			ContainerComponent={Container as ComponentType<ContainerComponentProps>}
-		>
-			<Room identifier={roomIdentifier}>
-				<Suspense>
-					<SuspenseMessageList initialMessagesState={initialMessages} />
-				</Suspense>
-			</Room>
-		</Chat>
+		<Room identifier={roomIdentifier}>
+			<Suspense fallback={null}>
+				<SuspenseMessageList initialMessagesState={initialMessages} />
+			</Suspense>
+		</Room>
 	);
 };
 
-type AppProps = {
+type ChatStoryProps = {
 	initialMessages: ExampleMessage[];
 };
 
-const App = ({ initialMessages }: AppProps) => {
+const ChatStory = ({ initialMessages }: ChatStoryProps) => {
 	const [queryClient] = useState(
 		new QueryClient({
 			defaultOptions: {
@@ -175,35 +166,92 @@ const App = ({ initialMessages }: AppProps) => {
 			},
 		}),
 	);
-	const [client, setClient] = useState<ChatClient<ExampleMessage>>();
+	const [roomIdentifier, setRoomIdentifier] = useState('1');
 
-	useEffect(() => {
-		const [testClient, cleanup] = makeChatClientFromJson(
-			roomIdentifier,
-			initialMessages,
-			(a, b) => a.date.getTime() - b.date.getTime(),
-			() => generateMessageArray(1)[0],
+	const client = useMockChatClient({
+		roomIdentifier,
+		initialMessages,
+		compare: (a, b) => a.date.getTime() - b.date.getTime(),
+	});
+
+	const invalidateMessages = (roomIdentifier: string) => {
+		queryClient.invalidateQueries([{ scope: 'initial', roomIdentifier }], {
+			refetchType: 'inactive',
+		});
+		queryClient.invalidateQueries(
+			[
+				{
+					anchors: {
+						before: undefined,
+						after: undefined,
+					},
+					roomIdentifier,
+				},
+			],
+			{
+				refetchType: 'inactive',
+			},
 		);
-
-		setClient(testClient);
-
-		return cleanup;
-	}, []);
-
-	if (client === undefined) {
-		return <div>Loading...</div>;
-	}
+	};
 
 	return (
 		<QueryClientProvider client={queryClient}>
 			<Suspense fallback={<div>Loading initial messages...</div>}>
-				<TestComponent client={client} />
+				<Chat<ExampleMessage>
+					client={client}
+					MessageComponent={ChatItemComponent}
+					itemKey={(item) => String(item.id)}
+					PlaceholderComponent={PlaceholderComponent}
+					compareItems={(a, b) => {
+						return a.date.getTime() - b.date.getTime();
+					}}
+					triggerDistance={3}
+					ContainerComponent={Container as ComponentType<ContainerComponentProps>}
+				>
+					<ChatMessages key={roomIdentifier} client={client} roomIdentifier={roomIdentifier} />
+					<button
+						onClick={() => {
+							client.sendMessage(generateMessageArray(1)[0], roomIdentifier);
+						}}
+					>
+						send random message
+					</button>
+					<br />
+
+					<b>Current room: {roomIdentifier}</b>
+					<br />
+					<button
+						onClick={() => {
+							const newRoomIdentifier = String(Number.parseInt(roomIdentifier) + 1);
+							invalidateMessages(newRoomIdentifier);
+							startTransition(() => {
+								setRoomIdentifier(newRoomIdentifier);
+							});
+						}}
+					>
+						go to next room
+					</button>
+					<button
+						disabled={roomIdentifier === '1'}
+						onClick={() => {
+							const newRoomIdentifier = String(Math.max(1, Number.parseInt(roomIdentifier) - 1));
+							invalidateMessages(newRoomIdentifier);
+							startTransition(() => {
+								setRoomIdentifier(newRoomIdentifier);
+							});
+						}}
+					>
+						go to prev room
+					</button>
+				</Chat>
 			</Suspense>
 			<ReactQueryDevtools />
 		</QueryClientProvider>
 	);
 };
 
-export const Default: ComponentStory<typeof App> = () => <App initialMessages={generateMessageArray(20)} />;
+export const Default: ComponentStory<typeof ChatStory> = () => (
+	<ChatStory initialMessages={generateMessageArray(200)} />
+);
 
-export const Empty: ComponentStory<typeof App> = () => <App initialMessages={[]} />;
+export const Empty: ComponentStory<typeof ChatStory> = () => <ChatStory initialMessages={[]} />;

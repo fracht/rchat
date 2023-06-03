@@ -69,6 +69,10 @@ export const useSuspenseMessages = <TMessage,>({
 	const visibleFrame = useRef<Frame>({ begin: -1, end: -1 });
 	const containerReference = useRef<HTMLElement>(null);
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
+	const searchResults = useRef<MessageSearchResult<TMessage> | undefined>(initialSearchResult);
+	const focusedItem = useRef<TMessage | undefined>(initialSearchResult?.results[0]);
+	const oldMessagesRef = useRef([...initialMessagesState.messages]);
+
 	const [anchors, setAnchors] = useState<Anchors<TMessage>>({
 		before: undefined,
 		after: undefined,
@@ -76,11 +80,11 @@ export const useSuspenseMessages = <TMessage,>({
 
 	const queryClient = useQueryClient();
 
-	const oldMessagesRef = useRef(initialMessagesState.messages);
-
 	const fetchMessages = async (roomIdentifier: string, { before, after }: Anchors<TMessage>) => {
 		await new Promise((res) => setTimeout(res, FETCH_DURATION));
+
 		let clippedItems;
+		let newState;
 
 		if (before && after) {
 			// ACTION 1: search message. Both before and after are the same item.
@@ -90,7 +94,7 @@ export const useSuspenseMessages = <TMessage,>({
 				chatClient.fetchMessages(roomIdentifier, additionalChunkSize, undefined, after),
 			]);
 
-			messagesState.current = {
+			newState = {
 				noMessagesBefore: previousChunk.noMessagesBefore,
 				noMessagesAfter: nextChunk.noMessagesAfter,
 			};
@@ -115,11 +119,10 @@ export const useSuspenseMessages = <TMessage,>({
 				clippedItems = getClippedArray(items, maxChunkSize, 'beginning');
 
 				const clipped = items.length > clippedItems.length;
-				const newState = {
+				newState = {
 					noMessagesBefore,
 					noMessagesAfter: !clipped && messagesState.current.noMessagesAfter,
 				};
-				messagesState.current = newState;
 			} else {
 				// ACTION 3: on bottom reached.
 
@@ -127,14 +130,14 @@ export const useSuspenseMessages = <TMessage,>({
 				clippedItems = getClippedArray(items, maxChunkSize, 'ending');
 
 				const clipped = items.length > clippedItems.length;
-				const newState = {
+				newState = {
 					noMessagesAfter,
 					noMessagesBefore: !clipped && messagesState.current.noMessagesBefore,
 				};
-				messagesState.current = newState;
 			}
 		}
 
+		messagesState.current = newState;
 		oldMessagesRef.current = clippedItems;
 		return clippedItems;
 	};
@@ -145,10 +148,11 @@ export const useSuspenseMessages = <TMessage,>({
 		// Initial data must be set only for initial query (see https://github.com/TanStack/query/issues/4297)
 		{
 			suspense: true,
-			initialData: !anchors.after && !anchors.before ? initialMessagesState.messages : undefined,
+			initialData: !anchors.after && !anchors.before ? [...initialMessagesState.messages] : undefined,
 			cacheTime: 10 * 1000,
 		},
 	);
+
 	const messages = data!;
 
 	const handleIncomingMessage = (message: TMessage, messageRoomIdentifier: string) => {
@@ -225,6 +229,18 @@ export const useSuspenseMessages = <TMessage,>({
 				);
 			}
 		}
+	}, [initialSearchResult]);
+
+	useEffect(() => {
+		startTransition(() => {
+			setAnchors({ before: undefined, after: undefined });
+		});
+		messagesState.current = initialMessagesState;
+	}, [initialMessagesState]);
+
+	useEffect(() => {
+		searchResults.current = initialSearchResult;
+		focusedItem.current = initialSearchResult?.results[0];
 	}, [initialSearchResult]);
 
 	useEffect(() => {
