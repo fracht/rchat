@@ -109,9 +109,6 @@ export const EndlessList = <T,>({
 		return smoothScrollToCenter(container, item, jumpAnimation, abortController);
 	});
 
-	const skipScrollToFocusedItem = useRef<boolean>(false);
-	const lastScrolledItem = useRef<T | undefined>();
-
 	const abortControllerReference = useRef<AbortController>();
 	const handleJumpScroll = useCallback(
 		async (abortController = new AbortController()) => {
@@ -147,6 +144,7 @@ export const EndlessList = <T,>({
 	const { observer, visibleItemKeys } = useVisibleItems(containerReference, onVisibleItemsChange);
 	const [scheduleJumpScroll, isJumpScheduled] = useScheduleOnNextRender(handleJumpScroll);
 
+	const lastScrolledItem = useRef<T | undefined>();
 	const handleScrollToFocusItem = useEvent(() => {
 		if (focusedItem === lastScrolledItem.current) {
 			return;
@@ -168,14 +166,11 @@ export const EndlessList = <T,>({
 		handleJump: scheduleJumpScroll,
 		focusedItem,
 		visibleItemKeys,
-		skipScrollToFocusedItem,
 		lastScrolledItem,
 	});
 
 	useEffect(() => {
-		if (!skipScrollToFocusedItem.current) {
-			handleScrollToFocusItem();
-		}
+		handleScrollToFocusItem();
 		hasMounted.current = true;
 	}, [handleScrollToFocusItem, itemsToRender]);
 
