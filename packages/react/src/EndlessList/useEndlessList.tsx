@@ -12,6 +12,8 @@ export type UseEndlessListConfig<T> = {
 	handleJump: (abortController: AbortController) => Promise<void>;
 	focusedItem?: T;
 	visibleItemKeys: MutableRefObject<Set<string>>;
+	skipScrollToFocusedItem: MutableRefObject<boolean>;
+	lastScrolledItem: MutableRefObject<T | undefined>;
 };
 
 export type EndlessListRealItem<TValue> = {
@@ -53,6 +55,8 @@ export const useEndlessList = <T,>({
 	compareItems,
 	handleJump,
 	visibleItemKeys,
+	skipScrollToFocusedItem,
+	lastScrolledItem,
 }: UseEndlessListConfig<T>): Array<EndlessListItem<T>> => {
 	const focusedItemKey = focusedItem === undefined ? undefined : getKey(focusedItem);
 	const defaultConvertItem = useMemo(() => valueToEndlessListItem(getKey, focusedItemKey), [getKey, focusedItemKey]);
@@ -249,6 +253,8 @@ export const useEndlessList = <T,>({
 			constructedItems = oldItems;
 		}
 
+		skipScrollToFocusedItem.current = true;
+
 		setRenderedItems(constructedItems);
 		const newController = new AbortController();
 		jumpAbortController.current = newController;
@@ -257,6 +263,10 @@ export const useEndlessList = <T,>({
 			if (hasMounted.current) {
 				await handleJump(newController);
 			}
+
+			skipScrollToFocusedItem.current = false;
+			lastScrolledItem.current = items[Math.floor(items.length / 2)];
+
 			setRenderedItems(items.map(defaultConvertItem));
 		} catch {
 			/* Noop */
