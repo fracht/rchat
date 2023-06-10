@@ -32,7 +32,6 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 				items,
 				initialItems: propsInitialItems ?? initialItems,
 				visibleItemKeys: { current: visibleItemKeys ?? emptySet },
-				skipScrollToFocusedItem: mockRef as unknown as MutableRefObject<boolean>,
 				lastScrolledItem: mockRef as unknown as MutableRefObject<number>,
 			}),
 		{
