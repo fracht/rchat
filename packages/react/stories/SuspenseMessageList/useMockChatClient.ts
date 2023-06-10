@@ -4,6 +4,7 @@ import { ChatSocketType } from '@rchat/shared';
 import { Socket } from 'socket.io-client';
 import { SocketIO, Server } from 'mock-socket';
 
+const FETCH_DELAY = 100;
 const fakeUrl = 'ws://localhost:1234';
 
 const pause = (ms: number) => {
@@ -71,6 +72,8 @@ export const useMockChatClient = ({ roomIdentifier, initialMessages, compare }: 
 		() =>
 			new ChatClient<ExampleMessage>(socket as unknown as Socket, {
 				fetchMessages: async (currentRoomIdentifier, count, before, after) => {
+					await new Promise((res) => setTimeout(res, FETCH_DELAY));
+
 					if (!data.current[currentRoomIdentifier]) {
 						data.current[currentRoomIdentifier] = [...initialMessages];
 					}
@@ -122,6 +125,8 @@ export const useMockChatClient = ({ roomIdentifier, initialMessages, compare }: 
 					};
 				},
 				searchMessages: async (currentRoomIdentifier: string, criteria: unknown) => {
+					await new Promise((res) => setTimeout(res, FETCH_DELAY));
+
 					if (typeof criteria !== 'string') {
 						throw Error('Search criteria must be a string!');
 					}

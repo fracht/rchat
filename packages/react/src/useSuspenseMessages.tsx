@@ -14,8 +14,6 @@ import { ChatClient, MessageFetchResult, MessageSearchResult } from '@rchat/clie
 import { findNewElementIndex } from './useMessages';
 import { clamp } from './internal/clamp';
 
-const FETCH_DURATION = 500;
-
 export type UseMessagesBag<TMessage> = {
 	messages: TMessage[];
 	onTopReached: () => void;
@@ -93,8 +91,6 @@ export const useSuspenseMessages = <TMessage,>({
 	const queryClient = useQueryClient();
 
 	const fetchMessages = async (roomIdentifier: string, { before, after }: Anchors<TMessage>) => {
-		await new Promise((res) => setTimeout(res, FETCH_DURATION));
-
 		let clippedItems;
 		let newState;
 
