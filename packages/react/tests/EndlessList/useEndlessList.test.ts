@@ -1,9 +1,17 @@
 import { renderHook, act } from '@testing-library/react';
 
 import { EndlessListItem, useEndlessList, UseEndlessListConfig } from '../../src/EndlessList/useEndlessList';
+import { MutableRefObject } from 'react';
+
+const mockRef = {
+	current: undefined,
+};
 
 const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promise<void>, itemKeys?: Set<string>) => {
-	const defaultHookConfig: Omit<UseEndlessListConfig<number>, 'initialItems' | 'items' | 'visibleItemKeys'> = {
+	const defaultHookConfig: Omit<
+		UseEndlessListConfig<number>,
+		'initialItems' | 'items' | 'visibleItemKeys' | 'skipScrollToFocusedItem' | 'lastScrolledItem'
+	> = {
 		getKey: (value) => value.toString(),
 		compareItems: (a, b) => a - b,
 		handleJump: handleJump ?? jest.fn(),
@@ -15,11 +23,18 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 		items: number[];
 		initialItems?: number[];
 		visibleItemKeys?: Set<string>;
-	}
+	};
 
 	const hookBag = renderHook<EndlessListItem<number>[], InitialProps>(
 		({ items, visibleItemKeys, initialItems: propsInitialItems }) =>
-			useEndlessList({ ...defaultHookConfig, items, initialItems: propsInitialItems ?? initialItems, visibleItemKeys: { current: visibleItemKeys ?? emptySet } }),
+			useEndlessList({
+				...defaultHookConfig,
+				items,
+				initialItems: propsInitialItems ?? initialItems,
+				visibleItemKeys: { current: visibleItemKeys ?? emptySet },
+				skipScrollToFocusedItem: mockRef as unknown as MutableRefObject<boolean>,
+				lastScrolledItem: mockRef as unknown as MutableRefObject<number>,
+			}),
 		{
 			initialProps: {
 				items: initialItems,
@@ -35,7 +50,7 @@ describe('useEndlessList', () => {
 	it('Should return new array if previous array is a subset of it. A new array has been expanded from both sides.', async () => {
 		const initialValues = [1, 2, 3];
 		const handleJump = jest.fn();
-		const {rerender, result} = renderEndlessListHook(initialValues, handleJump);
+		const { rerender, result } = renderEndlessListHook(initialValues, handleJump);
 
 		const nextInput = [-1, 0, 1, 2, 3, 4];
 		rerender({ items: nextInput });
@@ -47,7 +62,7 @@ describe('useEndlessList', () => {
 				index: 0,
 				array: nextInput,
 				focused: false,
-				itemKey: '-1'
+				itemKey: '-1',
 			},
 			{
 				type: 'real',
@@ -55,7 +70,7 @@ describe('useEndlessList', () => {
 				index: 1,
 				array: nextInput,
 				focused: false,
-				itemKey: '0'
+				itemKey: '0',
 			},
 			{
 				type: 'real',
@@ -63,7 +78,7 @@ describe('useEndlessList', () => {
 				index: 2,
 				array: nextInput,
 				focused: false,
-				itemKey: '1'
+				itemKey: '1',
 			},
 			{
 				type: 'real',
@@ -71,7 +86,7 @@ describe('useEndlessList', () => {
 				index: 3,
 				array: nextInput,
 				focused: false,
-				itemKey: '2'
+				itemKey: '2',
 			},
 			{
 				type: 'real',
@@ -79,7 +94,7 @@ describe('useEndlessList', () => {
 				index: 4,
 				array: nextInput,
 				focused: false,
-				itemKey: '3'
+				itemKey: '3',
 			},
 			{
 				type: 'real',
@@ -87,17 +102,17 @@ describe('useEndlessList', () => {
 				index: 5,
 				array: nextInput,
 				focused: false,
-				itemKey: '4'
+				itemKey: '4',
 			},
 		] satisfies Array<EndlessListItem<number>>);
 
 		expect(handleJump).not.toBeCalled();
-	})
+	});
 
 	it('Should return new array if it is a subset of previous array. A new array has been truncated from both sides.', async () => {
 		const initialValues = [1, 2, 3, 4, 5, 6];
 		const handleJump = jest.fn();
-		const {result, rerender} = renderEndlessListHook(initialValues, handleJump);
+		const { result, rerender } = renderEndlessListHook(initialValues, handleJump);
 
 		const nextInput = [3, 4, 5];
 		rerender({ items: nextInput });
@@ -109,7 +124,7 @@ describe('useEndlessList', () => {
 				index: 0,
 				array: nextInput,
 				focused: false,
-				itemKey: '3'
+				itemKey: '3',
 			},
 			{
 				type: 'real',
@@ -117,7 +132,7 @@ describe('useEndlessList', () => {
 				index: 1,
 				array: nextInput,
 				focused: false,
-				itemKey: '4'
+				itemKey: '4',
 			},
 			{
 				type: 'real',
@@ -125,24 +140,24 @@ describe('useEndlessList', () => {
 				index: 2,
 				array: nextInput,
 				focused: false,
-				itemKey: '5'
+				itemKey: '5',
 			},
 		] satisfies Array<EndlessListItem<number>>);
 
 		expect(handleJump).not.toBeCalled();
-	})
+	});
 
 	it('should not perform jump on first render', () => {
 		const initialValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		const jump = jest.fn();
 		renderEndlessListHook(initialValues, jump);
 		expect(jump).toBeCalledTimes(0);
-	})
+	});
 
 	it('should set new items when initial items has been changed', () => {
 		const initialValues = [1, 2, 3];
 		const jump = jest.fn();
-		const {result, rerender} = renderEndlessListHook(initialValues, jump);
+		const { result, rerender } = renderEndlessListHook(initialValues, jump);
 
 		const updatedInitialValues = [5, 6];
 		rerender({ items: updatedInitialValues, initialItems: updatedInitialValues });
@@ -154,7 +169,7 @@ describe('useEndlessList', () => {
 				focused: false,
 				itemKey: '5',
 				type: 'real',
-				value: 5
+				value: 5,
 			},
 			{
 				array: updatedInitialValues,
@@ -162,11 +177,11 @@ describe('useEndlessList', () => {
 				focused: false,
 				itemKey: '6',
 				type: 'real',
-				value: 6
-			}
+				value: 6,
+			},
 		]);
 		expect(jump).toBeCalledTimes(0);
-	})
+	});
 
 	it('must convert items into EndlessListItem', () => {
 		const input = [1, 2, 3];
@@ -418,7 +433,7 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [4, 5, 6];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['3']) });
-		const fixedInput = [2, 3]
+		const fixedInput = [2, 3];
 
 		expect(result.current).toStrictEqual([
 			{
@@ -428,7 +443,8 @@ describe('useEndlessList', () => {
 				itemKey: '2',
 				type: 'real',
 				value: 2,
-			},{
+			},
+			{
 				array: fixedInput,
 				index: 1,
 				focused: false,
@@ -521,7 +537,7 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [1, 2, 3];
 		rerender({ items: thirdInput, visibleItemKeys: new Set([':rchat:-1', '7', '8']) });
-		const fixedInput = [7, 8, 9]
+		const fixedInput = [7, 8, 9];
 
 		expect(result.current).toStrictEqual([
 			{
@@ -550,7 +566,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				type: 'placeholder',
-				itemKey: ':rchat:-1'
+				itemKey: ':rchat:-1',
 			},
 			{
 				array: fixedInput,
@@ -633,7 +649,7 @@ describe('useEndlessList', () => {
 		rerender({ items: secondInput, visibleItemKeys: undefined });
 		const thirdInput = [1, 2, 3];
 		rerender({ items: thirdInput, visibleItemKeys: new Set(['7', '8']) });
-		const fixedInput = [7, 8, 9]
+		const fixedInput = [7, 8, 9];
 
 		expect(result.current).toStrictEqual([
 			{
@@ -755,7 +771,8 @@ describe('useEndlessList', () => {
 				itemKey: '2',
 				type: 'real',
 				value: 2,
-			},{
+			},
+			{
 				array: fixedInput,
 				index: 1,
 				focused: false,
@@ -854,7 +871,7 @@ describe('useEndlessList', () => {
 		expect(result.current).toStrictEqual([
 			{
 				itemKey: ':rchat:-1',
-				type: 'placeholder'
+				type: 'placeholder',
 			},
 			{
 				array: mergedInput,
@@ -929,7 +946,7 @@ describe('useEndlessList', () => {
 				type: 'real',
 				value: 6,
 			},
-		] satisfies Array<EndlessListItem<number>>)
+		] satisfies Array<EndlessListItem<number>>);
 	});
 
 	it('must merge incoming and existing items (array with placeholder)', async () => {
@@ -965,7 +982,8 @@ describe('useEndlessList', () => {
 				itemKey: '1',
 				type: 'real',
 				value: 1,
-			},{
+			},
+			{
 				array: mergedInput,
 				index: 1,
 				focused: false,
@@ -983,7 +1001,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				itemKey: ':rchat:-1',
-				type: 'placeholder'
+				type: 'placeholder',
 			},
 			{
 				array: mergedInput2,
@@ -1058,7 +1076,7 @@ describe('useEndlessList', () => {
 				type: 'real',
 				value: 6,
 			},
-		] satisfies Array<EndlessListItem<number>>)
+		] satisfies Array<EndlessListItem<number>>);
 	});
 
 	it('must merge incoming and existing items (array with placeholder, correct direction)', async () => {
@@ -1129,7 +1147,7 @@ describe('useEndlessList', () => {
 			},
 			{
 				itemKey: ':rchat:-1',
-				type: 'placeholder'
+				type: 'placeholder',
 			},
 			{
 				array: mergedInput2,
@@ -1188,6 +1206,6 @@ describe('useEndlessList', () => {
 				type: 'real',
 				value: 5,
 			},
-		] satisfies Array<EndlessListItem<number>>)
+		] satisfies Array<EndlessListItem<number>>);
 	});
 });
