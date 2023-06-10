@@ -1,9 +1,14 @@
-import { CSSProperties, ComponentType, RefObject, Suspense, forwardRef, useState } from 'react';
+import { CSSProperties, ComponentType, ForwardedRef, RefObject, Suspense, forwardRef, useState } from 'react';
 import { ExampleMessage, useMockChatClient } from './useMockChatClient';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Chat } from '../../src/Chat';
 
-import { ContainerComponentProps, ItemComponentProps } from '../../src/EndlessList';
+import {
+	ContainerComponentProps,
+	ItemComponentProps,
+	PlaceholderComponentProps,
+	PlaceholderComponentType,
+} from '../../src/EndlessList';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ChatMessages } from './ChatMessages';
 import { ChatController } from './ChatController';
@@ -17,10 +22,6 @@ const styles: Record<string, CSSProperties> = {
 		marginRight: 5,
 		marginLeft: 30,
 	},
-	rightContainer: {
-		display: 'flex',
-		justifyContent: 'flex-end',
-	},
 	leftItem: {
 		borderRadius: '10px 10px 10px 0',
 		background: '#dfdfdf',
@@ -28,10 +29,6 @@ const styles: Record<string, CSSProperties> = {
 		padding: 10,
 		marginLeft: 5,
 		marginRight: 30,
-	},
-	leftContainer: {
-		display: 'flex',
-		justifyContent: 'flex-start',
 	},
 };
 
@@ -56,7 +53,13 @@ const getBorders = (item: ExampleMessage, index: number, items: ExampleMessage[]
 
 const ChatItemComponent = forwardRef(
 	({ value, index, array, itemKey, focused }: ItemComponentProps<ExampleMessage>, ref: React.Ref<HTMLElement>) => (
-		<div style={value.isLeft ? styles.leftContainer : styles.rightContainer}>
+		<div
+			style={{
+				display: 'flex',
+				justifyContent: value.isLeft ? 'flex-start' : 'flex-end',
+				backgroundColor: focused ? '#d4e3ff' : undefined,
+			}}
+		>
 			<div
 				ref={ref as React.Ref<HTMLDivElement>}
 				data-key={itemKey}
@@ -83,7 +86,15 @@ const Container = forwardRef(({ children }: ContainerComponentProps, ref) => (
 	</div>
 ));
 
-const PlaceholderComponent = () => <div style={{ height: 400 }}>Placeholder!</div>;
+export const PlaceholderComponent: PlaceholderComponentType = forwardRef(
+	({ itemKey }: PlaceholderComponentProps, ref) => {
+		return (
+			<div data-key={itemKey} ref={ref as RefObject<HTMLDivElement>} style={{ height: 400 }}>
+				Placeholder!
+			</div>
+		);
+	},
+);
 
 export type ChatStoryProps = {
 	initialMessages: ExampleMessage[];

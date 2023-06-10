@@ -16,18 +16,27 @@ const styles: Record<string, CSSProperties> = {
 	},
 };
 
-export const generateMessageArray = (length: number) => {
-	const possibilities = [
-		'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-		'Praesent varius auctor dolor sit amet pellentesque.',
-		'Nunc ante metus, cursus sed laoreet sit amet, ornare sed risus.',
-		'Phasellus egestas nibh vestibulum laoreet scelerisque. Suspendisse ut quam non lectus lobortis mollis a id lacus. ' +
-			'Quisque eu dictum lacus. In convallis nibh et orci fermentum pharetra. ' +
-			'Pellentesque ultricies velit et orci iaculis, quis euismod purus hendrerit.',
-		'Phasellus iaculis eleifend dolor, a finibus neque aliquam vitae.',
-		'Pellentesque habitant.',
-	];
+const possibilities = [
+	'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+	'Praesent varius auctor dolor sit amet pellentesque.',
+	'Nunc ante metus, cursus sed laoreet sit amet, ornare sed risus.',
+	'Phasellus egestas nibh vestibulum laoreet scelerisque. Suspendisse ut quam non lectus lobortis mollis a id lacus. ' +
+		'Quisque eu dictum lacus. In convallis nibh et orci fermentum pharetra. ' +
+		'Pellentesque ultricies velit et orci iaculis, quis euismod purus hendrerit.',
+	'Phasellus iaculis eleifend dolor, a finibus neque aliquam vitae.',
+	'Pellentesque habitant.',
+];
 
+const generateNewMessage = () => {
+	return {
+		message: possibilities[Math.floor(Math.random() * possibilities.length)],
+		id: 0,
+		date: new Date(),
+		isLeft: Math.random() > 0.5,
+	};
+};
+
+export const generateInitialMessages = (length: number) => {
 	const beginTimestamp = Date.now() - length * 10;
 
 	return new Array(length).fill(0).map((_, index) => ({
@@ -126,7 +135,7 @@ export const ChatController = ({
 				<b>Send message</b>
 				<button
 					onClick={() => {
-						client.sendMessage(generateMessageArray(1)[0], roomIdentifier);
+						client.sendMessage(generateNewMessage(), roomIdentifier);
 					}}
 				>
 					send random message

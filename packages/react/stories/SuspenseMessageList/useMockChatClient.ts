@@ -46,6 +46,7 @@ export const useMockChatClient = ({ roomIdentifier, initialMessages, compare }: 
 				}
 
 				message.id = ++lastIdRef.current[roomIdentifier];
+				message.message = `${message.id} ${message.message}`;
 
 				pause(Number(Math.random() > 0.5) * 2000).then(() => {
 					data.current[roomIdentifier].push(message);

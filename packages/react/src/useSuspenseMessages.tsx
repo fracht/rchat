@@ -215,7 +215,6 @@ export const useSuspenseMessages = <TMessage,>({
 
 	const handleSearch = useCallback(
 		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>) => {
-			console.log('handle search', searchResult);
 			if (searchRoomIdentifier === roomIdentifier) {
 				searchResults.current = searchResult;
 				selectedSearchResult.current = 0;
