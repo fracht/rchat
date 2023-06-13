@@ -53,7 +53,7 @@ importers:
       '@mui/styled-engine': ^5.10.6
       '@mui/system': ^5.10.6
       '@mui/types': ^7.2.0
-      '@rchat/react': workspace:^0.11.7
+      '@rchat/react': workspace:^0.11.8
       '@storybook/addon-actions': ^6.5.13
       '@storybook/addon-essentials': ^6.5.13
       '@storybook/addon-interactions': ^6.5.13
@@ -102,7 +102,7 @@ importers:
   packages/react:
     specifiers:
       '@babel/core': ^7.18.2
-      '@rchat/client': workspace:^0.11.7
+      '@rchat/client': workspace:^0.11.8
       '@sirse-dev/eslint-config': ^1.0.6
       '@sirse-dev/safe-context': ^0.3.0
       '@size-limit/preset-small-lib': ^7.0.8
@@ -220,7 +220,7 @@ importers:
 
   packages/test-utils:
     specifiers:
-      '@rchat/server': workspace:^0.11.7
+      '@rchat/server': workspace:^0.11.8
       aqu: ^0.4.3
       nodemon: ^2.0.20
       rimraf: ^3.0.2
