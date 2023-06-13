@@ -166,6 +166,7 @@ export const EndlessList = <T,>({
 		handleJump: scheduleJumpScroll,
 		focusedItem,
 		visibleItemKeys,
+		lastScrolledItem,
 	});
 
 	useEffect(() => {
