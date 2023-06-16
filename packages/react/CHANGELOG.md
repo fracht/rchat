@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.11.8
+
+### Patch Changes
+
+-   5b78b40: Fixed bug with long jump in endless list
+
 ## 0.11.7
 
 ## 0.11.6
