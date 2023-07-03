@@ -7,7 +7,12 @@ const mockRef = {
 	current: undefined,
 };
 
-const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promise<void>, itemKeys?: Set<string>) => {
+const renderEndlessListHook = (
+	initialItems: number[],
+	handleJump?: () => Promise<void>,
+	itemKeys?: Set<string>,
+	initialFocusedItem?: number,
+) => {
 	const defaultHookConfig: Omit<
 		UseEndlessListConfig<number>,
 		'initialItems' | 'items' | 'visibleItemKeys' | 'skipScrollToFocusedItem' | 'lastScrolledItem'
@@ -23,21 +28,24 @@ const renderEndlessListHook = (initialItems: number[], handleJump?: () => Promis
 		items: number[];
 		initialItems?: number[];
 		visibleItemKeys?: Set<string>;
+		focusedItem?: number;
 	};
 
 	const hookBag = renderHook<EndlessListItem<number>[], InitialProps>(
-		({ items, visibleItemKeys, initialItems: propsInitialItems }) =>
+		({ items, visibleItemKeys, initialItems: propsInitialItems, focusedItem }) =>
 			useEndlessList({
 				...defaultHookConfig,
 				items,
 				initialItems: propsInitialItems ?? initialItems,
 				visibleItemKeys: { current: visibleItemKeys ?? emptySet },
 				lastScrolledItem: mockRef as unknown as MutableRefObject<number>,
+				focusedItem,
 			}),
 		{
 			initialProps: {
 				items: initialItems,
 				visibleItemKeys: itemKeys,
+				focusedItem: initialFocusedItem,
 			},
 		},
 	);
@@ -1204,6 +1212,51 @@ describe('useEndlessList', () => {
 				itemKey: '5',
 				type: 'real',
 				value: 5,
+			},
+		] satisfies Array<EndlessListItem<number>>);
+	});
+
+	it('should update rendered items when focused item changes', () => {
+		const items = [1, 2];
+		const { rerender, result } = renderEndlessListHook(items, jest.fn(), undefined, 1);
+
+		expect(result.current).toStrictEqual([
+			{
+				type: 'real',
+				value: 1,
+				index: 0,
+				array: items,
+				focused: true,
+				itemKey: '1',
+			},
+			{
+				type: 'real',
+				value: 2,
+				index: 1,
+				array: items,
+				focused: false,
+				itemKey: '2',
+			},
+		] satisfies Array<EndlessListItem<number>>);
+
+		rerender({ focusedItem: 2, items: items });
+
+		expect(result.current).toStrictEqual([
+			{
+				type: 'real',
+				value: 1,
+				index: 0,
+				array: items,
+				focused: false,
+				itemKey: '1',
+			},
+			{
+				type: 'real',
+				value: 2,
+				index: 1,
+				array: items,
+				focused: true,
+				itemKey: '2',
 			},
 		] satisfies Array<EndlessListItem<number>>);
 	});

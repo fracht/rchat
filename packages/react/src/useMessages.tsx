@@ -1,6 +1,6 @@
 import { MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
-import { Ref, useCallback, useEffect, useRef } from 'react';
+import { Ref, useCallback, useEffect, useRef, useState } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
 import { clamp } from './internal/clamp';
 import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
@@ -14,7 +14,8 @@ export type UseMessagesBag<T> = {
 	noMessagesAfter: boolean;
 	onVisibleFrameChange: (frame: Frame) => void;
 	containerReference: Ref<HTMLElement>;
-	focusedItem?: T;
+	focusedItem: T | undefined;
+	resetFocusedItem: () => void;
 };
 
 export type UseMessagesConfig<T> = {
@@ -52,7 +53,7 @@ export const useMessages = <TMessage,>({
 	const containerReference = useRef<HTMLElement>(null);
 	const searchResults = useRef<MessageSearchResult<TMessage> | undefined>(initialSearchResult);
 	const selectedSearchResult = useRef(0);
-	const focusedItem = useRef<TMessage | undefined>(initialSearchResult?.results[0]);
+	const [focusedItem, setFocusedItem] = useState<TMessage | undefined>(initialSearchResult?.results[0]);
 
 	const [
 		messages,
@@ -67,6 +68,10 @@ export const useMessages = <TMessage,>({
 	] = useBoundedArray<TMessage>([...initialMessagesState.messages], maxChunkSize);
 
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
+
+	const resetFocusedItem = useCallback(() => {
+		setFocusedItem(undefined);
+	}, []);
 
 	const handleIncomingMessage = useCallback(
 		(message: TMessage, messageRoomIdentifier: string) => {
@@ -92,7 +97,7 @@ export const useMessages = <TMessage,>({
 
 	const focusItem = useCallback(
 		async (item: TMessage | undefined) => {
-			focusedItem.current = item;
+			setFocusedItem(item);
 			if (!item) {
 				return;
 			}
@@ -189,7 +194,7 @@ export const useMessages = <TMessage,>({
 
 	useEffect(() => {
 		searchResults.current = initialSearchResult;
-		focusedItem.current = initialSearchResult?.results[0];
+		setFocusedItem(initialSearchResult?.results[0]);
 	}, [initialSearchResult]);
 
 	const handleTopReached = useEvent(async () => {
@@ -250,6 +255,7 @@ export const useMessages = <TMessage,>({
 		noMessagesAfter: messagesState.current.noMessagesAfter,
 		onVisibleFrameChange,
 		containerReference,
-		focusedItem: focusedItem.current,
+		focusedItem,
+		resetFocusedItem,
 	};
 };
