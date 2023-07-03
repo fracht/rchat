@@ -282,14 +282,14 @@ export const useEndlessList = <T,>({
 	}, []);
 
 	useEffect(() => {
-		setRenderedItems((items) => {
-			for (const item of items) {
+		setRenderedItems((items) =>
+			items.map((item) => {
 				if (item.type === 'real') {
 					item.focused = item.itemKey === focusedItemKey;
 				}
-			}
-			return [...items];
-		});
+				return item;
+			}),
+		);
 	}, [focusedItemKey]);
 
 	return renderedItems;
