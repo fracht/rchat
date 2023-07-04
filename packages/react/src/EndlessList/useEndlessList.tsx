@@ -281,16 +281,16 @@ export const useEndlessList = <T,>({
 		};
 	}, []);
 
-	useEffect(() => {
-		setRenderedItems((items) =>
-			items.map((item) => {
-				if (item.type === 'real') {
-					item.focused = item.itemKey === focusedItemKey;
-				}
-				return item;
-			}),
-		);
-	}, [focusedItemKey]);
+	return useMemo(() => {
+		if (focusedItemKey === undefined) {
+			return renderedItems;
+		}
 
-	return renderedItems;
+		return renderedItems.map((item) => {
+			if (item.type === 'real') {
+				item.focused = item.itemKey === focusedItemKey;
+			}
+			return item;
+		});
+	}, [renderedItems, focusedItemKey]);
 };
