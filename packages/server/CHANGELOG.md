@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.11.9
+
+### Patch Changes
+
+-   4dde42d: Added possibility to invalidate room participants cache
+    -   @rchat/shared@0.11.9
+
 ## 0.11.8
 
 ### Patch Changes
