@@ -154,4 +154,9 @@ export class RoomManager<TMessageType> {
 	public unobserveUser = (socket: ChatSocketType<TMessageType>, userIdentifier: string) => {
 		socket.leave(getUserConnectivityObserveRoom(userIdentifier));
 	};
+
+	public invalidateRoomParticipants = async (roomIdentifier: string) => {
+		this.roomParticipants.delete(roomIdentifier);
+		this.activeRooms.delete(RoomManager.getSocketIORoomIdentifier(roomIdentifier));
+	};
 }
