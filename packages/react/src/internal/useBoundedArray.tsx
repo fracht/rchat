@@ -33,6 +33,10 @@ export type BoundedArrayControl<T> = {
 	 * Returns reference to current array.
 	 */
 	getAll: () => readonly T[];
+	/**
+	 * Sets state to the old one in order to rerender.
+	 */
+	refresh: () => void;
 };
 
 const getClippedArray = <T,>(items: T[], maxSize: number, keep: KeepDirection) => {
@@ -97,5 +101,7 @@ export const useBoundedArray = <T,>(
 
 	const getAll = useCallback(() => itemsReference.current, []);
 
-	return [itemsState, { push, unshift, set: setItems, at, getAll, insert }];
+	const refresh = useCallback(() => setItemsState((old) => [...old]), []);
+
+	return [itemsState, { push, unshift, set: setItems, at, getAll, insert, refresh }];
 };
