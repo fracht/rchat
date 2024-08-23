@@ -2,7 +2,6 @@ name: Continuous Integration
 on:
     pull_request:
         branches: [main]
-    workflow_dispatch:
 jobs:
     changeset:
         name: Build, test & lint
@@ -27,4 +26,4 @@ jobs:
               uses: covbot/pnpm-install-with-cache@v1
 
             - name: Build, test & lint
-              run: pnpm turbo run lint build test --filter=...[main...HEAD]
+              run: pnpm turbo run lint build test --filter=...[${{ github.event.pull_request.base.sha }}...${{ github.sha }}]
