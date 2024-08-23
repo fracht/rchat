@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import { ElementType, forwardRef, Ref, useEffect, useState } from 'react';
+import { MessageOrientation } from './MessageOrientation';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
-import { MessageOrientation } from './MessageOrientation';
 
 type MessageTimeWrapperState = {
 	orientation: MessageOrientation;
