@@ -14,20 +14,19 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "tsc",
 		"build-storybook": "build-storybook",
-		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
-		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
 		"release": "np",
 		"size": "size-limit",
 		"size:why": "size-limit --why",
 		"storybook": "start-storybook -p 6006",
 		"test": "jest",
 		"test:coverage": "pnpm run test --silent --ci --coverage --coverageReporters=\"text\" --coverageReporters=\"text-summary\"",
-		"test:watch": "pnpm run test --passWithNoTests --watch"
+		"test:watch": "pnpm run test --passWithNoTests --watch",
+		"build": "tsc && rimraf ./prepared-package && clean-publish",
+		"postpublish": "rimraf ./prepared-package",
+		"prepublishOnly": "pnpm build"
 	},
 	"dependencies": {
 		"@sirse-dev/safe-context": "^0.3.0",

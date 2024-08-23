@@ -9,13 +9,12 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc && rimraf ./prepared-package && clean-publish",
 		"build-storybook": "build-storybook",
-		"dev": "tsc --watch",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
+		"prepublishOnly": "pnpm build",
 		"release": "np",
 		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
 		"test": "aqu test --passWithNoTests",

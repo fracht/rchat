@@ -7,7 +7,7 @@
 		"build": "turbo run build",
 		"bump": "changeset version && pnpm i --lockfile-only",
 		"ci": "turbo run lint test build",
-		"dev": "turbo run dev --parallel",
+		"dev": "turbo watch build",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
 		"release": "pnpm build && changeset tag && pnpm publish -r"
 	},
@@ -18,7 +18,7 @@
 		"danger": "^11.2.4",
 		"prettier": "^2.8.4",
 		"syncpack": "^8.2.4",
-		"turbo": "^1.4.3",
+		"turbo": "^2.0.14",
 		"typescript": "^5.0.4"
 	},
 	"pnpm": {

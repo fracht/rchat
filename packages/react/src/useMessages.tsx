@@ -123,6 +123,7 @@ export const useMessages = <TMessage,>({
 		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>, focusIndex: number) => {
 			if (searchRoomIdentifier === roomIdentifier) {
 				searchResults.current = searchResult;
+				focusIndex = Math.min(focusIndex, searchResult.results.length - 1);
 				selectedSearchResult.current = focusIndex;
 				focusItem(searchResult.results[focusIndex]);
 			}

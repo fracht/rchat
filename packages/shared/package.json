@@ -9,10 +9,9 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "aqu build",
-		"dev": "aqu watch --no-cleanup",
+		"build": "aqu build && rimraf ./prepared-package && clean-publish",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish"
+		"prepublishOnly": "pnpm build"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
