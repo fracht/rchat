@@ -22,7 +22,10 @@ export class ChatClient<TMessage> extends CustomEventTarget<ChatClientEventMap<T
 
 	public constructor(url: string, api: ChatAPI<TMessage>);
 	public constructor(socket: ChatClientSocket<TMessage>, api: ChatAPI<TMessage>);
-	public constructor(urlOrSocket: string | ChatClientSocket<TMessage>, private readonly api: ChatAPI<TMessage>) {
+	public constructor(
+		urlOrSocket: string | ChatClientSocket<TMessage>,
+		private readonly api: ChatAPI<TMessage>,
+	) {
 		super();
 		if (typeof urlOrSocket === 'string') {
 			this.socket = io(urlOrSocket);

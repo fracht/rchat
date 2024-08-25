@@ -10,9 +10,9 @@
 	},
 	"scripts": {
 		"build": "aqu build && rimraf ./prepared-package && clean-publish",
+		"lint": "eslint **/*.{ts,tsx}",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "pnpm build",
-		"lint": "eslint **/*.{ts,tsx}"
+		"prepublishOnly": "pnpm build"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
