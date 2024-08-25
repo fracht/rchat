@@ -1,5 +1,11 @@
 # @rchat/material
 
+## 0.12.0
+
+### Patch Changes
+
+-   e2af7f0: Added unknown AccountAvatar
+
 ## 0.11.9
 
 ## 0.11.8

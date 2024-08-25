@@ -1,5 +1,15 @@
 # @rchat/client
 
+## 0.12.0
+
+### Minor Changes
+
+-   6aa367c: Fixed 'update search results' behavior when receiving a new message
+
+### Patch Changes
+
+-   @rchat/shared@0.12.0
+
 ## 0.11.9
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @rchat/server
 
+## 0.12.0
+
+### Patch Changes
+
+-   bbff950: Added possibility to open broadcast channel without additional checks
+    -   @rchat/shared@0.12.0
+
 ## 0.11.9
 
 ### Patch Changes
