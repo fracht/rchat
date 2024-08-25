@@ -5,6 +5,7 @@ module.exports = {
 	transformIgnorePatterns: ["[/\\\\]node_modules[/\\\\].+\\.(js|cjs|jsx)$'"],
 	preset: 'ts-jest/presets/js-with-babel',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'cjs', 'mjs', 'json', 'node'],
+	modulePathIgnorePatterns: ['<rootDir>/prepard-package/'],
 	collectCoverageFrom: ['src/**/*.{ts,tsx,js,jsx,cjs,mjs}'],
 	testMatch: ['<rootDir>/**/*.(spec|test).{ts,tsx,js,jsx,cjs,mjs}'],
 	testEnvironmentOptions: {

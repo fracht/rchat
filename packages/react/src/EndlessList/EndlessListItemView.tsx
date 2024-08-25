@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useRef } from 'react';
-import { mergeReferences } from '../internal/mergeReferences';
 import { ItemComponentType } from './ItemComponentType';
 import { PlaceholderComponentType } from './PlaceholderComponentType';
+import { mergeReferences } from '../internal/mergeReferences';
 import type { EndlessListItem } from './useEndlessList';
 
 export type EndlessListItemViewProps<TMessageType> = EndlessListItem<TMessageType> & {

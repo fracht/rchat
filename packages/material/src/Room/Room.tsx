@@ -1,10 +1,10 @@
 import { MessageList, MessageListProps, Room as RoomProvider } from '@rchat/react';
 import { ElementType } from 'react';
+import { RoomBody } from './RoomBody';
+import { RoomHeader } from './RoomHeader';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MessageInput } from '../MessageInput';
 import { styled } from '../styles/styled';
-import { RoomBody } from './RoomBody';
-import { RoomHeader } from './RoomHeader';
 
 const RoomRoot = styled('div', {
 	name: 'Room',

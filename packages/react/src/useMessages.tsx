@@ -120,11 +120,12 @@ export const useMessages = <TMessage,>({
 	);
 
 	const handleSearch = useCallback(
-		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>) => {
+		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>, focusIndex: number) => {
 			if (searchRoomIdentifier === roomIdentifier) {
 				searchResults.current = searchResult;
-				selectedSearchResult.current = 0;
-				focusItem(searchResult.results[0]);
+				focusIndex = Math.min(focusIndex, searchResult.results.length - 1);
+				selectedSearchResult.current = focusIndex;
+				focusItem(searchResult.results[focusIndex]);
 			}
 		},
 		[focusItem, roomIdentifier],

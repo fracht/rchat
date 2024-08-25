@@ -7,18 +7,16 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "aqu build",
+		"build": "aqu build && rimraf ./prepared-package && clean-publish",
 		"build-storybook": "build-storybook",
-		"dev": "aqu watch --no-cleanup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
+		"prepublishOnly": "pnpm build",
 		"release": "np",
 		"start": "nodemon ./dist/index.js",
 		"storybook": "start-storybook -p 6006",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch"
+		"test": "echo \"Tests are not configured\""
 	},
 	"dependencies": {
 		"aqu": "^0.4.3",

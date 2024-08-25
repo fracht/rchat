@@ -1,7 +1,7 @@
-import { ChatService } from './ChatService';
-import type { ExtendedError } from 'socket.io/dist/namespace';
 import { ChatServerType, ChatSocketType, ConnectionInfo } from '@rchat/shared';
+import { ChatService } from './ChatService';
 import { RoomManager } from './RoomManager';
+import type { ExtendedError } from 'socket.io/dist/namespace';
 
 export class ChatServer<TMessageType> {
 	protected readonly roomManager;
@@ -46,7 +46,7 @@ export class ChatServer<TMessageType> {
 			broadcastChannel.emit('receiveMessage', savedMessage, roomIdentifier);
 
 			return true;
-		} catch (error) {
+		} catch {
 			console.error('Failed to send message');
 			socket.emit('receiveError', roomIdentifier);
 
@@ -54,7 +54,7 @@ export class ChatServer<TMessageType> {
 		}
 	}
 
-	private async authentication(socket: ChatSocketType<TMessageType>, next: (err?: ExtendedError) => void) {
+	private async authentication(socket: ChatSocketType<TMessageType>, next: (error?: ExtendedError) => void) {
 		try {
 			const connectionInfo = await this.service.fetchConnectionInfo(socket.request);
 

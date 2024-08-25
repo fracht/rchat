@@ -2,28 +2,28 @@
 	"name": "rchat",
 	"version": "0.0.0",
 	"private": true,
-	"packageManager": "pnpm@8.6.12",
 	"scripts": {
 		"build": "turbo run build",
 		"bump": "changeset version && pnpm i --lockfile-only",
-		"ci": "turbo run lint test build",
-		"dev": "turbo run dev --parallel",
+		"ci": "turbo run lint test build --env-mode=loose",
+		"dev": "turbo watch build",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
 		"release": "pnpm build && changeset tag && pnpm publish -r"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.26.0",
-		"@types/jest": "^29.2.0",
-		"clean-publish": "^4.0.1",
-		"danger": "^11.2.4",
-		"prettier": "^2.8.4",
-		"syncpack": "^8.2.4",
-		"turbo": "^1.4.3",
-		"typescript": "^5.0.4"
+		"@changesets/cli": "^2.27.7",
+		"@types/jest": "^29.5.12",
+		"clean-publish": "^5.0.0",
+		"danger": "^12.3.3",
+		"prettier": "^3.3.3",
+		"syncpack": "^12.4.0",
+		"turbo": "^2.0.14",
+		"typescript": "^5.5.4"
 	},
 	"pnpm": {
 		"patchedDependencies": {
 			"dts-bundle-generator@6.13.0": "patches/dts-bundle-generator@6.13.0.patch"
 		}
-	}
+	},
+	"packageManager": "pnpm@9.8.0"
 }

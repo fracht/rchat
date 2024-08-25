@@ -8,10 +8,10 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "aqu build",
-		"dev": "aqu watch --no-cleanup",
+		"build": "aqu build && rimraf ./prepared-package && clean-publish",
+		"lint": "eslint **/*.{ts,tsx}",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
+		"prepublishOnly": "pnpm build",
 		"test": "jest",
 		"test:coverage": "pnpm run test --coverage",
 		"test:watch": "pnpm run test --watch"

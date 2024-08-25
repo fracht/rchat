@@ -1,5 +1,5 @@
-import Avatar, { AvatarProps } from '@mui/material/Avatar';
 import PersonRounded from '@mui/icons-material/PersonRounded';
+import Avatar, { AvatarProps } from '@mui/material/Avatar';
 import { getContrastRatio } from '@mui/system/colorManipulator';
 import { ElementType } from 'react';
 import { styled } from '../styles/styled';
@@ -19,14 +19,14 @@ const AccountAvatarRoot = styled<InternalAccountAvatarProps, typeof Avatar>(Avat
 	return { width: 28, height: 28, color, backgroundColor, fontSize: theme.typography.body2.fontSize };
 });
 
-const getInitials = (username: string): string | null => {
+const getInitials = (username: string): string | undefined => {
 	const words = username
 		.split(/\s+/g)
-		.map((value) => value.replace(/[^\p{L}]/gu, ''))
+		.map((value) => value.replaceAll(/[^\p{L}]/gu, ''))
 		.filter(Boolean);
 
 	if (words.length === 0) {
-		return null;
+		return undefined;
 	}
 
 	return words[0][0] + (words[1]?.[0] || '');

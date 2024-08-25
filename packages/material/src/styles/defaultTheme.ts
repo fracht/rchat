@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import createTheme from '@mui/material/styles/createTheme';
 
 declare module '@mui/material' {
