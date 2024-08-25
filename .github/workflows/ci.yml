@@ -2,28 +2,57 @@ name: Continuous Integration
 on:
     pull_request:
         branches: [main]
+        types: [labeled, opened, synchronize, reopened]
 jobs:
-    changeset:
+    build:
         name: Build, test & lint
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
-            - name: Use Node 18
-              uses: actions/setup-node@v3
+            - name: Use Node 20
+              uses: actions/setup-node@v4
               with:
-                  node-version: 18
+                  node-version: 20
 
-            - name: Install pnpm 8.6.12
+            - name: Install pnpm 9.8.0
               uses: pnpm/action-setup@v4.0.0
               with:
-                  version: 8.6.12
+                  version: 9.8.0
 
             - name: Install pnpm dependencies (with cache)
               uses: covbot/pnpm-install-with-cache@v1
 
             - name: Build, test & lint
               run: pnpm turbo run lint build test --filter=...[${{ github.event.pull_request.base.sha }}...${{ github.sha }}]
+    changeset:
+        name: Check for changeset existence
+        runs-on: ubuntu-latest
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'chore') }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Use Node 20
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install pnpm 9.8.0
+              uses: pnpm/action-setup@v4.0.0
+              with:
+                  version: 9.8.0
+
+            - name: Install pnpm dependencies (with cache)
+              uses: covbot/pnpm-install-with-cache@v1
+
+            - name: Danger
+              run: pnpm danger ci
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
