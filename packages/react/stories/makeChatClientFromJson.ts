@@ -1,6 +1,7 @@
 import { ChatClient } from '@rchat/client';
+import { ChatSocketType } from '@rchat/shared';
 import { Socket } from 'socket.io-client';
-import { SocketIO, Server, SocketIOClient } from 'mock-socket';
+import { SocketIO, Server } from 'mock-socket';
 
 const pause = (ms: number) => {
 	return new Promise<void>((resolve) => {
@@ -20,19 +21,14 @@ export const makeChatClientFromJson = <TMessage>(
 	let reversedAllMessages = [...allMessages].reverse();
 
 	mockServer.on('connection', async (socket) => {
-		const socketIO = socket as unknown as SocketIOClient;
+		const socketIO = socket as unknown as ChatSocketType<TMessage>;
 		while (true) {
 			await pause(1000 + Math.random() * 5000);
 
 			const newMessage = generateMessage();
+			// Imitate different network speed of sending messages in chat
 			pause(Number(Math.random() > 0.5) * 10000).then(() => {
-				socketIO.emit(
-					'chatMessage',
-					JSON.stringify({
-						roomIdentifier,
-						message: newMessage,
-					}),
-				);
+				socketIO.emit('receiveMessage', newMessage, roomIdentifier);
 				allMessages.push(newMessage);
 				allMessages.sort(compare);
 				reversedAllMessages = [...allMessages].reverse();
@@ -42,59 +38,53 @@ export const makeChatClientFromJson = <TMessage>(
 
 	const socket = SocketIO('ws://localhost:1234');
 
-	const realSocket: SocketIOClient = { ...socket } as SocketIOClient;
-	realSocket.on = (type, callback) => {
-		return socket.on(type, (msg) => {
-			const parsedMessage = JSON.parse(msg as unknown as string);
-			parsedMessage.message.date = new Date(parsedMessage.message.date);
-			callback(parsedMessage);
-		});
-	};
-
 	return [
-		new ChatClient(realSocket as unknown as Socket, async (_, count, before, after) => {
-			if (after !== undefined) {
-				const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
+		new ChatClient<TMessage>(socket as unknown as Socket, {
+			fetchMessages: async (_, count, before, after) => {
+				if (after !== undefined) {
+					const beginIndex = allMessages.findIndex((value) => compare(value, after) > 0);
 
-				if (beginIndex === -1) {
+					if (beginIndex === -1) {
+						return {
+							messages: [],
+							noMessagesAfter: true,
+							noMessagesBefore: false,
+						};
+					}
+
 					return {
-						messages: [],
-						noMessagesAfter: true,
+						messages: allMessages.slice(beginIndex, beginIndex + count),
+						noMessagesAfter: beginIndex + count >= allMessages.length,
 						noMessagesBefore: false,
 					};
 				}
 
-				return {
-					messages: allMessages.slice(beginIndex, beginIndex + count),
-					noMessagesAfter: beginIndex + count >= allMessages.length,
-					noMessagesBefore: false,
-				};
-			}
+				if (before !== undefined) {
+					const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
+					const beginIndex = allMessages.length - beginIndexReversed - 1;
 
-			if (before !== undefined) {
-				const beginIndexReversed = reversedAllMessages.findIndex((value) => compare(before, value) > 0);
-				const beginIndex = allMessages.length - beginIndexReversed - 1;
+					if (beginIndexReversed === -1) {
+						return {
+							messages: [],
+							noMessagesBefore: true,
+							noMessagesAfter: false,
+						};
+					}
 
-				if (beginIndexReversed === -1) {
 					return {
-						messages: [],
-						noMessagesBefore: true,
+						messages: allMessages.slice(Math.max(0, beginIndex - count), beginIndex),
+						noMessagesBefore: beginIndex - count <= 0,
 						noMessagesAfter: false,
 					};
 				}
 
 				return {
-					messages: allMessages.slice(Math.max(0, beginIndex - count), beginIndex),
-					noMessagesBefore: beginIndex - count <= 0,
-					noMessagesAfter: false,
+					messages: allMessages.slice(-count),
+					noMessagesAfter: true,
+					noMessagesBefore: count >= allMessages.length,
 				};
-			}
-
-			return {
-				messages: allMessages.slice(-count),
-				noMessagesAfter: true,
-				noMessagesBefore: count >= allMessages.length,
-			};
+			},
+			searchMessages: () => Promise.resolve({ results: [], totalCount: 0 }),
 		}),
 		() => {
 			mockServer.stop();

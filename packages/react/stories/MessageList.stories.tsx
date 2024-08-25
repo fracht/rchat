@@ -1,9 +1,9 @@
-import { ChatClient } from '@rchat/client';
+import { ChatClient, MessageFetchResult } from '@rchat/client';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { ComponentType, CSSProperties, forwardRef, useEffect, useState } from 'react';
+import { ComponentType, CSSProperties, forwardRef, RefObject, useEffect, useState } from 'react';
 import { Chat } from '../src/Chat';
 
-import { ContainerComponentProps, EndlessList, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
+import { ContainerComponentProps, EndlessListProps, ItemComponentProps } from '../src/EndlessList';
 import { MessageList } from '../src/MessageList';
 import { Room } from '../src/Room';
 import { makeChatClientFromJson } from './makeChatClientFromJson';
@@ -115,23 +115,57 @@ const generateMessageArray = (length: number) => {
 	}));
 };
 
-const Container = forwardRef(
-	({ innerContainerRef, children }: ContainerComponentProps, ref: React.Ref<HTMLDivElement>) => (
-		<div
-			style={{
-				overflow: 'auto',
-				height: 300,
-			}}
-			ref={ref}
-		>
-			<div ref={innerContainerRef as React.Ref<HTMLDivElement>}>{children}</div>
-		</div>
-	),
-);
+const Container = forwardRef(({ children }: ContainerComponentProps, ref) => (
+	<div
+		style={{
+			overflow: 'auto',
+			height: 300,
+		}}
+		ref={ref as RefObject<HTMLDivElement>}
+	>
+		{children}
+	</div>
+));
 
 const PlaceholderComponent = () => <div style={{ height: 400 }}>Placeholder!</div>;
 
-const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
+const TestComponent = ({ client }: { client: ChatClient<ExampleMessage> }) => {
+	const [initialMessages, setInitialMessages] = useState<MessageFetchResult<ExampleMessage> | null>(null);
+
+	useEffect(() => {
+		const load = async () => {
+			const fetchedMessagesState = await client.fetchMessages('123', 20, undefined, undefined);
+
+			setInitialMessages(fetchedMessagesState);
+		};
+
+		load();
+	}, [client]);
+
+	if (!initialMessages) {
+		return <div>Loading initial messages...</div>;
+	}
+
+	return (
+		<Chat<ExampleMessage>
+			client={client}
+			MessageComponent={ChatItemComponent}
+			itemKey={(item) => String(item.id)}
+			PlaceholderComponent={PlaceholderComponent}
+			compareItems={(a, b) => {
+				return a.date.getTime() - b.date.getTime();
+			}}
+			triggerDistance={3}
+			ContainerComponent={Container as ComponentType<ContainerComponentProps>}
+		>
+			<Room identifier="123">
+				<MessageList initialMessagesState={initialMessages} />
+			</Room>
+		</Chat>
+	);
+};
+
+const App = (props: EndlessListProps<ExampleMessage>) => {
 	const [client, setClient] = useState<ChatClient<ExampleMessage>>();
 
 	useEffect(() => {
@@ -151,25 +185,9 @@ const TestComponent = (props: EndlessListProps<ExampleMessage>) => {
 		return <div>Loading...</div>;
 	}
 
-	return (
-		<Chat<ExampleMessage>
-			client={client}
-			MessageComponent={ChatItemComponent}
-			itemKey="id"
-			PlaceholderComponent={PlaceholderComponent}
-			compareItems={(a, b) => {
-				return a.date.getTime() - b.date.getTime();
-			}}
-			triggerDistance={3}
-			ContainerComponent={Container as ComponentType<ContainerComponentProps>}
-		>
-			<Room identifier="123">
-				<MessageList />
-			</Room>
-		</Chat>
-	);
+	return <TestComponent client={client} />;
 };
 
-const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <TestComponent {...args} />;
+const Template: ComponentStory<ComponentType<EndlessListProps<ExampleMessage>>> = (args) => <App {...args} />;
 
 export const Default = Template.bind({});
