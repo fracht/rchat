@@ -13,7 +13,8 @@
 		"test:watch": "pnpm run test --watch",
 		"build": "aqu build && rimraf ./prepared-package && clean-publish",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "pnpm build"
+		"prepublishOnly": "pnpm build",
+		"lint": "eslint **/*.{ts,tsx}"
 	},
 	"dependencies": {
 		"@isaacs/ttlcache": "^1.2.1",

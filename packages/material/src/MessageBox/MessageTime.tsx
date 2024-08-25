@@ -67,10 +67,10 @@ export const MessageTime = createMuiComponent<InternalMessageTimeProps, typeof T
 				const [formattedTime, updateTimeout] = formatTime(time);
 
 				setFormattedTime(formattedTime);
-				if (updateTimeout !== undefined) {
-					timeoutId = setTimeout(updateTime, updateTimeout);
-				} else {
+				if (updateTimeout === undefined) {
 					timeoutId = undefined;
+				} else {
+					timeoutId = setTimeout(updateTime, updateTimeout);
 				}
 			};
 			updateTime();

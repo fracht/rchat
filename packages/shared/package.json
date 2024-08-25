@@ -11,7 +11,8 @@
 	"scripts": {
 		"build": "aqu build && rimraf ./prepared-package && clean-publish",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "pnpm build"
+		"prepublishOnly": "pnpm build",
+		"lint": "eslint **/*.{ts,tsx}"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",

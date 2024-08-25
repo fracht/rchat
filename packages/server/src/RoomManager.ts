@@ -1,7 +1,7 @@
+import TTLCache from '@isaacs/ttlcache';
 import { ChatServerType, ChatSocketType, ConnectionInfo } from '@rchat/shared';
 
 import LRUCache from 'lru-cache';
-import TTLCache from '@isaacs/ttlcache';
 
 const TTL_LONG = 60 * 60 * 1000; // persist active channels for one hour in memory.
 const TTL_SHORT = 2 * 60 * 1000; // persist preheated channels for 2 minutes.
@@ -121,7 +121,7 @@ export class RoomManager<TMessageType> {
 		let participants: Set<string> | undefined;
 		try {
 			participants = await this.getRoomParticipants(socket, roomIdentifier);
-		} catch (error) {
+		} catch {
 			console.error('Preheating room failed: cannot get room participants');
 		}
 

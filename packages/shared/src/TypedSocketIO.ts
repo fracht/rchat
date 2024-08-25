@@ -6,6 +6,7 @@ import type { Socket as ClientSocket } from 'socket.io-client';
 export type ChatSocketType<TMessageType> = Socket<
 	ChatSocketEmitMap<TMessageType>,
 	ChatSocketListenMap<TMessageType>,
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 	{},
 	ConnectionInfo
 >;
@@ -13,6 +14,7 @@ export type ChatSocketType<TMessageType> = Socket<
 export type ChatServerType<TMessageType> = Server<
 	ChatSocketEmitMap<TMessageType>,
 	ChatSocketListenMap<TMessageType>,
+	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 	{},
 	ConnectionInfo
 >;

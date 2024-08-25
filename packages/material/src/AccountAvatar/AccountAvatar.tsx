@@ -22,7 +22,7 @@ const AccountAvatarRoot = styled<InternalAccountAvatarProps, typeof Avatar>(Avat
 const getInitials = (username: string): string | undefined => {
 	const words = username
 		.split(/\s+/g)
-		.map((value) => value.replace(/[^\p{L}]/gu, ''))
+		.map((value) => value.replaceAll(/[^\p{L}]/gu, ''))
 		.filter(Boolean);
 
 	if (words.length === 0) {

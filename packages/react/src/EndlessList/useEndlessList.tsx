@@ -126,7 +126,7 @@ export const useEndlessList = <T,>({
 		};
 
 		const jumpKey = focusedItemKey ?? getKey(items[Math.floor(items.length / 2)]);
-		const convertedItems = [...items.map(valueToEndlessListItem(getKey, jumpKey))];
+		const convertedItems = items.map(valueToEndlessListItem(getKey, jumpKey));
 
 		let pivotIndex = visibleItems.findIndex((item) => keys.has(item.itemKey));
 

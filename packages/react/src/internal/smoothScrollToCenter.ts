@@ -48,10 +48,10 @@ export const smoothScrollToCenter = async (
 			}
 		};
 
-		if (startPos !== scrollEndValue) {
-			window.requestAnimationFrame(scroll);
-		} else {
+		if (startPos === scrollEndValue) {
 			resolve();
+		} else {
+			window.requestAnimationFrame(scroll);
 		}
 	});
 };
