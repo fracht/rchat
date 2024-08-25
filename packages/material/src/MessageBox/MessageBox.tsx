@@ -1,11 +1,11 @@
 import { CSSObject } from '@mui/material';
 import { ElementType, forwardRef, ReactElement, Ref } from 'react';
+import { MessageOrientation } from './MessageOrientation';
+import { MessageTime } from './MessageTime';
 import { AccountAvatar } from '../AccountAvatar';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { MuiAccountInfo } from '../helpers/MuiAccountInfo';
 import { styled } from '../styles/styled';
-import { MessageOrientation } from './MessageOrientation';
-import { MessageTime } from './MessageTime';
 
 export type MessagePosition = 'start' | 'middle' | 'end' | 'single';
 

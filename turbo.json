@@ -1,15 +1,12 @@
 {
 	"$schema": "https://turborepo.org/schema.json",
-	"pipeline": {
-		"dev": {
-			"cache": false,
-			"dependsOn": ["^dev"]
-		},
+	"ui": "tui",
+	"tasks": {
 		"build": {
 			"cache": true,
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**", "build/**"],
-			"inputs": ["src/**/*.tsx", "src/**/*.ts"]
+			"outputs": ["prepared-package"],
+			"inputs": ["src/**/*.tsx", "src/**/*.ts", "package.json"]
 		},
 		"test": {
 			"cache": true,

@@ -1,3 +1,4 @@
+import PersonRounded from '@mui/icons-material/PersonRounded';
 import Avatar, { AvatarProps } from '@mui/material/Avatar';
 import { getContrastRatio } from '@mui/system/colorManipulator';
 import { ElementType } from 'react';
@@ -18,11 +19,15 @@ const AccountAvatarRoot = styled<InternalAccountAvatarProps, typeof Avatar>(Avat
 	return { width: 28, height: 28, color, backgroundColor, fontSize: theme.typography.body2.fontSize };
 });
 
-const getInitials = (username: string) => {
+const getInitials = (username: string): string | undefined => {
 	const words = username
 		.split(/\s+/g)
-		.map((value) => value.replace(/[^\p{L}]/gu, ''))
+		.map((value) => value.replaceAll(/[^\p{L}]/gu, ''))
 		.filter(Boolean);
+
+	if (words.length === 0) {
+		return undefined;
+	}
 
 	return words[0][0] + (words[1]?.[0] || '');
 };
@@ -52,18 +57,6 @@ const getAvatarColor = (username: string) => {
 	return avatarColors[Math.abs(hash) % avatarColors.length];
 };
 
-const getAvatar = (username: string, profileUrl?: string): AvatarProps => {
-	if (profileUrl !== undefined) {
-		return { src: profileUrl, alt: username };
-	}
-
-	const initials = getInitials(username);
-
-	return {
-		children: initials,
-	};
-};
-
 type InternalAccountAvatarProps = {
 	username: string;
 	profileUrl?: string;
@@ -79,6 +72,16 @@ export const AccountAvatar = <TComponent extends ElementType = 'div', TAdditiona
 	username,
 	profileUrl,
 	...props
-}: AccountAvatarProps<TComponent, TAdditionalProps>) => (
-	<AccountAvatarRoot ownerState={{ username, profileUrl }} {...getAvatar(username, profileUrl)} {...props} />
-);
+}: AccountAvatarProps<TComponent, TAdditionalProps>) => {
+	if (profileUrl) {
+		return <AccountAvatarRoot ownerState={{ username, profileUrl }} src={profileUrl} alt={username} {...props} />;
+	}
+
+	const initials = getInitials(username);
+
+	return (
+		<AccountAvatarRoot ownerState={{ username, profileUrl }} {...props}>
+			{initials ?? <PersonRounded />}
+		</AccountAvatarRoot>
+	);
+};

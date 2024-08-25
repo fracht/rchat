@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/material",
-	"version": "0.11.7",
+	"version": "0.11.9",
 	"sideEffects": false,
 	"main": "./dist/src/index.js",
 	"types": "./dist/src/index.d.ts",
@@ -9,17 +9,14 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc && rimraf ./prepared-package && clean-publish",
 		"build-storybook": "build-storybook",
-		"dev": "tsc --watch",
 		"lint": "eslint **/*.{ts,tsx}",
 		"lint:fix": "eslint . --fix",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish",
+		"prepublishOnly": "pnpm build",
 		"release": "np",
-		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch"
+		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006"
 	},
 	"dependencies": {
 		"@mui/icons-material": "^5.10.6",
@@ -32,7 +29,7 @@
 		"@mui/material": "^5.10.6",
 		"@mui/styled-engine": "^5.10.6",
 		"@mui/types": "^7.2.0",
-		"@rchat/react": "workspace:^0.11.7",
+		"@rchat/react": "workspace:^0.11.9",
 		"@storybook/addon-actions": "^6.5.13",
 		"@storybook/addon-essentials": "^6.5.13",
 		"@storybook/addon-interactions": "^6.5.13",

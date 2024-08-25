@@ -10,18 +10,17 @@ import {
 	useRef,
 } from 'react';
 
-import { mergeReferences } from '../internal/mergeReferences';
-import { AnimationParameters, smoothScrollToCenter } from '../internal/smoothScrollToCenter';
-import { useEvent } from '../internal/useEvent';
-import { useScheduleOnNextRender } from '../internal/useScheduleOnNextRender';
-import { useToggleEvent } from '../internal/useToggleEvent';
-
 import { EndlessListItemView } from './EndlessListItemView';
 import { ItemComponentType } from './ItemComponentType';
 import { PlaceholderComponentType } from './PlaceholderComponentType';
 import { useEndlessList } from './useEndlessList';
 import { Frame, useVisibleFrame } from './useVisibleFrame';
 import { useVisibleItems } from './useVisibleItems';
+import { mergeReferences } from '../internal/mergeReferences';
+import { AnimationParameters, smoothScrollToCenter } from '../internal/smoothScrollToCenter';
+import { useEvent } from '../internal/useEvent';
+import { useScheduleOnNextRender } from '../internal/useScheduleOnNextRender';
+import { useToggleEvent } from '../internal/useToggleEvent';
 import type { KeysOfType } from '../internal/KeysOfType';
 
 export type ContainerComponentProps = PropsWithChildren<RefAttributes<HTMLElement>>;
@@ -166,6 +165,7 @@ export const EndlessList = <T,>({
 		handleJump: scheduleJumpScroll,
 		focusedItem,
 		visibleItemKeys,
+		lastScrolledItem,
 	});
 
 	useEffect(() => {

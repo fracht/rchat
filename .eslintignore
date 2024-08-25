@@ -1,9 +1,0 @@
-node_modules
-dist
-*.config.js
-*.test.js
-*.test.ts
-stories
-test
-packages/server
-dangerfile.js

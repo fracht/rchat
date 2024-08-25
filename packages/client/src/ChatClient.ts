@@ -7,7 +7,11 @@ type Self<T> = T;
 
 export type ChatClientEventMap<TMessage> = Self<
 	ChatSocketListenMap<TMessage> & {
-		receiveSearchResults: (roomIdentifier: string, result: MessageSearchResult<TMessage>) => void;
+		receiveSearchResults: (
+			roomIdentifier: string,
+			result: MessageSearchResult<TMessage>,
+			focusIndex: number,
+		) => void;
 		nextSearchResult: (roomIdentifier: string) => void;
 		previousSearchResult: (roomIdentifier: string) => void;
 	}
@@ -18,7 +22,10 @@ export class ChatClient<TMessage> extends CustomEventTarget<ChatClientEventMap<T
 
 	public constructor(url: string, api: ChatAPI<TMessage>);
 	public constructor(socket: ChatClientSocket<TMessage>, api: ChatAPI<TMessage>);
-	public constructor(urlOrSocket: string | ChatClientSocket<TMessage>, private readonly api: ChatAPI<TMessage>) {
+	public constructor(
+		urlOrSocket: string | ChatClientSocket<TMessage>,
+		private readonly api: ChatAPI<TMessage>,
+	) {
 		super();
 		if (typeof urlOrSocket === 'string') {
 			this.socket = io(urlOrSocket);
@@ -36,10 +43,10 @@ export class ChatClient<TMessage> extends CustomEventTarget<ChatClientEventMap<T
 
 	public fetchMessages: MessageFetcher<TMessage>;
 
-	public searchMessages = async (roomIdentifier: string, criteria: unknown) => {
+	public searchMessages = async (roomIdentifier: string, criteria: unknown, focusIndex: number) => {
 		const result = await this.api.searchMessages(roomIdentifier, criteria);
 
-		this.dispatchEvent('receiveSearchResults', roomIdentifier, result);
+		this.dispatchEvent('receiveSearchResults', roomIdentifier, result, focusIndex);
 
 		return {
 			result,

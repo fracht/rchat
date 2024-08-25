@@ -22,3 +22,4 @@ yarn-error.log*
 scripts/*.mjs
 coverage
 **/.turbo
+**/.storybook

@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material';
 import { ElementType, forwardRef, Ref, useEffect, useState } from 'react';
+import { MessageOrientation } from './MessageOrientation';
 import { createMuiComponent, MuiComponentProps } from '../helpers/createMuiComponent';
 import { styled } from '../styles/styled';
-import { MessageOrientation } from './MessageOrientation';
 
 type MessageTimeWrapperState = {
 	orientation: MessageOrientation;
@@ -67,10 +67,10 @@ export const MessageTime = createMuiComponent<InternalMessageTimeProps, typeof T
 				const [formattedTime, updateTimeout] = formatTime(time);
 
 				setFormattedTime(formattedTime);
-				if (updateTimeout !== undefined) {
-					timeoutId = setTimeout(updateTime, updateTimeout);
-				} else {
+				if (updateTimeout === undefined) {
 					timeoutId = undefined;
+				} else {
+					timeoutId = setTimeout(updateTime, updateTimeout);
 				}
 			};
 			updateTime();

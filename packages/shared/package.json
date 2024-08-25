@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/shared",
-	"version": "0.11.7",
+	"version": "0.11.9",
 	"main": "./dist/index.js",
 	"module": "./dist/shared.esm.js",
 	"types": "./dist/shared.d.ts",
@@ -9,10 +9,10 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "aqu build",
-		"dev": "aqu watch --no-cleanup",
+		"build": "aqu build && rimraf ./prepared-package && clean-publish",
+		"lint": "eslint **/*.{ts,tsx}",
 		"postpublish": "rimraf ./prepared-package",
-		"prepublishOnly": "rimraf ./prepared-package && clean-publish"
+		"prepublishOnly": "pnpm build"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",

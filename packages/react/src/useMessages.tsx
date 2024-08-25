@@ -63,6 +63,7 @@ export const useMessages = <TMessage,>({
 			insert: insertMessage,
 			at: getMessage,
 			getAll: getAllMessages,
+			refresh,
 		},
 	] = useBoundedArray<TMessage>([...initialMessagesState.messages], maxChunkSize);
 
@@ -92,10 +93,16 @@ export const useMessages = <TMessage,>({
 
 	const focusItem = useCallback(
 		async (item: TMessage | undefined) => {
-			focusedItem.current = item;
 			if (!item) {
+				if (focusedItem.current) {
+					refresh();
+				}
+
+				focusedItem.current = item;
 				return;
 			}
+
+			focusedItem.current = item;
 
 			const [previousChunk, nextChunk] = await Promise.all([
 				chatClient.fetchMessages(roomIdentifier, additionalChunkSize, item, undefined),
@@ -109,15 +116,16 @@ export const useMessages = <TMessage,>({
 
 			setMessages([...previousChunk.messages, item, ...nextChunk.messages], 'beginning');
 		},
-		[additionalChunkSize, chatClient, roomIdentifier, setMessages],
+		[additionalChunkSize, chatClient, roomIdentifier, setMessages, refresh],
 	);
 
 	const handleSearch = useCallback(
-		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>) => {
+		(searchRoomIdentifier: string, searchResult: MessageSearchResult<TMessage>, focusIndex: number) => {
 			if (searchRoomIdentifier === roomIdentifier) {
 				searchResults.current = searchResult;
-				selectedSearchResult.current = 0;
-				focusItem(searchResult.results[0]);
+				focusIndex = Math.min(focusIndex, searchResult.results.length - 1);
+				selectedSearchResult.current = focusIndex;
+				focusItem(searchResult.results[focusIndex]);
 			}
 		},
 		[focusItem, roomIdentifier],
