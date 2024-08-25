@@ -100,6 +100,17 @@ export class RoomManager<TMessageType> {
 		}
 	};
 
+	/**
+	 * Open broadcast channel to specified room.
+	 *
+	 * This function will automatically check, if room is created, and if not, will create it and join all existing
+	 * user sockets. Also, this function will check if user has access to this room, and if not - will throw an error.
+	 *
+	 * @param socket Socket, which initiates broadcast connection.
+	 * @param roomIdentifier Unique identifier of room.
+	 *
+	 * @returns Broadcast channel
+	 */
 	public broadcast = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		const participants = await this.tryGetRoomParticipants(socket, roomIdentifier);
 		const userIdentifier = socket.data.userIdentifier!;
@@ -108,9 +119,26 @@ export class RoomManager<TMessageType> {
 			throw new Error('Forbidden');
 		}
 
+		return await this.unsafeBroadcast(roomIdentifier, participants);
+	};
+
+	/**
+	 * Open broadcast channel to specified room, without performing any checks.
+	 *
+	 * This function doesn't check, if user has enough access, or if specified participants have enough access to
+	 * participate in this room, thus, this function is unsafe. You should use it very carefully.
+	 *
+	 * @param roomIdentifier Unique identifier of room
+	 * @param participants User identifier list, who participate in specified room. Warning - this parameter is
+	 * required, but it is not guaranteed that all people specified in it will actually participate in room. If you need
+	 * to guarantee participant list, call `RoomManager.invalidateRoomParticipants` before calling this function.
+	 *
+	 * @returns Broadcast channel
+	 */
+	public unsafeBroadcast = async (roomIdentifier: string, participants: Set<string>) => {
 		const socketIORoom = RoomManager.getSocketIORoomIdentifier(roomIdentifier);
 		if (!this.activeRooms.get(socketIORoom)) {
-			await this.preheatRoom(socket, roomIdentifier);
+			await this.unsafePreheatRoom(roomIdentifier, participants);
 		}
 
 		this.activeRooms.setTTL(roomIdentifier, TTL_LONG);
@@ -129,12 +157,16 @@ export class RoomManager<TMessageType> {
 			return;
 		}
 
+		await this.unsafePreheatRoom(roomIdentifier, participants);
+	};
+
+	public unsafePreheatRoom = async (roomIdentifier: string, participants: Set<string>) => {
 		const socketIORoom = RoomManager.getSocketIORoomIdentifier(roomIdentifier);
 
 		for (const participant of participants) {
 			if (this.userSockets.has(participant)) {
 				for (const socket of this.userSockets.get(participant)!) {
-					socket.join(socketIORoom);
+					await socket.join(socketIORoom);
 				}
 			}
 		}
