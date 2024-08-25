@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "turbo run build",
 		"bump": "changeset version && pnpm i --lockfile-only",
-		"ci": "turbo run lint test build",
+		"ci": "turbo run lint test build --env-mode=loose",
 		"dev": "turbo watch build",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
 		"release": "pnpm build && changeset tag && pnpm publish -r"
