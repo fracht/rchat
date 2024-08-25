@@ -27,7 +27,7 @@ jobs:
               uses: covbot/pnpm-install-with-cache@v1
 
             - name: Build, test & lint
-              run: pnpm ci -- --filter=...[${{ github.event.pull_request.base.sha }}...${{ github.sha }}]
+              run: pnpm run ci -- --filter=...[${{ github.event.pull_request.base.sha }}...${{ github.sha }}]
     changeset:
         name: Check for changeset existence
         runs-on: ubuntu-latest
