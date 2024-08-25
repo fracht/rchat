@@ -1,5 +1,15 @@
 # @rchat/react
 
+## 0.12.0
+
+### Minor Changes
+
+-   6aa367c: Fixed 'update search results' behavior when receiving a new message
+
+### Patch Changes
+
+-   e319e25: Fixed "Unable to unfocus focused item when clearing search results"
+
 ## 0.11.9
 
 ## 0.11.8
