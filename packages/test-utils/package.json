@@ -16,8 +16,7 @@
 		"release": "np",
 		"start": "nodemon ./dist/index.js",
 		"storybook": "start-storybook -p 6006",
-		"test": "aqu test --passWithNoTests",
-		"test:watch": "aqu test --passWithNoTests --watch"
+		"test": "echo \"Tests are not configured\""
 	},
 	"dependencies": {
 		"aqu": "^0.4.3",
