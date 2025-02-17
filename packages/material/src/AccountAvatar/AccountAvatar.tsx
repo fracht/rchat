@@ -81,7 +81,7 @@ export const AccountAvatar = <TComponent extends ElementType = 'div', TAdditiona
 
 	return (
 		<AccountAvatarRoot ownerState={{ username, profileUrl }} {...props}>
-			{initials ?? <PersonRounded />}
+			{initials ?? <PersonRounded fontSize="inherit" />}
 		</AccountAvatarRoot>
 	);
 };
