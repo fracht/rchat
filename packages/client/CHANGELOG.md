@@ -1,5 +1,11 @@
 # @rchat/client
 
+## 0.12.1
+
+### Patch Changes
+
+-   @rchat/shared@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes
