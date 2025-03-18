@@ -1,7 +1,7 @@
 {
 	"name": "@rchat/client",
 	"description": "",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"main": "./dist/index.js",
 	"module": "./dist/client.esm.js",
 	"types": "./dist/client.d.ts",
