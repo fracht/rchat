@@ -2,23 +2,23 @@
 	"name": "@rchat/shared",
 	"version": "0.12.0",
 	"main": "./dist/index.js",
-	"module": "./dist/shared.esm.js",
-	"types": "./dist/shared.d.ts",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"publishConfig": {
 		"access": "public",
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "echo \"Building @rchat/shared ...\"",
+		"build": "tsup",
 		"lint": "eslint **/*.{ts,tsx}",
 		"postpublish": "rimraf ./prepared-package",
 		"prepublishOnly": "pnpm build"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.2",
-		"aqu": "0.4.3",
 		"rimraf": "^3.0.2",
 		"socket.io": "^4.5.1",
-		"socket.io-client": "^4.5.1"
+		"socket.io-client": "^4.5.1",
+		"tsup": "^8.4.0"
 	}
 }
