@@ -9,7 +9,7 @@
 		"directory": "prepared-package"
 	},
 	"scripts": {
-		"build": "aqu build && rimraf ./prepared-package && clean-publish",
+		"build": "echo \"Building @rchat/shared ...\"",
 		"lint": "eslint **/*.{ts,tsx}",
 		"postpublish": "rimraf ./prepared-package",
 		"prepublishOnly": "pnpm build"
