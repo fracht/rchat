@@ -8,7 +8,7 @@
 		"ci": "turbo run lint test build --env-mode=loose",
 		"dev": "turbo watch build",
 		"format": "syncpack format && prettier --write **/*.{ts,tsx,js,jsx,json,yml,md}",
-		"release": "pnpm build && changeset tag && pnpm publish -r"
+		"release": "pnpm build && changeset tag && pnpm publish -r --dry-run"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.27.7",
@@ -17,7 +17,7 @@
 		"danger": "^12.3.3",
 		"prettier": "^3.3.3",
 		"syncpack": "^12.4.0",
-		"turbo": "^2.0.14",
+		"turbo": "^2.4.4",
 		"typescript": "^5.5.4"
 	},
 	"pnpm": {
