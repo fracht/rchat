@@ -1,6 +1,6 @@
 {
 	"name": "@rchat/material",
-	"version": "0.12.2",
+	"version": "0.12.0",
 	"sideEffects": false,
 	"main": "./dist/src/index.js",
 	"types": "./dist/src/index.d.ts",
@@ -18,16 +18,18 @@
 		"release": "np",
 		"storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006"
 	},
+	"dependencies": {
+		"@mui/icons-material": "^5.10.6",
+		"@mui/system": "^5.10.6"
+	},
 	"devDependencies": {
 		"@babel/core": "^7.18.9",
 		"@emotion/react": "^11.10.4",
 		"@emotion/styled": "^11.10.4",
-		"@mui/icons-material": "^6.1.3",
-		"@mui/material": "^6.1.3",
-		"@mui/styled-engine": "^6.1.3",
-		"@mui/system": "^6.1.3",
+		"@mui/material": "^5.10.6",
+		"@mui/styled-engine": "^5.10.6",
 		"@mui/types": "^7.2.0",
-		"@rchat/react": "workspace:^0.12.2",
+		"@rchat/react": "workspace:^0.12.0",
 		"@storybook/addon-actions": "^6.5.13",
 		"@storybook/addon-essentials": "^6.5.13",
 		"@storybook/addon-interactions": "^6.5.13",
@@ -48,9 +50,7 @@
 	"peerDependencies": {
 		"@emotion/react": "^11.10.4",
 		"@emotion/styled": "^11.10.4",
-		"@mui/icons-material": "^6.1.3",
-		"@mui/material": "^6.1.3",
-		"@mui/system": "^6.1.3",
+		"@mui/material": "^5.10.6",
 		"@rchat/react": "< 1.0.0",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0"
