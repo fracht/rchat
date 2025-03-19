@@ -1,5 +1,12 @@
 # @rchat/material
 
+## 0.12.1
+
+### Patch Changes
+
+-   4d65807: Updated @rchat/material dependencies
+-   6c77787: Fixed AccountAvatar placeholder style
+
 ## 0.12.0
 
 ### Patch Changes
