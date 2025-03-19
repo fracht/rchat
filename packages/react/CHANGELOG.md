@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.12.3
+
+### Patch Changes
+
+-   1ee2be3: Handle fetching error in handle{Top|Bottom}Reached
+
 ## 0.12.2
 
 ## 0.12.1
