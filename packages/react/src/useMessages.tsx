@@ -206,21 +206,24 @@ export const useMessages = <TMessage,>({
 		}
 
 		isFetching.current = true;
-		const { messages: fetchedMessages, noMessagesBefore } = await chatClient.fetchMessages(
-			roomIdentifier,
-			additionalChunkSize,
-			getMessage(0),
-			undefined,
-		);
+		try {
+			const { messages: fetchedMessages, noMessagesBefore } = await chatClient.fetchMessages(
+				roomIdentifier,
+				additionalChunkSize,
+				getMessage(0),
+				undefined,
+			);
 
-		const clipped = unshiftMessages(fetchedMessages);
+			const clipped = unshiftMessages(fetchedMessages);
 
-		const newState = {
-			noMessagesBefore,
-			noMessagesAfter: !clipped && messagesState.current.noMessagesAfter,
-		};
-		messagesState.current = newState;
-		isFetching.current = false;
+			const newState = {
+				noMessagesBefore,
+				noMessagesAfter: !clipped && messagesState.current.noMessagesAfter,
+			};
+			messagesState.current = newState;
+		} finally {
+			isFetching.current = false;
+		}
 	});
 
 	const handleBottomReached = useEvent(async () => {
@@ -229,21 +232,24 @@ export const useMessages = <TMessage,>({
 		}
 
 		isFetching.current = true;
-		const { messages: fetchedMessages, noMessagesAfter } = await chatClient.fetchMessages(
-			roomIdentifier,
-			additionalChunkSize,
-			undefined,
-			getMessage(-1),
-		);
+		try {
+			const { messages: fetchedMessages, noMessagesAfter } = await chatClient.fetchMessages(
+				roomIdentifier,
+				additionalChunkSize,
+				undefined,
+				getMessage(-1),
+			);
 
-		const clipped = pushMessages(fetchedMessages);
-		const newState = {
-			noMessagesAfter,
-			noMessagesBefore: !clipped && messagesState.current.noMessagesBefore,
-		};
+			const clipped = pushMessages(fetchedMessages);
+			const newState = {
+				noMessagesAfter,
+				noMessagesBefore: !clipped && messagesState.current.noMessagesBefore,
+			};
 
-		messagesState.current = newState;
-		isFetching.current = false;
+			messagesState.current = newState;
+		} finally {
+			isFetching.current = false;
+		}
 	});
 
 	const onVisibleFrameChange = (frame: Frame) => {
