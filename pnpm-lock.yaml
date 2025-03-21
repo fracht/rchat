@@ -85,7 +85,7 @@ importers:
         specifier: ^7.2.0
         version: 7.2.4(@types/react@18.2.6)
       '@rchat/react':
-        specifier: workspace:^0.12.3
+        specifier: workspace:^0.12.4
         version: link:../react/prepared-package
       '@storybook/addon-actions':
         specifier: ^6.5.13
@@ -150,10 +150,10 @@ importers:
         specifier: ^7.18.2
         version: 7.21.8
       '@rchat/client':
-        specifier: workspace:^0.12.3
+        specifier: workspace:^0.12.4
         version: link:../client/prepared-package
       '@rchat/shared':
-        specifier: workspace:^0.12.3
+        specifier: workspace:^0.12.4
         version: link:../shared/prepared-package
       '@sirse-dev/eslint-config':
         specifier: ^5.0.0
@@ -323,7 +323,7 @@ importers:
         version: 4.6.1
     devDependencies:
       '@rchat/server':
-        specifier: workspace:^0.12.3
+        specifier: workspace:^0.12.4
         version: link:../server/prepared-package
       nodemon:
         specifier: ^2.0.20
