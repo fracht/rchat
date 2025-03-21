@@ -1,5 +1,11 @@
 # @rchat/react
 
+## 0.12.4
+
+### Patch Changes
+
+-   c4ee5f4: Fixed noMessagesBefore/noMessagesAfter state update in useMessages hook
+
 ## 0.12.3
 
 ### Patch Changes
