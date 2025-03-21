@@ -1,6 +1,6 @@
 import { MessageFetchResult, MessageSearchResult } from '@rchat/client';
 import { ChatClient } from '@rchat/client';
-import { Ref, useCallback, useEffect, useRef } from 'react';
+import { Ref, useCallback, useEffect, useRef, useState } from 'react';
 import { Frame } from './EndlessList/useVisibleFrame';
 import { clamp } from './internal/clamp';
 import { KeepDirection, useBoundedArray } from './internal/useBoundedArray';
@@ -67,6 +67,8 @@ export const useMessages = <TMessage,>({
 		},
 	] = useBoundedArray<TMessage>([...initialMessagesState.messages], maxChunkSize);
 
+	const [noMessagesAfter, setNoMessagesAfter] = useState(initialMessagesState.noMessagesAfter);
+	const [noMessagesBefore, setNoMessagesBefore] = useState(initialMessagesState.noMessagesBefore);
 	const messagesState = useRef<Omit<MessageFetchResult<TMessage>, 'messages'>>(initialMessagesState);
 
 	const handleIncomingMessage = useCallback(
@@ -193,6 +195,8 @@ export const useMessages = <TMessage,>({
 	useEffect(() => {
 		setMessages([...initialMessagesState.messages], 'beginning');
 		messagesState.current = initialMessagesState;
+		setNoMessagesAfter(initialMessagesState.noMessagesAfter);
+		setNoMessagesBefore(initialMessagesState.noMessagesBefore);
 	}, [initialMessagesState, setMessages]);
 
 	useEffect(() => {
@@ -220,6 +224,8 @@ export const useMessages = <TMessage,>({
 				noMessagesBefore,
 				noMessagesAfter: !clipped && messagesState.current.noMessagesAfter,
 			};
+			setNoMessagesAfter(newState.noMessagesAfter);
+			setNoMessagesBefore(newState.noMessagesBefore);
 			messagesState.current = newState;
 		} finally {
 			isFetching.current = false;
@@ -246,6 +252,8 @@ export const useMessages = <TMessage,>({
 				noMessagesBefore: !clipped && messagesState.current.noMessagesBefore,
 			};
 
+			setNoMessagesAfter(newState.noMessagesAfter);
+			setNoMessagesBefore(newState.noMessagesBefore);
 			messagesState.current = newState;
 		} finally {
 			isFetching.current = false;
@@ -260,8 +268,8 @@ export const useMessages = <TMessage,>({
 		messages,
 		onTopReached: handleTopReached,
 		onBottomReached: handleBottomReached,
-		noMessagesBefore: messagesState.current.noMessagesBefore,
-		noMessagesAfter: messagesState.current.noMessagesAfter,
+		noMessagesBefore,
+		noMessagesAfter,
 		onVisibleFrameChange,
 		containerReference,
 		focusedItem: focusedItem.current,
