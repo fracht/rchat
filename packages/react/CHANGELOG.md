@@ -1,5 +1,7 @@
 # @rchat/react
 
+## 0.13.0
+
 ## 0.12.4
 
 ### Patch Changes
