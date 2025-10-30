@@ -43,9 +43,9 @@ export class RoomManager<TMessageType> {
 		return sockets && sockets.size > 0;
 	};
 
-	public tryGetRoomParticipants = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
+	public tryGetRoomParticipants = async (connectionInfo: ConnectionInfo, roomIdentifier: string) => {
 		try {
-			return await this.getRoomParticipants(socket, roomIdentifier);
+			return await this.getRoomParticipants(connectionInfo, roomIdentifier);
 		} catch (error) {
 			console.error('Failed to fetch participants.', error);
 		}
@@ -54,11 +54,11 @@ export class RoomManager<TMessageType> {
 	};
 
 	private getRoomParticipants = async (
-		socket: ChatSocketType<TMessageType>,
+		connectionInfo: ConnectionInfo,
 		roomIdentifier: string,
 	): Promise<Set<string>> => {
 		if (!this.roomParticipants.has(roomIdentifier)) {
-			const fetchedParticipants = await this.fetchParticipants(socket.data as ConnectionInfo, roomIdentifier);
+			const fetchedParticipants = await this.fetchParticipants(connectionInfo, roomIdentifier);
 			const participants: Set<string> = new Set(fetchedParticipants);
 			this.roomParticipants.set(roomIdentifier, participants);
 
@@ -83,7 +83,7 @@ export class RoomManager<TMessageType> {
 
 		// Join to all active rooms
 		for (const [room] of this.activeRooms) {
-			const participants = await this.tryGetRoomParticipants(socket, room);
+			const participants = await this.tryGetRoomParticipants(socket.data as ConnectionInfo, room);
 			if (participants?.has(identifier)) {
 				await socket.join(room);
 			}
@@ -111,9 +111,16 @@ export class RoomManager<TMessageType> {
 	 *
 	 * @returns Broadcast channel
 	 */
-	public broadcast = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
-		const participants = await this.tryGetRoomParticipants(socket, roomIdentifier);
-		const userIdentifier = socket.data.userIdentifier!;
+	public broadcast = async (socket: ChatSocketType<TMessageType> | ConnectionInfo, roomIdentifier: string) => {
+		let connectionInfo: ConnectionInfo;
+		if ('userIdentifier' in socket) {
+			connectionInfo = socket;
+		} else {
+			connectionInfo = socket.data as ConnectionInfo;
+		}
+
+		const participants = await this.tryGetRoomParticipants(connectionInfo, roomIdentifier);
+		const userIdentifier = connectionInfo.userIdentifier!;
 
 		if (!participants.has(userIdentifier)) {
 			throw new Error('Forbidden');
@@ -148,7 +155,7 @@ export class RoomManager<TMessageType> {
 	public preheatRoom = async (socket: ChatSocketType<TMessageType>, roomIdentifier: string) => {
 		let participants: Set<string> | undefined;
 		try {
-			participants = await this.getRoomParticipants(socket, roomIdentifier);
+			participants = await this.getRoomParticipants(socket.data as ConnectionInfo, roomIdentifier);
 		} catch {
 			console.error('Preheating room failed: cannot get room participants');
 		}
