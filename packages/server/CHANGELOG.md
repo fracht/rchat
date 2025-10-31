@@ -1,5 +1,15 @@
 # @rchat/server
 
+## 0.13.0
+
+### Minor Changes
+
+-   360ef93: Added ability to specify ConnectionInfo instead of socket in RoomManager.broadcast
+
+### Patch Changes
+
+-   @rchat/shared@0.13.0
+
 ## 0.12.4
 
 ### Patch Changes
